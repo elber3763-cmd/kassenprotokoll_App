@@ -1,4 +1,4 @@
-import os
+﻿import os
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, colorchooser, simpledialog
 import tkinter.font as tkFont
@@ -3256,7 +3256,103 @@ class NamenslistePDF(FPDF):
             self.cell(col_widths["car"], 10, row.get('car', ''), 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
             self.cell(col_widths["signature"], 10, '', 1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L', fill=1)
             fill = not fill
-            
+
+
+class NameSplitDialog(tk.Toplevel):
+    """
+    Dialog zum manuellen Festlegen des Trennpunkts zwischen Vorname und Nachname
+    bei mehrteiligen Namen (z.B. "Anna Maria Müller Schmidt").
+    """
+    def __init__(self, parent, app_ref, name_words):
+        super().__init__(parent)
+        self.transient(parent)
+        self.grab_set()
+        self.parent_app = app_ref
+        self.result = None  # None = überspringen, (nachname, vorname) = Ergebnis
+        self.name_words = name_words
+        self.title("Name aufteilen")
+
+        full_name = " ".join(name_words)
+
+        main_frame = ttk.Frame(self, padding=15)
+        main_frame.pack(expand=True, fill="both")
+        main_frame.columnconfigure(0, weight=1)
+
+        dialog_font = ("Segoe UI", 12)
+
+        ttk.Label(main_frame, text="Mehrteiligen Namen aufteilen",
+                  font=("Segoe UI", 13, "bold")).grid(row=0, column=0, sticky="w", pady=(0, 5))
+        ttk.Label(main_frame, text=f'Name: "{full_name}"',
+                  font=dialog_font).grid(row=1, column=0, sticky="w", pady=(0, 10))
+        ttk.Label(main_frame,
+                  text="Wo ist der Trennpunkt? (linke Wörter = Vorname, rechte = Nachname)",
+                  font=dialog_font).grid(row=2, column=0, sticky="w", pady=(0, 8))
+
+        # split_var = Anzahl der Wörter von LINKS, die zum Vornamen gehören
+        self.split_var = tk.IntVar(value=1)
+
+        options_frame = ttk.Frame(main_frame)
+        options_frame.grid(row=3, column=0, sticky="ew", pady=(0, 8))
+        options_frame.columnconfigure(0, weight=1)
+
+        for n in range(1, len(name_words)):
+            vorname_part = " ".join(name_words[:n])
+            nachname_part = " ".join(name_words[n:])
+            label_text = f"Vorname: \"{vorname_part}\"  |  Nachname: \"{nachname_part}\""
+            rb = ttk.Radiobutton(options_frame, text=label_text,
+                                 variable=self.split_var, value=n)
+            rb.grid(row=n - 1, column=0, sticky="w", pady=2)
+
+        preview_frame = ttk.LabelFrame(main_frame, text="Ergebnis-Vorschau", padding=8)
+        preview_frame.grid(row=4, column=0, sticky="ew", pady=(4, 12))
+        preview_frame.columnconfigure(0, weight=1)
+
+        self.preview_var = tk.StringVar()
+        self._update_preview()
+        self.split_var.trace_add('write', lambda *_: self._update_preview())
+        ttk.Label(preview_frame, textvariable=self.preview_var,
+                  font=("Segoe UI", 12, "bold")).grid(row=0, column=0, sticky="w")
+
+        button_frame = ttk.Frame(main_frame)
+        button_frame.grid(row=5, column=0, sticky="ew")
+        button_frame.columnconfigure((0, 1), weight=1)
+
+        ipady = self.parent_app.current_settings.get('dialog_button_ipady', 5)
+
+        confirm_btn = ttk.Button(button_frame, text="Bestätigen", command=self.on_confirm)
+        self.parent_app._configure_dialog_button(confirm_btn, 'Dialog_Save', 'Bestätigen')
+        confirm_btn.grid(row=0, column=0, padx=5, ipady=ipady, sticky="ew")
+
+        skip_btn = ttk.Button(button_frame, text="Überspringen", command=self.on_skip)
+        self.parent_app._configure_dialog_button(skip_btn, 'Dialog_Cancel', 'Überspringen')
+        skip_btn.grid(row=0, column=1, padx=5, ipady=ipady, sticky="ew")
+
+        self.protocol("WM_DELETE_WINDOW", self.on_skip)
+
+    def _update_preview(self):
+        n = self.split_var.get()
+        if 1 <= n < len(self.name_words):
+            vorname_part = " ".join(self.name_words[:n])
+            nachname_part = " ".join(self.name_words[n:])
+            self.preview_var.set(f"{nachname_part}, {vorname_part}")
+
+    def on_confirm(self):
+        n = self.split_var.get()
+        if 1 <= n < len(self.name_words):
+            vorname_part = " ".join(self.name_words[:n])
+            nachname_part = " ".join(self.name_words[n:])
+            self.result = (nachname_part, vorname_part)
+        self.destroy()
+
+    def on_skip(self):
+        self.result = None
+        self.destroy()
+
+    def show(self):
+        self.wait_window(self)
+        return self.result
+
+
 class NamenslisteEntryDialog(tk.Toplevel):
     """
     Dialogfenster zum Hinzufügen oder Bearbeiten eines Eintrags in der Namensliste.
@@ -9129,13 +9225,17 @@ class WeekendPlannerApp:
         # 2. Entscheidung treffen
         # Wenn nicht eingeloggt -> Login Screen anzeigen
         if not getattr(self, 'is_logged_in', False):
-            # Wir erstellen den Login-Screen und übergeben:
-            # 1. Die Login-Funktion
-            # 2. Die Abbrechen-Funktion (Zurück zum Dashboard der Haupt-App)
+            # Nur zum Dashboard navigieren, wenn der Wochenendplaner auch wirklich
+            # die aktive Seite ist. Falls der Nutzer auf einer anderen Seite arbeitet
+            # und der Timer im Hintergrund abläuft, wird der Redirect ignoriert.
+            def _on_login_timeout():
+                if self.app.current_page_name == "Wochenendplaner":
+                    self.app.show_page("Dashboard")
+
             ModernLoginScreen(
-                self.parent_frame, 
+                self.parent_frame,
                 self._perform_login,
-                cancel_callback=lambda: self.app.show_page("Dashboard")
+                cancel_callback=_on_login_timeout
             )
         else:
             # Wenn eingeloggt -> Die Haupt-App bauen
@@ -31998,18 +32098,40 @@ class KassenprotokollApp:
             messagebox.showinfo("Duplikate prüfen", "Die Namensliste ist leer.", parent=self.master)
             return
 
-        # Namen normalisieren und Duplikate finden
-        seen = {}
+        # Hilfsfunktion zur Normalisierung von Namen
+        def _normalize_name_for_deduplication(full_name):
+            cleaned_name = re.sub(r'(?i)\b(Ms|Mr|Mrs|Hr|Herr|Frau|Fr|Prof|Dr|Familie)\b\.?\s*', '', full_name).strip()
+            
+            # Trennt in Vor- und Nachname, wenn ein Komma vorhanden ist (Nachname, Vorname)
+            if ',' in cleaned_name:
+                parts = [p.strip() for p in cleaned_name.split(',', 1)]
+                if len(parts) == 2:
+                    nachname, vorname = parts
+                    return f"{nachname.lower()} {vorname.lower()}"
+                else:
+                    return cleaned_name.lower()
+            # Trennt in Vor- und Nachname, wenn kein Komma vorhanden ist (Vorname Nachname)
+            else:
+                parts = cleaned_name.rsplit(' ', 1)
+                if len(parts) == 2:
+                    vorname, nachname = parts
+                    return f"{nachname.lower()}, {vorname.lower()}" # Einheitliches Format: Nachname, Vorname
+                else:
+                    return cleaned_name.lower()
+
+        # Duplikate suchen
+        seen_normalized = {}
         duplicates = []
         for entry in self.namensliste_data_cache:
-            name_key = entry.get('name', '').strip().lower()
-            if not name_key:
+            name = entry.get('name', '').strip()
+            if not name:
                 continue
-            if name_key in seen:
-                if name_key not in duplicates:
-                    duplicates.append(name_key)
+            key = _normalize_name_for_deduplication(name)
+            if key in seen_normalized:
+                if key not in duplicates:
+                    duplicates.append(key)
             else:
-                seen[name_key] = True
+                seen_normalized[key] = True
 
         if not duplicates:
             messagebox.showinfo(
@@ -32147,7 +32269,15 @@ class KassenprotokollApp:
     
     def _delete_namensliste_entry(self, event=None):
         selected_ids = self.namensliste_tree.selection()
-        if not selected_ids: return
+        
+        # Wenn nichts ausgewählt ist, wird gefragt, ob man alles löschen möchte
+        if not selected_ids: 
+            if self.namensliste_data_cache and messagebox.askyesno("Alle löschen", "Es ist kein Eintrag ausgewählt.\nMöchten Sie stattdessen ALLE Einträge löschen?"):
+                self.namensliste_data_cache = []
+                self._save_namensliste_data()
+                self._save_namensliste_to_history("Alle Einträge gelöscht")
+                self._load_and_display_namensliste()
+            return
         
         if messagebox.askyesno("Löschen", f"{len(selected_ids)} Eintrag/Einträge wirklich löschen?"):
             self.namensliste_data_cache = [e for e in self.namensliste_data_cache if e.get("id") not in selected_ids]
@@ -32203,12 +32333,21 @@ class KassenprotokollApp:
                     entry['name'] = cleaned_name.replace(',', '').strip()
             else:
                 # Format: "Vorname Nachname" -> "Nachname, Vorname"
-                parts = cleaned_name.rsplit(' ', 1)
+                parts = cleaned_name.split()
                 if len(parts) == 2:
                     vorname, nachname = parts
                     entry['name'] = f"{nachname}, {vorname}"
-                else: 
+                elif len(parts) == 1:
                     entry['name'] = cleaned_name
+                else:
+                    # 3+ Wörter: doppelter Nachname und/oder doppelter Vorname möglich
+                    # Dialog anzeigen, damit der Nutzer den Trennpunkt festlegen kann
+                    dialog = NameSplitDialog(self.master, self, parts)
+                    split_result = dialog.show()
+                    if split_result is not None:
+                        nachname_part, vorname_part = split_result
+                        entry['name'] = f"{nachname_part}, {vorname_part}"
+                    # else: Eintrag unverändert lassen (Überspringen)
 
         # Schritt 3: Alphabetisch sortieren
         self.namensliste_data_cache.sort(key=lambda x: x.get('name', '').lower())
