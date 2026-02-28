@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw.bak
+*.py.bak
+
+# Virtuelle Umgebung
+venv/
+env/
+
+# Datenbanken & Backups
+*.db
+backups/
+
+# Build / Dist
+build/
+dist/
+*.spec
+*.egg-info/
+
+# Laufzeit-Daten (werden zur Laufzeit generiert)
+*.json
+*.log
+
+# Office Temp-Dateien
+~$*
+.~lock.*
+
+# Generierte PDFs & Dokumente
+*.pdf
+
+# System
+desktop.ini
+Thumbs.db
+.DS_Store

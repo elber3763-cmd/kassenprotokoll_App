@@ -1,0 +1,10 @@
+fpdf
+python-docx
+openpyxl
+pygame
+pywin32
+asteval
+Pillow
+ttkthemes
+PyMuPDF
+pyinstaller
