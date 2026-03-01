@@ -431,6 +431,118 @@ class OffeneRechnungenPDF(FPDF):
             self.ln()
         self.ln(8)
 
+class CalendarPopup(tk.Toplevel):
+    """Kalender-Popup zur Datumsauswahl. Schreibt das gewählte Datum (TT.MM.JJJJ) in target_var."""
+
+    MONTH_NAMES = ["Januar", "Februar", "März", "April", "Mai", "Juni",
+                   "Juli", "August", "September", "Oktober", "November", "Dezember"]
+    DAY_HEADERS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+
+    def __init__(self, parent, target_var):
+        super().__init__(parent)
+        self.transient(parent)
+        self.grab_set()
+        self.title("Datum auswählen")
+        self.resizable(False, False)
+        self.target_var = target_var
+
+        today = datetime.date.today()
+        pre_selected = None
+        initial = target_var.get().strip()
+        if initial:
+            for fmt in ("%d.%m.%Y", "%d.%m.%y"):
+                try:
+                    pre_selected = datetime.datetime.strptime(initial, fmt).date()
+                    break
+                except (ValueError, TypeError):
+                    pass
+
+        self.selected = pre_selected or today
+        self.view_year = self.selected.year
+        self.view_month = self.selected.month
+
+        self._build()
+        self._center(parent)
+
+    def _center(self, parent):
+        self.update_idletasks()
+        px, py = parent.winfo_rootx(), parent.winfo_rooty()
+        pw, ph = parent.winfo_width(), parent.winfo_height()
+        w, h = self.winfo_reqwidth(), self.winfo_reqheight()
+        self.geometry(f"+{px + (pw - w) // 2}+{py + (ph - h) // 2}")
+
+    def _build(self):
+        for w in self.winfo_children():
+            w.destroy()
+
+        frm = ttk.Frame(self, padding=12)
+        frm.pack()
+
+        # Navigations-Header
+        hdr = ttk.Frame(frm)
+        hdr.grid(row=0, column=0, columnspan=7, sticky='ew', pady=(0, 8))
+        hdr.columnconfigure(1, weight=1)
+        ttk.Button(hdr, text="◀", width=3, command=self._prev_month).grid(row=0, column=0)
+        ttk.Label(hdr, text=f"{self.MONTH_NAMES[self.view_month - 1]} {self.view_year}",
+                  font=("Segoe UI", 13, "bold"), anchor='center').grid(row=0, column=1, sticky='ew', padx=10)
+        ttk.Button(hdr, text="▶", width=3, command=self._next_month).grid(row=0, column=2)
+
+        # Wochentag-Kopfzeile
+        for col, name in enumerate(self.DAY_HEADERS):
+            fg = '#CC0000' if col >= 5 else '#333333'
+            tk.Label(frm, text=name, font=("Segoe UI", 10, "bold"),
+                     width=4, fg=fg, anchor='center').grid(row=1, column=col, padx=2, pady=(0, 4))
+
+        # Tage
+        today = datetime.date.today()
+        weeks = calendar.monthcalendar(self.view_year, self.view_month)
+        for r, week in enumerate(weeks):
+            for c, day in enumerate(week):
+                if day == 0:
+                    tk.Label(frm, text="", width=4).grid(row=r + 2, column=c, padx=2, pady=2)
+                    continue
+                d = datetime.date(self.view_year, self.view_month, day)
+                is_sel = (d == self.selected)
+                is_today = (d == today)
+                is_weekend = (c >= 5)
+                if is_sel:
+                    bg, fg, fw = '#0078D4', 'white', 'bold'
+                elif is_today:
+                    bg, fg, fw = '#CCE4F7', '#0078D4', 'bold'
+                elif is_weekend:
+                    bg, fg, fw = 'SystemButtonFace', '#CC0000', 'normal'
+                else:
+                    bg, fg, fw = 'SystemButtonFace', '#111111', 'normal'
+                tk.Button(frm, text=str(day), width=4,
+                          font=("Segoe UI", 10, fw), bg=bg, fg=fg,
+                          relief='flat', cursor='hand2',
+                          command=lambda d=d: self._pick(d)).grid(row=r + 2, column=c, padx=2, pady=2, sticky='nsew')
+
+        # Heute & Abbrechen
+        ttk.Button(frm, text="Heute", command=lambda: self._pick(datetime.date.today())).grid(
+            row=len(weeks) + 2, column=0, columnspan=7, pady=(10, 3), sticky='ew')
+        ttk.Button(frm, text="Abbrechen", command=self.destroy).grid(
+            row=len(weeks) + 3, column=0, columnspan=7, pady=(3, 0), sticky='ew')
+
+    def _prev_month(self):
+        if self.view_month == 1:
+            self.view_month, self.view_year = 12, self.view_year - 1
+        else:
+            self.view_month -= 1
+        self._build()
+
+    def _next_month(self):
+        if self.view_month == 12:
+            self.view_month, self.view_year = 1, self.view_year + 1
+        else:
+            self.view_month += 1
+        self._build()
+
+    def _pick(self, date_obj):
+        self.target_var.set(date_obj.strftime("%d.%m.%Y"))
+        self.destroy()
+
+
 class OffeneRechnungEntryDialog(tk.Toplevel):
     """ Dialog zum Hinzufügen oder Bearbeiten eines Eintrags für offene Rechnungen. """
     def __init__(self, parent, app_ref, entry_data=None):
@@ -478,7 +590,7 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
 
         kuerzel_options = ['','TB', 'SS', 'JH', 'DH', 'TP', 'KL']
         # Die leere Option ('') ist wichtig, damit die Logik eine unvollständige Eingabe erkennen kann.
-        status_options = ['','Ja', 'Nein', 'in Bearbeitung']
+        status_options = ['','Ja', 'Nein', 'in Bearbeitung', 'an Bankett übergeben', 'noch offen']
 
         row = 0
         ttk.Label(main_frame, text="BK-Referenz:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
@@ -488,10 +600,10 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
         ttk.Entry(main_frame, textvariable=self.data_vars['gruppenname'], font=dialog_font).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3, ipady=entry_ipady); row+=1
         
         ttk.Label(main_frame, text="Anreise:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
-        ttk.Entry(main_frame, textvariable=self.data_vars['anreise'], font=dialog_font).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3, ipady=entry_ipady); row+=1
+        self._make_date_field(main_frame, self.data_vars['anreise'], dialog_font, entry_ipady).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
 
         ttk.Label(main_frame, text="Abreise:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
-        ttk.Entry(main_frame, textvariable=self.data_vars['abreise'], font=dialog_font).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3, ipady=entry_ipady); row+=1
+        self._make_date_field(main_frame, self.data_vars['abreise'], dialog_font, entry_ipady).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
 
         sections = [
             ('Info versendet:', 'info_sent', 'info_kuerzel', 'info_datum'),
@@ -506,7 +618,7 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
             ttk.Label(main_frame, text="Kürzel:", font=dialog_font).grid(row=row, column=2, sticky='e', padx=5)
             ttk.Combobox(main_frame, textvariable=self.data_vars[kuerzel_key], values=kuerzel_options, state='readonly', width=7, font=dialog_font).grid(row=row, column=3, sticky='w', padx=5); row+=1
             ttk.Label(main_frame, text="Datum:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
-            ttk.Entry(main_frame, textvariable=self.data_vars[datum_key], font=dialog_font).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3, ipady=entry_ipady); row+=1
+            self._make_date_field(main_frame, self.data_vars[datum_key], dialog_font, entry_ipady).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
         
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=row, column=0, columnspan=4, pady=15, sticky="ew")
@@ -521,6 +633,15 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
         cancel_button.grid(row=0, column=1, padx=5, ipady=5, sticky="ew")
         
         self.protocol("WM_DELETE_WINDOW", self.on_cancel)
+
+    def _make_date_field(self, parent, var, font, entry_ipady):
+        """Erstellt ein Datumsfeld: Entry + 📅 Kalender-Button in einem Frame."""
+        frame = ttk.Frame(parent)
+        entry = ttk.Entry(frame, textvariable=var, font=font)
+        entry.pack(side='left', fill='x', expand=True, ipady=entry_ipady)
+        ttk.Button(frame, text="📅", width=3,
+                   command=lambda: CalendarPopup(self, var)).pack(side='left', padx=(4, 0))
+        return frame
 
     def on_save(self):
         # Grundlegende Validierung für den Gruppennamen
@@ -967,8 +1088,8 @@ class OffeneRechnungenApp:
         self.parent_frame = parent
         self.app = app_ref
         self.offene_rechnungen_data_file = os.path.join(self.app.ZIELORDNER_OFFENE_RECHNUNGEN, 'offene_rechnungen_data.json')
-        self.gruppen_data, self.einzel_data = [], []
-        self.gruppen_tree, self.einzel_tree, self.notebook = None, None, None
+        self.all_data = []
+        self.tree = None
         self.periodic_check_job = None
         self.action_buttons = {}
         self.button_images = {}
@@ -1036,14 +1157,9 @@ class OffeneRechnungenApp:
         ttk.Label(header, text="Offene Rechnungen", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
         ttk.Label(header, textvariable=self.app.date_display_var, font=("Segoe UI", 12)).grid(row=0, column=2, sticky='e', padx=20)
         
-        self.notebook = ttk.Notebook(self.parent_frame)
-        self.notebook.grid(row=1, column=0, sticky='nsew', padx=15, pady=(5,10))
-        gruppen_frame = ttk.Frame(self.notebook, padding=10)
-        einzel_frame = ttk.Frame(self.notebook, padding=10)
-        self.notebook.add(gruppen_frame, text="  Gruppen & Firmen  ")
-        self.notebook.add(einzel_frame, text="  Einzelpersonen, Privat & Co.  ")
-        self.gruppen_tree = self._create_table_view(gruppen_frame, 'gruppen')
-        self.einzel_tree = self._create_table_view(einzel_frame, 'einzel')
+        table_frame = ttk.Frame(self.parent_frame, padding=10)
+        table_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(5, 10))
+        self.tree = self._create_table_view(table_frame)
 
         button_frame = ttk.Frame(self.parent_frame, style='AppBackground.TFrame', padding=(15, 10))
         button_frame.grid(row=2, column=0, sticky='ew', pady=(0, 10))
@@ -1052,11 +1168,12 @@ class OffeneRechnungenApp:
         ipady_val = design_cfg.get('ipady', 8)
         
         button_defs = {
-            'OR_Import': {'text': 'Import', 'command': self._on_import_excel}, 
+            'OR_Import': {'text': 'Import', 'command': self._on_import_excel},
             'OR_DeleteAll': {'text': 'Papierkorb', 'command': self._on_delete_all},
-            'OR_Edit': {'text': 'Bearbeiten', 'command': self._on_edit_selected_entry}, 
+            'OR_Edit': {'text': 'Bearbeiten', 'command': self._on_edit_selected_entry},
+            'OR_Kommentar': {'text': '💬 Kommentar', 'command': self._on_comment_selected_entry},
             'OR_Cleanup': {'text': '>14 Tage löschen', 'command': self._on_cleanup_old},
-            'OR_SavePDF': {'text': 'PDF Speichern', 'command': self._on_save_and_export_pdf}, 
+            'OR_SavePDF': {'text': 'PDF Speichern', 'command': self._on_save_and_export_pdf},
             'OR_Email': {'text': 'E-Mail', 'command': self._on_email},
             'OR_History': {'text': 'Verlauf', 'command': self._on_show_history},
         }
@@ -1066,11 +1183,11 @@ class OffeneRechnungenApp:
             self._configure_or_button(btn, key, props['text'])
             self.action_buttons[key] = btn
 
-    def _create_table_view(self, parent, key):
+    def _create_table_view(self, parent):
         parent.grid_rowconfigure(0, weight=1); parent.grid_columnconfigure(0, weight=1)
         tree_frame = ttk.Frame(parent); tree_frame.grid(row=0, column=0, sticky='nsew')
         tree_frame.rowconfigure(0, weight=1); tree_frame.columnconfigure(0, weight=1)
-        
+
         cols = {
             'bk_ref': {'text': 'BK-Referenz', 'width': 150}, 'gruppenname': {'text': 'Gruppenname', 'width': 350},
             'anreise': {'text': 'Anreise', 'width': 100}, 'abreise': {'text': 'Abreise', 'width': 100},
@@ -1078,33 +1195,32 @@ class OffeneRechnungenApp:
             'erneut_sent': {'text': 'Erneut versendet', 'width': 160}, 'erneut_kuerzel': {'text': 'Kürzel', 'width': 60}, 'erneut_datum': {'text': 'Datum', 'width': 100},
             'final_sent': {'text': 'Final versendet', 'width': 160}, 'final_kuerzel': {'text': 'Kürzel', 'width': 60}, 'final_datum': {'text': 'Datum', 'width': 100}
         }
-        
-        style_name = f"OffeneRechnungen.{key}.Treeview"
-        self.app.style.configure(style_name, rowheight=40, font=("Segoe UI", 12)); self.app.style.configure(f"{style_name}.Heading", font=("Segoe UI", 14, "bold"))
-        
+
+        style_name = "OffeneRechnungen.Treeview"
+        self.app.style.configure(style_name, rowheight=40, font=("Segoe UI", 12))
+        self.app.style.configure(f"{style_name}.Heading", font=("Segoe UI", 14, "bold"))
+
         tree = ttk.Treeview(tree_frame, columns=list(cols.keys()), show='tree headings', style=style_name)
-        
         tree.column("#0", width=40, stretch=tk.NO, anchor='center')
         tree.heading("#0", text="💬")
+        tree.tag_configure('red_row', background='#FFDDDD')
+        tree.tag_configure('yellow_row', background='#FFFFE0')
+        tree.tag_configure('green_row', background='#DDFFDD')
+        for col_id, cfg in cols.items():
+            tree.heading(col_id, text=cfg['text']); tree.column(col_id, width=cfg['width'], anchor='w', stretch=tk.NO)
 
-        tree.tag_configure('red_row', background='#FFDDDD'); tree.tag_configure('yellow_row', background='#FFFFE0'); tree.tag_configure('green_row', background='#DDFFDD')
-        for col_id, config in cols.items(): 
-            tree.heading(col_id, text=config['text']); tree.column(col_id, width=config['width'], anchor='w', stretch=tk.NO)
-        
-        vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=tree.yview); hsb = ttk.Scrollbar(tree_frame, orient="horizontal", command=tree.xview)
+        vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=tree.yview)
+        hsb = ttk.Scrollbar(tree_frame, orient="horizontal", command=tree.xview)
         tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
         tree.grid(row=0, column=0, sticky='nsew'); vsb.grid(row=0, column=1, sticky='ns'); hsb.grid(row=1, column=0, sticky='ew')
-        
-        tree.bind("<Double-1>", lambda e, k=key: self._on_edit_entry(e, k))
+
+        tree.bind("<Double-1>", self._on_edit_entry)
         tree.bind("<Button-3>", self._open_comment_editor)
         TreeViewToolTip(tree, self, '#0', 'kommentar')
-        
-        TreeViewCellNavigation(tree, edit_command_func=self._on_edit_selected_entry) # <--- HINZUFÜGEN
+        TreeViewCellNavigation(tree, edit_command_func=self._on_edit_selected_entry)
 
-
-        add_btn_frame = ttk.Frame(parent); add_btn_frame.grid(row=1, column=0, sticky='w', pady=(10,0))
-        
-        add_button = ttk.Button(add_btn_frame, command=lambda k=key: self._on_add_entry(k))
+        add_btn_frame = ttk.Frame(parent); add_btn_frame.grid(row=1, column=0, sticky='w', pady=(10, 0))
+        add_button = ttk.Button(add_btn_frame, command=self._on_add_entry)
 
         config_key = 'OR_AddRow'
         default_text = '➕ Zeile hinzufügen'
@@ -1136,53 +1252,50 @@ class OffeneRechnungenApp:
         return tree
 
     def _open_comment_editor(self, event):
-        tree = event.widget
-        item_id = tree.identify_row(event.y)
-        if not item_id: return
+        item_id = self.tree.identify_row(event.y)
+        if not item_id:
+            return
+        self.tree.selection_set(item_id)
+        self._edit_comment_for_id(item_id)
 
-        tree.selection_set(item_id)
-        
-        try:
-            selected_tab_index = self.notebook.index(self.notebook.select())
-            data_cache = self.gruppen_data if selected_tab_index == 0 else self.einzel_data
-        except (tk.TclError, AttributeError): return
+    def _on_comment_selected_entry(self):
+        if not self.tree.selection():
+            SuccessToast(self.app.master, title="Keine Auswahl", message="Bitte einen Eintrag auswählen.", toast_type='warning', colors=self.app.current_settings.get('toast_colors'))
+            return
+        self._edit_comment_for_id(self.tree.selection()[0])
 
-        entry_to_edit = next((e for e in data_cache if e.get("id") == item_id), None)
-        if not entry_to_edit: return
-
+    def _edit_comment_for_id(self, item_id):
+        entry_to_edit = next((e for e in self.all_data if e.get("id") == item_id), None)
+        if not entry_to_edit:
+            return
         dialog = CommentDialog(self.app.master, self.app, initial_comment=entry_to_edit.get('kommentar', ''))
         new_comment_text = dialog.show()
-
         if new_comment_text is not None:
             entry_to_edit['kommentar'] = new_comment_text
             self.save_data(show_toast=False, action="Kommentar geändert")
-            
             if new_comment_text:
-                tree.item(item_id, image=self.comment_icon)
+                self.tree.item(item_id, image=self.comment_icon)
             else:
-                tree.item(item_id, image='')
+                self.tree.item(item_id, image='')
 
     def populate_tables(self):
         # KORREKTUR: Sicherheitsprüfung, ob die Instanz zerstört wird.
         if self.is_destroyed:
             return
 
-        for tree, data_cache in [(self.gruppen_tree, self.gruppen_data), (self.einzel_tree, self.einzel_data)]:
-            # KORREKTUR: Prüft, ob das Treeview-Widget noch existiert.
-            if not tree or not tree.winfo_exists():
-                continue 
-            
-            for item in tree.get_children(): tree.delete(item)
-            for entry in data_cache:
-                color_tag = self._get_row_color_tag(entry)
-                values_list = [entry.get(k, '') for k in ['bk_ref', 'gruppenname', 'anreise', 'abreise', 'info_sent', 'info_kuerzel', 'info_datum', 'erneut_sent', 'erneut_kuerzel', 'erneut_datum', 'final_sent', 'final_kuerzel', 'final_datum']]
-                
-                item_id = entry['id']
-                tree.insert('', 'end', iid=item_id, values=values_list, tags=(color_tag,))
-                if entry.get('kommentar', ''):
-                    tree.item(item_id, image=self.comment_icon)
-                else:
-                    tree.item(item_id, image='')
+        if not self.tree or not self.tree.winfo_exists():
+            return
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        for entry in self.all_data:
+            color_tag = self._get_row_color_tag(entry)
+            values_list = [entry.get(k, '') for k in ['bk_ref', 'gruppenname', 'anreise', 'abreise', 'info_sent', 'info_kuerzel', 'info_datum', 'erneut_sent', 'erneut_kuerzel', 'erneut_datum', 'final_sent', 'final_kuerzel', 'final_datum']]
+            item_id = entry['id']
+            self.tree.insert('', 'end', iid=item_id, values=values_list, tags=(color_tag,))
+            if entry.get('kommentar', ''):
+                self.tree.item(item_id, image=self.comment_icon)
+            else:
+                self.tree.item(item_id, image='')
 
     def load_data(self):
         # vvvvv HIER IST DIE KORREKTUR vvvvv
@@ -1195,9 +1308,15 @@ class OffeneRechnungenApp:
             try:
                 with open(self.offene_rechnungen_data_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-                    self.gruppen_data = data.get('gruppen', []); self.einzel_data = data.get('einzel', [])
-            except (json.JSONDecodeError, IOError): self.gruppen_data, self.einzel_data = [], []
-        else: self.gruppen_data, self.einzel_data = [], []
+                # Rückwärtskompatibilität: alte Daten aus gruppen+einzel zusammenführen
+                if 'all' in data:
+                    self.all_data = data.get('all', [])
+                else:
+                    self.all_data = data.get('gruppen', []) + data.get('einzel', [])
+            except (json.JSONDecodeError, IOError):
+                self.all_data = []
+        else:
+            self.all_data = []
         self.populate_tables()
         self.start_periodic_invoice_check()
 
@@ -1217,10 +1336,7 @@ class OffeneRechnungenApp:
         snapshot = {
             "timestamp": datetime.datetime.now().isoformat(),
             "action": action,
-            "data": {
-                "gruppen": json.loads(json.dumps(self.gruppen_data)),
-                "einzel": json.loads(json.dumps(self.einzel_data))
-            }
+            "data": {"all": json.loads(json.dumps(self.all_data))}
         }
         
         history_data.insert(0, snapshot)
@@ -1237,7 +1353,7 @@ class OffeneRechnungenApp:
         try:
             os.makedirs(os.path.dirname(self.offene_rechnungen_data_file), exist_ok=True)
             with open(self.offene_rechnungen_data_file, 'w', encoding='utf-8') as f:
-                json.dump({'gruppen': self.gruppen_data, 'einzel': self.einzel_data}, f, indent=2, ensure_ascii=False)
+                json.dump({'all': self.all_data}, f, indent=2, ensure_ascii=False)
             
             if action:
                 self._save_history_snapshot(action)
@@ -1263,96 +1379,93 @@ class OffeneRechnungenApp:
             if messagebox.askyesno("Ordner öffnen?", "Möchten Sie den Speicherort öffnen?", parent=self.app.master): self.app._open_folder(target_folder)
         except Exception as e: messagebox.showerror("PDF Speicherfehler", f"Fehler:\n{e}", parent=self.app.master)
 
-    def _on_add_entry(self, list_key):
+    def _on_add_entry(self):
         new_data = OffeneRechnungEntryDialog(self.app.master, self.app).show()
         if new_data:
             new_data['warnings_dismissed'] = {"erneut": False, "final_send": False, "final": False, "cleanup_ready": False, "initial_send": False}
             new_data['kommentar'] = ""
-            (self.gruppen_data if list_key == 'gruppen' else self.einzel_data).append(new_data)
+            self.all_data.append(new_data)
             self.populate_tables()
             self.save_data(show_toast=False, action="Eintrag hinzugefügt")
-            
+
     def _on_edit_selected_entry(self):
-        try: selected_tab_index = self.notebook.index(self.notebook.select())
-        except (tk.TclError, AttributeError): return
-        self._on_edit_entry(None, 'gruppen' if selected_tab_index == 0 else 'einzel')
-            
-    # HINWEIS: Dies ist die korrigierte, einzige Version der Methode. Die doppelte wurde entfernt.
-    def _on_edit_entry(self, event, list_key):
-        tree = self.gruppen_tree if list_key == 'gruppen' else self.einzel_tree
-        if not tree.selection(): 
+        self._on_edit_entry(None)
+
+    def _on_edit_entry(self, event):
+        if not self.tree.selection():
             SuccessToast(self.app.master, title="Keine Auswahl", message="Bitte einen Eintrag zum Bearbeiten auswählen.", toast_type='warning', colors=self.app.current_settings.get('toast_colors'))
             return
-        selected_id = tree.selection()[0]
-        data_cache = self.gruppen_data if list_key == 'gruppen' else self.einzel_data
-        entry_to_edit = next((e for e in data_cache if e.get("id") == selected_id), None)
-        if not entry_to_edit: return
-        
+        selected_id = self.tree.selection()[0]
+        entry_to_edit = next((e for e in self.all_data if e.get("id") == selected_id), None)
+        if not entry_to_edit:
+            return
         updated_data = OffeneRechnungEntryDialog(self.app.master, self.app, entry_data=entry_to_edit).show()
-        
         if updated_data:
-            entry_index = next((i for i, e in enumerate(data_cache) if e.get("id") == selected_id), -1)
+            entry_index = next((i for i, e in enumerate(self.all_data) if e.get("id") == selected_id), -1)
             if entry_index != -1:
-                warnings_dismissed = entry_to_edit.get('warnings_dismissed', 
+                warnings_dismissed = entry_to_edit.get('warnings_dismissed',
                                                        {"erneut": False, "final_send": False, "final": False, "cleanup_ready": False, "initial_send": False})
-                
                 if (entry_to_edit.get('info_sent') != 'Ja' and updated_data.get('info_sent') == 'Ja') or \
                    (updated_data.get('info_sent') == 'Ja' and entry_to_edit.get('info_datum') != updated_data.get('info_datum')):
                     warnings_dismissed['erneut'] = False
-                
                 if (entry_to_edit.get('erneut_sent') != 'Ja' and updated_data.get('erneut_sent') == 'Ja') or \
                    (updated_data.get('erneut_sent') == 'Ja' and entry_to_edit.get('erneut_datum') != updated_data.get('erneut_datum')):
                     warnings_dismissed['final_send'] = False
-                
                 if (entry_to_edit.get('final_sent') != 'Ja' and updated_data.get('final_sent') == 'Ja') or \
                    (updated_data.get('final_sent') == 'Ja' and entry_to_edit.get('final_datum') != updated_data.get('final_datum')):
                     warnings_dismissed['cleanup_ready'] = False
-                
                 updated_data['warnings_dismissed'] = warnings_dismissed
                 updated_data['kommentar'] = entry_to_edit.get('kommentar', '')
-
-                data_cache[entry_index] = updated_data
+                self.all_data[entry_index] = updated_data
                 self.populate_tables()
                 self.save_data(show_toast=False, action="Eintrag bearbeitet")
 
     def _on_delete_all(self):
-        if messagebox.askyesno("Bestätigung", "Wirklich ALLE Daten aus BEIDEN Tabellen löschen?"):
-            self.gruppen_data.clear(); self.einzel_data.clear()
+        if messagebox.askyesno("Bestätigung", "Wirklich ALLE Einträge löschen?", parent=self.app.master):
+            self.all_data.clear()
             self.populate_tables()
             self.save_data(show_toast=False, action="Alle Einträge gelöscht")
             SuccessToast(self.app.master, title="Gelöscht", message="Alle Einträge wurden entfernt.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
 
     def _on_cleanup_old(self):
-        if not messagebox.askyesno("Aufräumen", "Sollen alle Einträge, die vor mehr als 14 Tagen erneut versendet wurden, entfernt werden?"):
+        if not messagebox.askyesno(
+            "Aufräumen",
+            "Sollen alle Einträge entfernt werden, bei denen die Rechnung\n"
+            "erneut versendet wurde und das Datum mehr als 14 Tage zurückliegt?",
+            parent=self.app.master
+        ):
             return
-            
-        fourteen_days_ago = datetime.date.today() - datetime.timedelta(days=14)
-        deleted_count = 0
 
-        def filter_list(data_list):
-            nonlocal deleted_count
-            initial_count = len(data_list)
-            
+        try:
+            fourteen_days_ago = datetime.date.today() - datetime.timedelta(days=14)
+            deleted_count = 0
+
             def is_old_and_resent(entry):
                 if entry.get('erneut_sent') == 'Ja' and entry.get('erneut_datum'):
-                    try:
-                        entry_date = datetime.datetime.strptime(entry['erneut_datum'], "%d.%m.%Y").date()
-                        return entry_date < fourteen_days_ago
-                    except (ValueError, TypeError): return False
+                    entry_date = self._parse_date(entry['erneut_datum'])
+                    if entry_date is None:
+                        return False
+                    return entry_date < fourteen_days_ago
                 return False
 
-            new_list = [entry for entry in data_list if not is_old_and_resent(entry)]
-            deleted_count += initial_count - len(new_list)
-            return new_list
+            initial_count = len(self.all_data)
+            self.all_data = [e for e in self.all_data if not is_old_and_resent(e)]
+            deleted_count = initial_count - len(self.all_data)
 
-        self.gruppen_data = filter_list(self.gruppen_data)
-        self.einzel_data = filter_list(self.einzel_data)
-        
-        self.populate_tables()
-        if deleted_count > 0:
-            self.save_data(show_toast=False, action=f"{deleted_count} alte Einträge aufgeräumt")
-        
-        SuccessToast(self.app.master, title="Aufgeräumt", message=f"{deleted_count} alte Einträge wurden entfernt.", toast_type='info', colors=self.app.current_settings.get('toast_colors'))
+            self.populate_tables()
+
+            if deleted_count > 0:
+                self.save_data(show_toast=False, action=f"{deleted_count} alte Einträge aufgeräumt")
+                SuccessToast(self.app.master, title="Aufgeräumt", message=f"{deleted_count} Einträge wurden entfernt.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
+            else:
+                messagebox.showinfo(
+                    "Aufräumen",
+                    "Es wurden keine Einträge gefunden, bei denen die Rechnung\n"
+                    "erneut versendet wurde und das Datum mehr als 14 Tage zurückliegt.",
+                    parent=self.app.master
+                )
+        except Exception as e:
+            messagebox.showerror("Fehler beim Aufräumen", f"Ein Fehler ist aufgetreten:\n{e}", parent=self.app.master)
         
     def _on_import_excel(self):
         if not openpyxl_available:
@@ -1367,14 +1480,9 @@ class OffeneRechnungenApp:
         if not file_path: return
 
         try:
-            selected_tab_index = self.notebook.index(self.notebook.select())
-            target_list = self.gruppen_data if selected_tab_index == 0 else self.einzel_data
-            target_name = "Gruppen & Firmen" if selected_tab_index == 0 else "Einzelpersonen, Privat & Co."
-
             workbook = openpyxl.load_workbook(file_path)
             sheet = workbook.active
             imported_count = 0; new_entries = []
-            
             expected_keys = ['bk_ref', 'gruppenname', 'anreise', 'abreise', 'info_sent', 'info_kuerzel', 'info_datum', 'erneut_sent', 'erneut_kuerzel', 'erneut_datum', 'final_sent', 'final_kuerzel', 'final_datum']
 
             for row in sheet.iter_rows(min_row=2, values_only=True):
@@ -1386,10 +1494,10 @@ class OffeneRechnungenApp:
                 new_entries.append(entry_data); imported_count += 1
 
             if imported_count > 0:
-                target_list.extend(new_entries)
+                self.all_data.extend(new_entries)
                 self.populate_tables()
                 self.save_data(show_toast=False, action=f"{imported_count} Einträge importiert")
-                messagebox.showinfo("Import erfolgreich", f"{imported_count} Einträge wurden erfolgreich in '{target_name}' importiert.", parent=self.app.master)
+                messagebox.showinfo("Import erfolgreich", f"{imported_count} Einträge wurden erfolgreich importiert.", parent=self.app.master)
             else:
                 messagebox.showinfo("Import abgeschlossen", "Keine neuen Einträge zum Importieren gefunden.", parent=self.app.master)
         except Exception as e:
@@ -1433,7 +1541,7 @@ class OffeneRechnungenApp:
                 return
 
         today = datetime.date.today()
-        for entry in self.gruppen_data + self.einzel_data:
+        for entry in self.all_data:
             entry_id = entry.get('id')
             gruppenname = entry.get('gruppenname', 'Unbekannt')
             if not entry_id:
@@ -1443,21 +1551,23 @@ class OffeneRechnungenApp:
 
             try:
                 if not warnings_dismissed.get('cleanup_ready', False) and entry.get('final_sent') == 'Ja' and entry.get('final_datum'):
-                    entry_date = datetime.datetime.strptime(entry['final_datum'], "%d.%m.%Y").date()
-                    if (today - entry_date).days >= 14:
+                    entry_date = self._parse_date(entry['final_datum'])
+                    if entry_date and (today - entry_date).days >= 14:
                         WarningDialogWithDismiss(self.app.master, "Hinweis zur Bereinigung", f"14 Tage nach dem 3. Versuch sind vergangen. Die Rechnung für '{gruppenname}' kann nun über den Button '>14 Tage löschen' entfernt werden.", lambda eid=entry_id, flag='cleanup_ready': self.dismiss_warning_for_entry(eid, flag)); return
 
                 elif not warnings_dismissed.get('final_send', False) and entry.get('erneut_sent') == 'Ja' and entry.get('erneut_datum'):
-                    if (today - datetime.datetime.strptime(entry['erneut_datum'], "%d.%m.%Y").date()).days >= 7:
+                    erneut_date = self._parse_date(entry['erneut_datum'])
+                    if erneut_date and (today - erneut_date).days >= 7:
                         WarningDialogWithDismiss(self.app.master, "Warnung", f"Eine Woche nach dem 2. Versuch ist vergangen. Bitte die Rechnung für '{gruppenname}' erneut versenden (3. Versuch).", lambda eid=entry_id, flag='final_send': self.dismiss_warning_for_entry(eid, flag)); return
 
                 elif not warnings_dismissed.get('erneut', False) and entry.get('info_sent') == 'Ja' and entry.get('info_datum'):
-                    if (today - datetime.datetime.strptime(entry['info_datum'], "%d.%m.%Y").date()).days >= 7:
+                    info_date = self._parse_date(entry['info_datum'])
+                    if info_date and (today - info_date).days >= 7:
                         WarningDialogWithDismiss(self.app.master, "Warnung", f"Eine Woche nach dem Verschicken des 1. Versuchs ist vergangen. Bitte die Rechnung für '{gruppenname}' erneut versenden (2. Versuch).", lambda eid=entry_id, flag='erneut': self.dismiss_warning_for_entry(eid, flag)); return
 
                 elif entry.get('abreise') and not (entry.get('info_sent') == 'Ja' or entry.get('erneut_sent') == 'Ja' or entry.get('final_sent') == 'Ja') and not warnings_dismissed.get('initial_send', False):
-                    abreise_date = datetime.datetime.strptime(entry['abreise'], "%d.%m.%Y").date()
-                    if (today - abreise_date).days >= 7:
+                    abreise_date = self._parse_date(entry['abreise'])
+                    if abreise_date and (today - abreise_date).days >= 7:
                         WarningDialogWithDismiss(self.app.master, "Warnung", f"Die Rechnung für '{gruppenname}' wurde vor einer Woche verschickt. Da keine Antwort eingegangen ist, bitte erneut versenden (1. Versuch).", lambda eid=entry_id, flag='initial_send': self.dismiss_warning_for_entry(eid, flag)); return
 
             except (ValueError, TypeError) as e:
@@ -1476,12 +1586,22 @@ class OffeneRechnungenApp:
             self.periodic_check_job = None
                 
     def dismiss_warning_for_entry(self, entry_id, flag_to_set):
-        for entry_list in [self.gruppen_data, self.einzel_data]:
-            for entry in entry_list:
-                if entry.get('id') == entry_id:
+        for entry in self.all_data:
+            if entry.get('id') == entry_id:
                     entry.setdefault('warnings_dismissed', {})[flag_to_set] = True
                     self.save_data(show_toast=False)
                     return
+
+    def _parse_date(self, date_str):
+        """Parst ein Datum im Format TT.MM.JJJJ oder TT.MM.JJ (2-stelliges Jahr)."""
+        if not date_str:
+            return None
+        for fmt in ("%d.%m.%Y", "%d.%m.%y"):
+            try:
+                return datetime.datetime.strptime(date_str, fmt).date()
+            except (ValueError, TypeError):
+                continue
+        return None
 
     def _get_row_color_tag(self, entry):
         ampel1_char = self._get_ampel_char_for_date(entry, 7)
@@ -1496,8 +1616,10 @@ class OffeneRechnungenApp:
         if cycle_days == 7 and entry.get('info_sent') == 'Ja': date_str = entry.get('info_datum')
         elif cycle_days == 14 and entry.get('erneut_sent') == 'Ja': date_str = entry.get('erneut_datum')
         if not date_str: return ''
+        parsed = self._parse_date(date_str)
+        if parsed is None: return ''
         try:
-            ablaufdatum = datetime.datetime.strptime(date_str, "%d.%m.%Y").date() + datetime.timedelta(days=cycle_days)
+            ablaufdatum = parsed + datetime.timedelta(days=cycle_days)
             tage_bis_ablauf = (ablaufdatum - datetime.date.today()).days
             if cycle_days == 7:
                 if tage_bis_ablauf < 0: return '🔴'
@@ -1546,7 +1668,7 @@ class OffeneRechnungenApp:
         return html
 
     def _on_email(self):
-        if not self.gruppen_data and not self.einzel_data:
+        if not self.all_data:
             messagebox.showinfo("E-Mail", "Keine Datensätze zum Versand vorhanden.", parent=self.app.master)
             return
 
@@ -1602,20 +1724,11 @@ class OffeneRechnungenApp:
         pdf.add_page()
         col_configs = {'bk_ref':{'text':'BK','width_pct':0.08},'gruppenname':{'text':'Name','width_pct':0.25},'anreise':{'text':'Anr.','width_pct':0.08},'abreise':{'text':'Abr.','width_pct':0.08},'info_sent':{'text':'Info','width_pct':0.04},'info_kuerzel':{'text':'K.','width_pct':0.04},'info_datum':{'text':'Datum','width_pct':0.07},'erneut_sent':{'text':'Erneut','width_pct':0.04},'erneut_kuerzel':{'text':'K.','width_pct':0.04},'erneut_datum':{'text':'Datum','width_pct':0.07},'final_sent':{'text':'Final','width_pct':0.04},'final_kuerzel':{'text':'K.','width_pct':0.04},'final_datum':{'text':'Datum','width_pct':0.07}}
         
-        if self.gruppen_data:
-            pdf.draw_table("Gruppen & Firmen", self.gruppen_data, col_configs)
+        if self.all_data:
+            pdf.draw_table("Offene Rechnungen", self.all_data, col_configs)
         else:
             pdf.set_font(pdf.font_family, 'B', 12)
-            pdf.cell(0, 10, "Gruppen & Firmen", 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
-            pdf.set_font(pdf.font_family, '', 10)
-            pdf.cell(0, 10, "Diese Tabelle enthält keine Einträge.", 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
-            pdf.ln(5)
-
-        if self.einzel_data:
-            pdf.draw_table("Einzelpersonen, Privat & Co.", self.einzel_data, col_configs)
-        else:
-            pdf.set_font(pdf.font_family, 'B', 12)
-            pdf.cell(0, 10, "Einzelpersonen, Privat & Co.", 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+            pdf.cell(0, 10, "Offene Rechnungen", 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
             pdf.set_font(pdf.font_family, '', 10)
             pdf.cell(0, 10, "Diese Tabelle enthält keine Einträge.", 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
             pdf.ln(5)
@@ -1632,7 +1745,7 @@ class OffeneRechnungenApp:
             except (json.JSONDecodeError, IOError): pass
         snapshot = {
             "timestamp": datetime.datetime.now().isoformat(), "action": action,
-            "data": {"gruppen": json.loads(json.dumps(self.gruppen_data)), "einzel": json.loads(json.dumps(self.einzel_data))}
+            "data": {"all": json.loads(json.dumps(self.all_data))}
         }
         history_data.insert(0, snapshot)
         history_data = history_data[:self.app.max_history_entries]
@@ -1650,8 +1763,8 @@ class OffeneRechnungenApp:
     def _get_history_summary_line(self, snapshot):
         action = snapshot.get('action', 'Unbekannt')
         data = snapshot.get('data', {})
-        gruppen_count = len(data.get('gruppen', [])); einzel_count = len(data.get('einzel', []))
-        return f"[{action}] - Gruppen: {gruppen_count}, Einzel: {einzel_count}"
+        count = len(data.get('all', data.get('gruppen', []) + data.get('einzel', [])))
+        return f"[{action}] - Einträge: {count}"
 
     def _restore_from_history(self, history_dialog):
         # Die Logik zum Extrahieren der Daten wird direkt hier implementiert.
@@ -1675,13 +1788,16 @@ class OffeneRechnungenApp:
             return
         
         data_to_restore = snapshot_data.get('data')
-        if not data_to_restore or 'gruppen' not in data_to_restore or 'einzel' not in data_to_restore:
+        if not data_to_restore:
             messagebox.showerror("Fehler", "Keine gültigen Daten zum Wiederherstellen in diesem Eintrag.", parent=history_dialog)
             return
-        
+
         if messagebox.askyesno("Wiederherstellen", "Diesen Zustand wiederherstellen? Aktuelle Änderungen gehen verloren.", parent=history_dialog):
-            self.gruppen_data = data_to_restore.get('gruppen', [])
-            self.einzel_data = data_to_restore.get('einzel', [])
+            # Rückwärtskompatibilität: altes Format (gruppen+einzel) oder neues Format (all)
+            if 'all' in data_to_restore:
+                self.all_data = data_to_restore.get('all', [])
+            else:
+                self.all_data = data_to_restore.get('gruppen', []) + data_to_restore.get('einzel', [])
             self.populate_tables()
             self.save_data(show_toast=False, action="Wiederhergestellt aus Verlauf")
             history_dialog.destroy()
@@ -13069,16 +13185,17 @@ class KassenprotokollApp:
                 'OR_Import': {'type': 'symbol', 'value': '📥 Import', 'is_active': True},
                 'OR_DeleteAll': {'type': 'symbol', 'value': '🗑️ Papierkorb', 'is_active': True},
                 'OR_Edit': {'type': 'symbol', 'value': '✏️ Bearbeiten', 'is_active': True},
+                'OR_Kommentar': {'type': 'symbol', 'value': '💬 Kommentar', 'is_active': True},
                 'OR_Cleanup': {'type': 'symbol', 'value': '⏳ >14 Tage löschen', 'is_active': True},
                 'OR_SavePDF': {'type': 'symbol', 'value': '💾 PDF Speichern', 'is_active': True},
                 'OR_Email': {'type': 'symbol', 'value': '📧 E-Mail', 'is_active': True},
                 'OR_History': {'type': 'symbol', 'value': '🕰️ Verlauf', 'is_active': True},
 
             },
-        
-        
-        
-        
+
+
+
+
             # vvvvv HIER DEN NEUEN BLOCK EINFÜGEN vvvvv
             'auth_code_button_configs': {
                 'AuthCode_ClearAll': {'type': 'symbol', 'value': 'Alles löschen', 'is_active': True},
@@ -13182,6 +13299,7 @@ class KassenprotokollApp:
                 'OR_DeleteAll': {'type': 'symbol', 'value': '🗑️ Papierkorb', 'is_active': True},
                 # Dies ist der Fallback, falls kein globales Icon (s.o.) hochgeladen wurde
                 'OR_Edit': {'type': 'symbol', 'value': '✏️ Bearbeiten', 'is_active': True},
+                'OR_Kommentar': {'type': 'symbol', 'value': '💬 Kommentar', 'is_active': True},
                 'OR_Cleanup': {'type': 'symbol', 'value': '⏳ >14 Tage löschen', 'is_active': True},
                 'OR_SavePDF': {'type': 'symbol', 'value': '💾 PDF Speichern', 'is_active': True},
                 'OR_Email': {'type': 'symbol', 'value': '📧 E-Mail', 'is_active': True},
@@ -28760,8 +28878,8 @@ class KassenprotokollApp:
         section_title = "Offene Rechnungen: Button-Konfiguration"
         
         button_order = [
-            'OR_AddRow', 
-            'OR_Import', 'OR_DeleteAll', 'OR_Edit', 
+            'OR_AddRow',
+            'OR_Import', 'OR_DeleteAll', 'OR_Edit', 'OR_Kommentar',
             'OR_Cleanup', 'OR_SavePDF', 'OR_Email',
             'OR_History'
         ]
