@@ -619,7 +619,7 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
         self._make_date_field(main_frame, self.data_vars['anreise'], dialog_font, entry_ipady, max_date=datetime.date.today() - datetime.timedelta(days=1)).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
 
         ttk.Label(main_frame, text="Abreise:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
-        self._make_date_field(main_frame, self.data_vars['abreise'], dialog_font, entry_ipady, max_date=datetime.date.today()).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
+        self._make_date_field(main_frame, self.data_vars['abreise'], dialog_font, entry_ipady).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
 
         sections = [
             ('Info versendet:', 'info_sent', 'info_kuerzel', 'info_datum'),
@@ -677,12 +677,12 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
 
     def on_save(self):
         import re
-        # BK-Referenz validieren (Format: BK gefolgt von Ziffern, z.B. BK009514)
+        # BK-Referenz validieren (Format: BK gefolgt von Ziffern, optional /Ziffern, z.B. BK009514 oder BK123456/1)
         bk_ref = self.data_vars['bk_ref'].get().strip()
-        if not re.match(r'^BK\d+$', bk_ref):
+        if not re.match(r'^BK\d+(/\d+)?$', bk_ref):
             messagebox.showerror(
                 "Ungültige BK-Referenz",
-                "Die BK-Referenz muss das Format BK + Ziffern haben (z.B. BK009514).",
+                "Die BK-Referenz muss das Format BK + Ziffern haben (z.B. BK009514 oder BK123456/1).",
                 parent=self
             )
             return
