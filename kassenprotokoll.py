@@ -3629,9 +3629,8 @@ class NamenslisteEntryDialog(tk.Toplevel):
     
 class UrlaubsantragPDF(FPDF):
     """
-    Erstellt eine PDF-Datei für den Urlaubsantrag mit einem modernen, 
-    professionellen und eleganten Layout, das auf dem bereitgestellten
-    Musterbeispiel basiert. (FINALE, KORRIGIERTE VERSION)
+    Erstellt eine PDF-Datei für den Urlaubsantrag mit einem Layout,
+    das exakt dem gewünschten Muster entspricht.
     """
     def __init__(self, data, logo_path=None):
         super().__init__('P', 'mm', 'A4')
@@ -3654,148 +3653,170 @@ class UrlaubsantragPDF(FPDF):
 
         # --- KOPFZEILE: LOGO ZENTRIERT, INFO-FELDER RECHTS ---
         if self.logo_path and os.path.exists(self.logo_path):
-            self.image(self.logo_path, x=80, y=10, w=52)
+            self.image(self.logo_path, x=65, y=0, w=80)
 
-        self.set_font(self.font_family, '', 10)
-        rx = 140
-        self.set_xy(rx, 10)
         self.set_font(self.font_family, 'B', 8)
+        rx = 135
+        self.set_xy(rx, 15)
         self.cell(0, 5, "*Auszufüllen von der Personalabteilung", align='L')
-        self.set_font(self.font_family, '', 10)
-        self.set_xy(rx, 17)
-        self.cell(35, 7, "*Resturlaub:")
-        self.cell(25, 7, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.set_x(rx)
-        self.cell(35, 7, "*Überschneidungen:")
-        self.cell(25, 7, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(9)
-        self.set_x(rx)
-        self.cell(35, 7, "*Guestline:")
-        self.cell(25, 7, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        
+        self.set_font(self.font_family, '', 9)
+        self.set_xy(rx, 23)
+        self.cell(0, 5, "*Resturlaub:")
+        self.set_xy(rx, 31)
+        self.cell(0, 5, "*Überschneidungen:")
+        self.set_xy(rx, 39)
+        self.cell(0, 5, "*Guestline:")
 
         # --- TITEL ---
-        self.set_y(68)
+        self.set_y(65)
         self.set_font(self.font_family, 'BU', 16)
         self.cell(0, 10, "Urlaubsantrag", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
-        self.ln(6)
+        self.ln(8)
 
-        # --- OBERE FELDER (fette Labels, unterschiedliche Linienbreiten) ---
-        lbl = 60
-
-        self.set_x(15)
-        self.set_font(self.font_family, 'B', 11)
-        self.cell(lbl, 8, "Name des Mitarbeiters:")
-        self.set_font(self.font_family, '', 11)
-        self.cell(130, 8, self.data.get('name', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(2)
+        # --- OBERE FELDER ---
+        lbl_w = 55
+        val_x = 15 + lbl_w
+        line_w = 100
 
         self.set_x(15)
         self.set_font(self.font_family, 'B', 11)
-        self.cell(lbl, 8, "Abteilung:")
+        self.cell(lbl_w, 8, "Name des Mitarbeiters:")
         self.set_font(self.font_family, '', 11)
-        self.cell(100, 8, self.data.get('abteilung', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(2)
+        self.cell(line_w, 8, self.data.get('name', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.ln(3)
 
         self.set_x(15)
         self.set_font(self.font_family, 'B', 11)
-        self.cell(lbl, 8, "Position:")
+        self.cell(lbl_w, 8, "Abteilung:")
         self.set_font(self.font_family, '', 11)
-        self.cell(100, 8, self.data.get('position', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.cell(line_w, 8, self.data.get('abteilung', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.ln(3)
+
+        self.set_x(15)
+        self.set_font(self.font_family, 'B', 11)
+        self.cell(lbl_w, 8, "Position:")
+        self.set_font(self.font_family, '', 11)
+        self.cell(line_w, 8, self.data.get('position', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         self.set_font(self.font_family, '', 8)
-        self.set_x(15 + lbl)
-        self.write(4, "(Änderungen sind unbedingt ")
+        self.set_x(val_x)
+        self.write(5, "(Änderungen sind unbedingt ")
         self.set_font(self.font_family, 'B', 8)
-        self.write(4, "schriftlich")
+        self.write(5, "schriftlich")
         self.set_font(self.font_family, '', 8)
-        self.write(4, " mitzuteilen)")
-        self.ln(5)
+        self.write(5, " mitzuteilen)")
+        self.ln(8)
 
-        # --- TRENNLINIE ---
+        # --- TRENNLINIE 1 ---
         self.set_line_width(0.8)
         self.line(10, self.get_y(), 200, self.get_y())
-        self.ln(6)
+        self.ln(8)
 
         # --- DATUMS-FELDER ---
-        def date_field(label, value):
+        def thick_date_field(label, value):
             self.set_x(15)
-            self.set_font(self.font_family, 'B', 11)
-            self.cell(lbl, 8, label)
-            self.set_font(self.font_family, '', 11)
-            self.cell(110, 8, str(value), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            self.ln(3)
+            self.set_font(self.font_family, 'B', 10)
+            self.cell(100, 10, label)
+            
+            start_x = 130
+            end_x = 175
+            y_line = self.get_y() + 7
+            
+            self.set_line_width(1.2)
+            self.line(start_x, y_line, end_x, y_line)
+            
+            if value:
+                self.set_font(self.font_family, '', 11)
+                self.set_xy(start_x, self.get_y())
+                self.cell(end_x - start_x, 7, str(value), align='C')
+            
+            self.set_xy(15, self.get_y() + 11)
 
-        date_field("erster Tag:", self.data.get('erster_tag', ''))
-        date_field("letzter Tag:", self.data.get('letzter_tag', ''))
-        date_field("Gesamtanzahl der Tage:", self.data.get('gesamtzahl', '0'))
-        date_field("Unterschrift des Mitarbeiters:", "")
+        thick_date_field("erster tatsächlicher Urlaubstag:", self.data.get('erster_tag', ''))
+        thick_date_field("letzter tatsächlicher Urlaubstag:", self.data.get('letzter_tag', ''))
+        thick_date_field("reguläre freie Arbeitstage:", self.data.get('regulaere_freie_tage', ''))
+        thick_date_field("Gesamtanzahl der tatsächlichen Urlaubstage:", self.data.get('gesamtzahl', '0'))
+        thick_date_field("Unterschrift des Mitarbeiters:", "")
 
-        # --- TRENNLINIE ---
+        self.ln(2)
+
+        # --- TRENNLINIE 2 ---
         self.set_line_width(0.8)
         self.line(10, self.get_y(), 200, self.get_y())
         self.ln(6)
 
         # --- FÜR DEN ABTEILUNGSLEITER ---
         self.set_x(15)
-        self.set_font(self.font_family, 'BU', 11)
-        self.cell(0, 7, "Für den Abteilungsleiter:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(2)
-        self.set_font(self.font_family, '', 10)
+        self.set_font(self.font_family, 'BU', 10)
+        self.cell(0, 6, "Für den Abteilungsleiter:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.ln(1)
+        self.set_font(self.font_family, '', 9)
         self.set_x(15)
-        self.multi_cell(185, 5, "Dieser Urlaubsantrag ist erst verbindlich, wenn die Direktion ihn genehmigt hat.", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.cell(0, 5, "Dieser Urlaubsantrag ist erst verbindlich, wenn die Direktion ihn genehmigt hat.", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         self.ln(12)
 
-        # --- DATUM / UNTERSCHRIFT ABTEILUNGSLEITER (Linie ÜBER dem Label) ---
-        col1, col2, w1, w2 = 15, 110, 75, 85
+        col1 = 15
+        col2 = 110
+        w1 = 60
+        w2 = 80
+        
+        y_line = self.get_y()
         self.set_line_width(0.3)
-        self.line(col1, self.get_y(), col1 + w1, self.get_y())
-        self.line(col2, self.get_y(), col2 + w2, self.get_y())
-        self.ln(4)
-        self.set_font(self.font_family, 'B', 11)
+        self.line(col1, y_line, col1 + w1, y_line)
+        self.line(col2, y_line, col2 + w2, y_line)
+        
+        self.set_y(y_line + 1)
+        self.set_font(self.font_family, 'B', 10)
         self.set_x(col1)
-        self.cell(w1, 7, "Datum")
+        self.cell(w1, 5, "Datum")
         self.set_x(col2)
-        self.cell(w2, 7, "Unterschrift des Abteilungsleiters", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(8)
+        self.cell(w2, 5, "Unterschrift des Abteilungsleiters", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.ln(10)
 
-        # --- TRENNLINIE ---
+        # --- TRENNLINIE 3 ---
         self.set_line_width(0.8)
         self.line(10, self.get_y(), 200, self.get_y())
         self.ln(8)
 
-        # --- UNTERSCHRIFT DIREKTION (nicht fett) ---
-        self.set_font(self.font_family, '', 11)
-        self.set_x(15)
-        self.cell(58, 8, "Unterschrift Direktion:")
-        self.cell(75, 8, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(8)
-
-        # --- EINGETRAGEN VOM PERSONALBÜRO (nicht fett) ---
-        self.set_x(15)
-        self.cell(63, 8, "eingetragen vom Personalbüro:")
-        self.cell(70, 8, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(6)
-
-        # --- CHECKBOXEN: D□ G□ K□ S□ ---
-        box_y = self.get_y()
-        self.set_x(15)
+        # --- FUSSBEREICH ---
         self.set_font(self.font_family, '', 10)
-        for ch in ["D", "G", "K", "S"]:
-            self.cell(5, 5, ch)
-            self.rect(x=self.get_x(), y=box_y + 0.5, w=4, h=4)
-            self.set_x(self.get_x() + 6)
+        self.set_x(10)
+        self.cell(60, 8, "Unterschrift Direktion:")
+        y_line = self.get_y() + 6
+        self.set_line_width(1.2)
+        self.line(75, y_line, 125, y_line)
+        self.ln(10)
+
+        self.set_x(10)
+        self.cell(60, 8, "eingetragen vom Personalbüro:")
+        y_line = self.get_y() + 6
+        self.line(75, y_line, 125, y_line)
         self.ln(8)
 
-        # --- FUSSZEILE ---
+        # CHECKBOXES
         self.set_x(10)
-        self.set_font(self.font_family, '', 8)
+        self.set_font(self.font_family, '', 10)
+        box_y = self.get_y() + 1
+        self.set_line_width(0.8)
+        
+        for ch in ["D", "G", "K", "S"]:
+            self.cell(5, 6, ch)
+            self.rect(self.get_x(), box_y, 4, 4)
+            self.set_x(self.get_x() + 7)
+            
+        self.ln(12)
+
+        # VERLAUF
+        self.set_x(10)
+        self.set_font(self.font_family, '', 7)
         self.cell(0, 5, "Verlauf: Auszufüllen durch AN -> Personalabteilung -> Abteilungsleiter -> Personalabteilung", align='L')
 
 
 class UrlaubsantragEntryDialog(tk.Toplevel):
     """
     Dialogfenster zur Erfassung oder Bearbeitung eines Urlaubsantrags.
-    Gibt die Daten als Dictionary zurück.
+    Gibt die Daten als Dictionary zurück. Inklusive Kalender-Auswahl.
     """
     def __init__(self, parent, app_ref, entry_data=None):
         super().__init__(parent)
@@ -3822,6 +3843,7 @@ class UrlaubsantragEntryDialog(tk.Toplevel):
         self.position_var = tk.StringVar()
         self.erster_tag_var = tk.StringVar()
         self.letzter_tag_var = tk.StringVar()
+        self.regulaere_freie_tage_var = tk.StringVar(value="")
         self.gesamtzahl_var = tk.StringVar(value="0")
 
         if self.is_editing and entry_data:
@@ -3831,14 +3853,25 @@ class UrlaubsantragEntryDialog(tk.Toplevel):
             self.position_var.set(entry_data.get('position', ''))
             self.erster_tag_var.set(entry_data.get('erster_tag', ''))
             self.letzter_tag_var.set(entry_data.get('letzter_tag', ''))
+            self.regulaere_freie_tage_var.set(entry_data.get('regulaere_freie_tage', ''))
             self.gesamtzahl_var.set(str(entry_data.get('gesamtzahl', '0')))
         else:
             self.id_var.set(uuid.uuid4().hex)
 
-        fields = [
-            ("Name d. Mitarbeiters:", self.name_var), ("Abteilung:", self.abteilung_var), ("Position:", self.position_var),
+        # Traces hinzufügen, damit sich die Summe LIVE automatisch berechnet
+        self.erster_tag_var.trace_add("write", lambda *args: self._calculate_days())
+        self.letzter_tag_var.trace_add("write", lambda *args: self._calculate_days())
+        self.regulaere_freie_tage_var.trace_add("write", lambda *args: self._calculate_days())
+
+        # Felder Definition mit Typ-Angabe (text, date oder number)
+        fields =[
+            ("Name d. Mitarbeiters:", self.name_var, "text"), 
+            ("Abteilung:", self.abteilung_var, "text"), 
+            ("Position:", self.position_var, "text"),
             None,
-            ("Erster Tag (TT.MM.JJJJ):", self.erster_tag_var), ("Letzter Tag (TT.MM.JJJJ):", self.letzter_tag_var)
+            ("Erster Tag (TT.MM.JJJJ):", self.erster_tag_var, "date"), 
+            ("Letzter Tag (TT.MM.JJJJ):", self.letzter_tag_var, "date"),
+            ("Reguläre freie Arbeitstage:", self.regulaere_freie_tage_var, "number")
         ]
 
         row = 0
@@ -3848,17 +3881,31 @@ class UrlaubsantragEntryDialog(tk.Toplevel):
                 row += 1
                 continue
 
-            label_text, var = item
+            label_text, var, field_type = item
             ttk.Label(main_frame, text=label_text).grid(row=row, column=0, sticky="w", padx=5, pady=3)
-            entry = ttk.Entry(main_frame, textvariable=var, width=40, font=dialog_font)
-            entry.grid(row=row, column=1, sticky="ew", padx=5, pady=3, ipady=8)
             
-            # HIER WIRD DIE PFEILTASTEN-NAVIGATION HINZUGEFÜGT
-            self.parent_app._bind_dialog_navigation(entry)
-            
-            if "Tag" in label_text:
-                entry.bind("<FocusOut>", self._calculate_days)
-                entry.bind("<Return>", self._calculate_days)
+            if field_type == "date":
+                # Container für Eingabefeld + Kalender-Button
+                date_frame = ttk.Frame(main_frame)
+                date_frame.grid(row=row, column=1, sticky="ew", padx=5, pady=3)
+                
+                # Eingabefeld auf readonly setzen (nur Klick erlaubt)
+                entry = ttk.Entry(date_frame, textvariable=var, font=dialog_font, state='readonly')
+                entry.pack(side='left', fill='x', expand=True, ipady=8)
+                
+                def open_calendar(v=var):
+                    CalendarPopup(self, v)
+                    
+                entry.bind('<Button-1>', lambda e, v=var: open_calendar(v))
+                btn_cal = ttk.Button(date_frame, text="📅", width=4, command=lambda v=var: open_calendar(v))
+                btn_cal.pack(side='left', padx=(4, 0))
+                
+                self.parent_app._bind_dialog_navigation(entry)
+            else:
+                entry = ttk.Entry(main_frame, textvariable=var, width=40, font=dialog_font)
+                entry.grid(row=row, column=1, sticky="ew", padx=5, pady=3, ipady=8)
+                self.parent_app._bind_dialog_navigation(entry)
+
             if row == 0: entry.focus_set()
             row += 1
 
@@ -3889,32 +3936,32 @@ class UrlaubsantragEntryDialog(tk.Toplevel):
                 self.gesamtzahl_var.set("0")
                 return
 
-            # --- KORREKTUR START ---
-            # Die Datumsumwandlung wird in einen try-except-Block eingeschlossen.
             start_date = datetime.datetime.strptime(start_str, "%d.%m.%Y").date()
             end_date = datetime.datetime.strptime(end_str, "%d.%m.%Y").date()
-            # --- KORREKTUR ENDE ---
 
             if end_date < start_date:
                 self.gesamtzahl_var.set("0")
                 return
 
-            workdays_in_period = 0
-            current_date = start_date
-            while current_date <= end_date:
-                if current_date.weekday() < 5:
-                    workdays_in_period += 1
-                current_date += datetime.timedelta(days=1)
+            # Für die Hotellerie zählen wir ALLE Kalendertage (Mo-So)
+            total_days_in_period = (end_date - start_date).days + 1
 
-            final_vacation_days = workdays_in_period
-            
+            try:
+                # Prüft sicher, ob das Feld leer ist (wichtig beim Live-Tippen)
+                reg_free_str = self.regulaere_freie_tage_var.get().strip()
+                reg_free = int(reg_free_str) if reg_free_str else 0
+            except ValueError:
+                reg_free = 0
+
+            # Zieht die regulär freien Tage von der Gesamtzeit ab
+            final_vacation_days = total_days_in_period - reg_free
+            if final_vacation_days < 0:
+                final_vacation_days = 0
+                
             self.gesamtzahl_var.set(str(final_vacation_days))
 
         except (ValueError, TypeError):
-            # --- KORREKTUR START ---
-            # Fängt ungültige Datumsformate ab und gibt eine Fehlermeldung aus.
             self.gesamtzahl_var.set("Ungültiges Datum")
-            # --- KORREKTUR ENDE ---
 
     def on_save(self):
         name = self.name_var.get().strip()
@@ -3923,14 +3970,12 @@ class UrlaubsantragEntryDialog(tk.Toplevel):
             return
 
         try:
-            # Überprüft, ob die Daten gültig sind, bevor gespeichert wird
             datetime.datetime.strptime(self.erster_tag_var.get(), "%d.%m.%Y")
             datetime.datetime.strptime(self.letzter_tag_var.get(), "%d.%m.%Y")
         except ValueError:
-            messagebox.showerror("Fehler", "Bitte geben Sie ein gültiges Datum im Format TT.MM.JJJJ ein.", parent=self)
+            messagebox.showerror("Fehler", "Bitte wählen Sie ein gültiges Datum aus.", parent=self)
             return
 
-        # Sammelt die korrekten Daten aus den Variablen des Urlaubsantrag-Dialogs
         self.result = {
             "id": self.id_var.get(),
             "name": name,
@@ -3938,6 +3983,7 @@ class UrlaubsantragEntryDialog(tk.Toplevel):
             "position": self.position_var.get().strip(),
             "erster_tag": self.erster_tag_var.get().strip(),
             "letzter_tag": self.letzter_tag_var.get().strip(),
+            "regulaere_freie_tage": self.regulaere_freie_tage_var.get().strip(),
             "gesamtzahl": self.gesamtzahl_var.get(),
         }
         self.destroy()
@@ -3952,169 +3998,7 @@ class UrlaubsantragEntryDialog(tk.Toplevel):
     
     
     
-class UrlaubsantragPDF(FPDF):
-    """
-    Erstellt eine PDF-Datei für den Urlaubsantrag mit einem modernen, 
-    professionellen und eleganten Layout, das auf dem bereitgestellten
-    Musterbeispiel basiert. (FINALE, KORRIGIERTE VERSION)
-    """
-    def __init__(self, data, logo_path=None):
-        super().__init__('P', 'mm', 'A4')
-        self.data = data
-        self.logo_path = logo_path
-        self.font_family = "Helvetica"
-        try:
-            font_dir = resource_path('fonts')
-            dejavu_sans_path = os.path.join(font_dir, "DejaVuSans.ttf")
-            dejavu_sans_bold_path = os.path.join(font_dir, "DejaVuSans-Bold.ttf")
-            if os.path.exists(dejavu_sans_path) and os.path.exists(dejavu_sans_bold_path):
-                self.add_font("DejaVuSans", "", dejavu_sans_path)
-                self.add_font("DejaVuSans", "B", dejavu_sans_bold_path)
-                self.font_family = "DejaVuSans"
-        except Exception as e:
-            print(f"PDF Font Warning (Urlaubsantrag): {e}")
 
-    def create_form(self):
-        self.add_page()
-
-        # --- KOPFZEILE: LOGO ZENTRIERT, INFO-FELDER RECHTS ---
-        if self.logo_path and os.path.exists(self.logo_path):
-            self.image(self.logo_path, x=80, y=10, w=52)
-
-        self.set_font(self.font_family, '', 10)
-        rx = 140
-        self.set_xy(rx, 10)
-        self.set_font(self.font_family, 'B', 8)
-        self.cell(0, 5, "*Auszufüllen von der Personalabteilung", align='L')
-        self.set_font(self.font_family, '', 10)
-        self.set_xy(rx, 17)
-        self.cell(35, 7, "*Resturlaub:")
-        self.cell(25, 7, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.set_x(rx)
-        self.cell(35, 7, "*Überschneidungen:")
-        self.cell(25, 7, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(9)
-        self.set_x(rx)
-        self.cell(35, 7, "*Guestline:")
-        self.cell(25, 7, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-
-        # --- TITEL ---
-        self.set_y(68)
-        self.set_font(self.font_family, 'BU', 16)
-        self.cell(0, 10, "Urlaubsantrag", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
-        self.ln(6)
-
-        # --- OBERE FELDER (fette Labels, unterschiedliche Linienbreiten) ---
-        lbl = 60
-
-        self.set_x(15)
-        self.set_font(self.font_family, 'B', 11)
-        self.cell(lbl, 8, "Name des Mitarbeiters:")
-        self.set_font(self.font_family, '', 11)
-        self.cell(130, 8, self.data.get('name', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(2)
-
-        self.set_x(15)
-        self.set_font(self.font_family, 'B', 11)
-        self.cell(lbl, 8, "Abteilung:")
-        self.set_font(self.font_family, '', 11)
-        self.cell(100, 8, self.data.get('abteilung', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(2)
-
-        self.set_x(15)
-        self.set_font(self.font_family, 'B', 11)
-        self.cell(lbl, 8, "Position:")
-        self.set_font(self.font_family, '', 11)
-        self.cell(100, 8, self.data.get('position', ''), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-
-        self.set_font(self.font_family, '', 8)
-        self.set_x(15 + lbl)
-        self.write(4, "(Änderungen sind unbedingt ")
-        self.set_font(self.font_family, 'B', 8)
-        self.write(4, "schriftlich")
-        self.set_font(self.font_family, '', 8)
-        self.write(4, " mitzuteilen)")
-        self.ln(5)
-
-        # --- TRENNLINIE ---
-        self.set_line_width(0.8)
-        self.line(10, self.get_y(), 200, self.get_y())
-        self.ln(6)
-
-        # --- DATUMS-FELDER ---
-        def date_field(label, value):
-            self.set_x(15)
-            self.set_font(self.font_family, 'B', 11)
-            self.cell(lbl, 8, label)
-            self.set_font(self.font_family, '', 11)
-            self.cell(110, 8, str(value), border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            self.ln(3)
-
-        date_field("erster Tag:", self.data.get('erster_tag', ''))
-        date_field("letzter Tag:", self.data.get('letzter_tag', ''))
-        date_field("Gesamtanzahl der Tage:", self.data.get('gesamtzahl', '0'))
-        date_field("Unterschrift des Mitarbeiters:", "")
-
-        # --- TRENNLINIE ---
-        self.set_line_width(0.8)
-        self.line(10, self.get_y(), 200, self.get_y())
-        self.ln(6)
-
-        # --- FÜR DEN ABTEILUNGSLEITER ---
-        self.set_x(15)
-        self.set_font(self.font_family, 'BU', 11)
-        self.cell(0, 7, "Für den Abteilungsleiter:", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(2)
-        self.set_font(self.font_family, '', 10)
-        self.set_x(15)
-        self.multi_cell(185, 5, "Dieser Urlaubsantrag ist erst verbindlich, wenn die Direktion ihn genehmigt hat.", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(12)
-
-        # --- DATUM / UNTERSCHRIFT ABTEILUNGSLEITER (Linie ÜBER dem Label) ---
-        col1, col2, w1, w2 = 15, 110, 75, 85
-        self.set_line_width(0.3)
-        self.line(col1, self.get_y(), col1 + w1, self.get_y())
-        self.line(col2, self.get_y(), col2 + w2, self.get_y())
-        self.ln(4)
-        self.set_font(self.font_family, 'B', 11)
-        self.set_x(col1)
-        self.cell(w1, 7, "Datum")
-        self.set_x(col2)
-        self.cell(w2, 7, "Unterschrift des Abteilungsleiters", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(8)
-
-        # --- TRENNLINIE ---
-        self.set_line_width(0.8)
-        self.line(10, self.get_y(), 200, self.get_y())
-        self.ln(8)
-
-        # --- UNTERSCHRIFT DIREKTION (nicht fett) ---
-        self.set_font(self.font_family, '', 11)
-        self.set_x(15)
-        self.cell(58, 8, "Unterschrift Direktion:")
-        self.cell(75, 8, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(8)
-
-        # --- EINGETRAGEN VOM PERSONALBÜRO (nicht fett) ---
-        self.set_x(15)
-        self.cell(63, 8, "eingetragen vom Personalbüro:")
-        self.cell(70, 8, "", border='B', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        self.ln(6)
-
-        # --- CHECKBOXEN: D□ G□ K□ S□ ---
-        box_y = self.get_y()
-        self.set_x(15)
-        self.set_font(self.font_family, '', 10)
-        for ch in ["D", "G", "K", "S"]:
-            self.cell(5, 5, ch)
-            self.rect(x=self.get_x(), y=box_y + 0.5, w=4, h=4)
-            self.set_x(self.get_x() + 6)
-        self.ln(8)
-
-        # --- FUSSZEILE ---
-        self.set_x(10)
-        self.set_font(self.font_family, '', 8)
-        self.cell(0, 5, "Verlauf: Auszufüllen durch AN -> Personalabteilung -> Abteilungsleiter -> Personalabteilung", align='L')
 
 
 
@@ -13880,8 +13764,6 @@ class KassenprotokollApp:
 
         self._create_ueberstundenantrag_page(self.pages["Überstundenantrag"]) # <-- NEUE ZEILE
 
-        self._create_offene_rechnungen_page(self.pages["Offene Rechnungen"]) # <-- DIESE ZEILE HINZUFÜGEN
-        
         self._create_auth_code_finder_page(self.pages["AuthCodeFinder"]) # <-- DIESE ZEILE HINZUFÜGEN
         
         self._create_layover_page(self.pages["Layover"])
@@ -34714,12 +34596,12 @@ if __name__ == "__main__":
     # Root Window erstellen
     if ThemedTk:
         try:
-            root = ThemedTk(theme=initial_theme) 
-        except tk.TclError: 
+            root = ThemedTk(theme=initial_theme)
+        except (tk.TclError, KeyboardInterrupt, Exception):
             try:
-                root = ThemedTk(theme="arc") 
+                root = ThemedTk(theme="arc")
                 initial_theme = "arc"
-            except Exception:
+            except (KeyboardInterrupt, Exception):
                  root = tk.Tk()
                  initial_theme = None
     else:
