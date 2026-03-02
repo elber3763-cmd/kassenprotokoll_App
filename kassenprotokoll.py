@@ -714,14 +714,6 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
             )
             return
 
-        if abreise_date and abreise_date > today:
-            messagebox.showerror(
-                "Ungültiges Abreisedatum",
-                f"Das Abreisedatum ({self.data_vars['abreise'].get()}) darf nicht in der Zukunft liegen.\n\n"
-                "Die Abreise muss heute oder in der Vergangenheit liegen.",
-                parent=self
-            )
-            return
 
         # Definition der zu prüfenden Sektionen
         sections_to_validate = [
