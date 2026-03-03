@@ -1238,7 +1238,7 @@ class OffeneRechnungenApp:
             'OR_DeleteAll': {'text': 'Papierkorb', 'command': self._on_delete_all},
             'OR_Edit': {'text': 'Bearbeiten', 'command': self._on_edit_selected_entry},
             'OR_Kommentar': {'text': '💬 Kommentar', 'command': self._on_comment_selected_entry},
-            'OR_Cleanup': {'text': '>3 Tage löschen', 'command': self._on_cleanup_old},
+            'OR_Cleanup': {'text': '>7 Tage löschen', 'command': self._on_cleanup_old},
             'OR_SavePDF': {'text': 'PDF Speichern', 'command': self._on_save_and_export_pdf},
             'OR_Email': {'text': 'E-Mail', 'command': self._on_email},
             'OR_History': {'text': 'Verlauf', 'command': self._on_show_history},
@@ -1497,13 +1497,13 @@ class OffeneRechnungenApp:
         if not messagebox.askyesno(
             "Aufräumen",
             "Sollen alle Einträge entfernt werden, bei denen die Rechnung\n"
-            "Final versendet wurde und das Datum mehr als 3 Tage zurückliegt?",
+            "Final versendet wurde und das Datum mehr als 7 Tage zurückliegt?",
             parent=self.app.master
         ):
             return
 
         try:
-            three_days_ago = datetime.date.today() - datetime.timedelta(days=3)
+            three_days_ago = datetime.date.today() - datetime.timedelta(days=7)
             deleted_count = 0
 
             def is_old_and_final(entry):
@@ -1530,7 +1530,7 @@ class OffeneRechnungenApp:
                 messagebox.showinfo(
                     "Aufräumen",
                     "Es wurden keine Einträge gefunden, bei denen die Rechnung\n"
-                    "Final versendet wurde und das Datum mehr als 3 Tage zurückliegt.",
+                    "Final versendet wurde und das Datum mehr als 7 Tage zurückliegt.",
                     parent=self.app.master
                 )
         except Exception as e:
