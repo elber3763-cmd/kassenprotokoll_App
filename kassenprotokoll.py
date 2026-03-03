@@ -559,6 +559,175 @@ class CalendarPopup(tk.Toplevel):
         self.destroy()
 
 
+class CleanupPreviewDialog(tk.Toplevel):
+    """
+    Zeigt eine elegante Vorschau aller Einträge, die beim Aufräumen
+    gelöscht werden würden, und lässt den Mitarbeiter bestätigen oder abbrechen.
+    """
+    def __init__(self, parent, entries):
+        super().__init__(parent)
+        self.transient(parent)
+        self.grab_set()
+        self.confirmed = False
+
+        self.title("Aufräumen – Vorschau")
+        self.resizable(True, True)
+
+        # ── Farben ──────────────────────────────────────────────────
+        BG        = "#1e1e2e"
+        CARD_BG   = "#2a2a3e"
+        HDR_BG    = "#c0392b"
+        HDR_FG    = "#ffffff"
+        ROW_EVEN  = "#2a2a3e"
+        ROW_ODD   = "#252535"
+        ROW_SEL   = "#e74c3c"
+        FG        = "#ecf0f1"
+        MUTED     = "#95a5a6"
+        BTN_DEL   = "#c0392b"
+        BTN_DEL_H = "#e74c3c"
+        BTN_CNL   = "#34495e"
+        BTN_CNL_H = "#4a6278"
+
+        self.configure(bg=BG)
+
+        # ── Hauptrahmen ──────────────────────────────────────────────
+        outer = tk.Frame(self, bg=BG, padx=20, pady=20)
+        outer.pack(fill='both', expand=True)
+
+        # ── Kopfzeile ───────────────────────────────────────────────
+        header = tk.Frame(outer, bg=HDR_BG, padx=16, pady=12)
+        header.pack(fill='x', pady=(0, 14))
+
+        tk.Label(
+            header, text="⚠  Einträge zum Löschen",
+            bg=HDR_BG, fg=HDR_FG,
+            font=("Segoe UI", 14, "bold")
+        ).pack(side='left')
+
+        count_badge = tk.Label(
+            header,
+            text=f"  {len(entries)} Einträge  ",
+            bg="#e74c3c", fg=HDR_FG,
+            font=("Segoe UI", 10, "bold"),
+            padx=6, pady=2, relief='flat'
+        )
+        count_badge.pack(side='right', padx=(0, 4))
+
+        # ── Info-Text ────────────────────────────────────────────────
+        tk.Label(
+            outer,
+            text="Die folgenden Einträge haben das Final-Datum vor mehr als 7 Tagen\n"
+                 "und werden bei Bestätigung unwiderruflich gelöscht.",
+            bg=BG, fg=MUTED,
+            font=("Segoe UI", 9),
+            justify='left'
+        ).pack(anchor='w', pady=(0, 10))
+
+        # ── Treeview-Rahmen ──────────────────────────────────────────
+        tree_frame = tk.Frame(outer, bg=CARD_BG, padx=2, pady=2)
+        tree_frame.pack(fill='both', expand=True)
+
+        cols = ("bk_ref", "gruppenname", "anreise", "abreise", "final_datum")
+        self.tree = ttk.Treeview(tree_frame, columns=cols, show="headings", height=12)
+
+        style = ttk.Style(self)
+        style.theme_use(style.theme_use())  # Keep current theme
+        style.configure("Cleanup.Treeview",
+                        background=ROW_EVEN, foreground=FG,
+                        fieldbackground=ROW_EVEN,
+                        rowheight=26, font=("Segoe UI", 9),
+                        borderwidth=0)
+        style.configure("Cleanup.Treeview.Heading",
+                        background=CARD_BG, foreground=MUTED,
+                        font=("Segoe UI", 9, "bold"),
+                        relief='flat')
+        style.map("Cleanup.Treeview",
+                  background=[("selected", ROW_SEL)],
+                  foreground=[("selected", HDR_FG)])
+        self.tree.configure(style="Cleanup.Treeview")
+
+        col_cfg = [
+            ("bk_ref",      "BK-Referenz",    110, 'center'),
+            ("gruppenname", "Gruppenname",     260, 'w'),
+            ("anreise",     "Anreise",          90, 'center'),
+            ("abreise",     "Abreise",          90, 'center'),
+            ("final_datum", "Final versendet",  110, 'center'),
+        ]
+        for cid, lbl, w, anchor in col_cfg:
+            self.tree.heading(cid, text=lbl)
+            self.tree.column(cid, width=w, anchor=anchor, stretch=(cid == "gruppenname"))
+
+        self.tree.tag_configure("even", background=ROW_EVEN)
+        self.tree.tag_configure("odd",  background=ROW_ODD)
+
+        vsb = ttk.Scrollbar(tree_frame, orient="vertical",   command=self.tree.yview)
+        hsb = ttk.Scrollbar(tree_frame, orient="horizontal", command=self.tree.xview)
+        self.tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+
+        self.tree.grid(row=0, column=0, sticky='nsew')
+        vsb.grid(row=0, column=1, sticky='ns')
+        hsb.grid(row=1, column=0, sticky='ew')
+        tree_frame.rowconfigure(0, weight=1)
+        tree_frame.columnconfigure(0, weight=1)
+
+        for i, entry in enumerate(entries):
+            tag = "even" if i % 2 == 0 else "odd"
+            self.tree.insert("", "end", tags=(tag,), values=(
+                entry.get('bk_ref', ''),
+                entry.get('gruppenname', ''),
+                entry.get('anreise', ''),
+                entry.get('abreise', ''),
+                entry.get('final_datum', ''),
+            ))
+
+        # ── Trennlinie ───────────────────────────────────────────────
+        tk.Frame(outer, bg="#3d3d55", height=1).pack(fill='x', pady=(14, 10))
+
+        # ── Button-Leiste ────────────────────────────────────────────
+        btn_bar = tk.Frame(outer, bg=BG)
+        btn_bar.pack(fill='x')
+
+        def _on_enter_del(e):  del_btn.configure(bg=BTN_DEL_H)
+        def _on_leave_del(e):  del_btn.configure(bg=BTN_DEL)
+        def _on_enter_cnl(e):  cnl_btn.configure(bg=BTN_CNL_H)
+        def _on_leave_cnl(e):  cnl_btn.configure(bg=BTN_CNL)
+
+        cnl_btn = tk.Button(
+            btn_bar, text="Abbrechen",
+            bg=BTN_CNL, fg=FG, activebackground=BTN_CNL_H, activeforeground=FG,
+            font=("Segoe UI", 10), relief='flat', padx=20, pady=8, cursor='hand2',
+            command=self.destroy
+        )
+        cnl_btn.pack(side='right', padx=(8, 0))
+        cnl_btn.bind("<Enter>", _on_enter_cnl)
+        cnl_btn.bind("<Leave>", _on_leave_cnl)
+
+        del_btn = tk.Button(
+            btn_bar, text="🗑  Alle löschen",
+            bg=BTN_DEL, fg=HDR_FG, activebackground=BTN_DEL_H, activeforeground=HDR_FG,
+            font=("Segoe UI", 10, "bold"), relief='flat', padx=20, pady=8, cursor='hand2',
+            command=self._confirm
+        )
+        del_btn.pack(side='right')
+        del_btn.bind("<Enter>", _on_enter_del)
+        del_btn.bind("<Leave>", _on_leave_del)
+
+        # ── Fenster-Größe und Zentrierung ────────────────────────────
+        self.update_idletasks()
+        w, h = 720, 520
+        px = parent.winfo_rootx() + (parent.winfo_width()  - w) // 2
+        py = parent.winfo_rooty() + (parent.winfo_height() - h) // 2
+        self.geometry(f"{w}x{h}+{px}+{py}")
+        self.minsize(600, 400)
+
+        self.bind("<Escape>", lambda e: self.destroy())
+        self.wait_window(self)
+
+    def _confirm(self):
+        self.confirmed = True
+        self.destroy()
+
+
 class OffeneRechnungEntryDialog(tk.Toplevel):
     """ Dialog zum Hinzufügen oder Bearbeiten eines Eintrags für offene Rechnungen. """
     def __init__(self, parent, app_ref, entry_data=None):
@@ -1494,17 +1663,8 @@ class OffeneRechnungenApp:
             SuccessToast(self.app.master, title="Gelöscht", message="Alle Einträge wurden entfernt.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
 
     def _on_cleanup_old(self):
-        if not messagebox.askyesno(
-            "Aufräumen",
-            "Sollen alle Einträge entfernt werden, bei denen die Rechnung\n"
-            "Final versendet wurde und das Datum mehr als 7 Tage zurückliegt?",
-            parent=self.app.master
-        ):
-            return
-
         try:
-            three_days_ago = datetime.date.today() - datetime.timedelta(days=7)
-            deleted_count = 0
+            cutoff = datetime.date.today() - datetime.timedelta(days=7)
 
             def is_old_and_final(entry):
                 if entry.get('final_sent') == 'Ja' or entry.get('final_datum'):
@@ -1514,25 +1674,30 @@ class OffeneRechnungenApp:
                     entry_date = self._parse_date(final_datum)
                     if entry_date is None:
                         return False
-                    return entry_date < three_days_ago
+                    return entry_date < cutoff
                 return False
 
-            initial_count = len(self.all_data)
-            self.all_data = [e for e in self.all_data if not is_old_and_final(e)]
-            deleted_count = initial_count - len(self.all_data)
+            to_delete = [e for e in self.all_data if is_old_and_final(e)]
 
-            self.populate_tables()
-
-            if deleted_count > 0:
-                self.save_data(show_toast=False, action=f"{deleted_count} alte Einträge aufgeräumt")
-                SuccessToast(self.app.master, title="Aufgeräumt", message=f"{deleted_count} Einträge wurden entfernt.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
-            else:
+            if not to_delete:
                 messagebox.showinfo(
                     "Aufräumen",
                     "Es wurden keine Einträge gefunden, bei denen die Rechnung\n"
                     "Final versendet wurde und das Datum mehr als 7 Tage zurückliegt.",
                     parent=self.app.master
                 )
+                return
+
+            dlg = CleanupPreviewDialog(self.app.master, to_delete)
+            if not dlg.confirmed:
+                return
+
+            deleted_count = len(to_delete)
+            self.all_data = [e for e in self.all_data if not is_old_and_final(e)]
+            self.populate_tables()
+            self.save_data(show_toast=False, action=f"{deleted_count} alte Einträge aufgeräumt")
+            SuccessToast(self.app.master, title="Aufgeräumt", message=f"{deleted_count} Einträge wurden entfernt.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
+
         except Exception as e:
             messagebox.showerror("Fehler beim Aufräumen", f"Ein Fehler ist aufgetreten:\n{e}", parent=self.app.master)
         
