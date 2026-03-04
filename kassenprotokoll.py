@@ -8746,13 +8746,25 @@ class MODRundgangApp:
                 _bind_recursive(child)
 
         # ── SECTION CARDS ──────────────────────────────────────────────────────
+        # Use ttk.LabelFrame as the outer container (proven to work inside canvas
+        # windows) and place the colored header tk.Frame *inside* it, so the
+        # tk children get proper widths from the already-sized ttk parent.
         self.ui_data = []
         for sec_idx, sec_def in enumerate(self.sections_def):
             accent = SECTION_COLORS[sec_idx % len(SECTION_COLORS)]
-            card = _shadow_card(self.scroll_frame)
-            _card_header(card, sec_def['title'], accent)
+            lf = ttk.LabelFrame(self.scroll_frame, text='', padding=0)
+            lf.pack(fill='x', padx=12, pady=(6, 2))
 
-            tasks_frame = tk.Frame(card, bg=C_CARD, padx=10, pady=6)
+            # Coloured header bar inside the LabelFrame
+            hdr = tk.Frame(lf, bg=accent, height=34)
+            hdr.pack(fill='x')
+            hdr.pack_propagate(False)
+            tk.Label(hdr, text=f"◆  {sec_def['title']}",
+                     font=("Segoe UI", 10, "bold"),
+                     bg=accent, fg='white', anchor='w', padx=10
+                     ).pack(fill='both', expand=True)
+
+            tasks_frame = tk.Frame(lf, bg=C_CARD, padx=10, pady=6)
             tasks_frame.pack(fill='x')
 
             tasks = []
@@ -8796,9 +8808,15 @@ class MODRundgangApp:
             self.ui_data.append({"title": sec_def['title'], "tasks": tasks})
 
         # ── ALARM CARD ─────────────────────────────────────────────────────────
-        alarm_card = _shadow_card(self.scroll_frame)
-        _card_header(alarm_card, "🚨  Alarm-Status (An Rezeption auflaufend)", '#BF360C')
-        alarm_body = tk.Frame(alarm_card, bg=C_CARD, padx=14, pady=8)
+        alarm_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=0)
+        alarm_lf.pack(fill='x', padx=12, pady=(6, 2))
+        alarm_hdr = tk.Frame(alarm_lf, bg='#BF360C', height=34)
+        alarm_hdr.pack(fill='x')
+        alarm_hdr.pack_propagate(False)
+        tk.Label(alarm_hdr, text="🚨  Alarm-Status (An Rezeption auflaufend)",
+                 font=("Segoe UI", 10, "bold"), bg='#BF360C', fg='white',
+                 anchor='w', padx=10).pack(fill='both', expand=True)
+        alarm_body = tk.Frame(alarm_lf, bg=C_CARD, padx=14, pady=8)
         alarm_body.pack(fill='x')
         self.alarms = ["Notruf Sauna", "Heizung Residence", "Heizung Kronsberg Tower",
                        "Heizung Deluxe Tower", "BMZ Brandmeldezentrale"]
@@ -8812,9 +8830,16 @@ class MODRundgangApp:
                      bg=C_CARD, fg='#BF360C').pack(side='left')
 
         # ── REPORT CARD ────────────────────────────────────────────────────────
-        report_card = _shadow_card(self.scroll_frame, pady=(6, 2))
-        _card_header(report_card, "📝  Abschließender Bericht für Direktion & Frühdienst", '#37474F')
-        report_body = tk.Frame(report_card, bg=C_CARD, padx=12, pady=10)
+        report_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=0)
+        report_lf.pack(fill='x', padx=12, pady=(6, 2))
+        report_hdr = tk.Frame(report_lf, bg='#37474F', height=34)
+        report_hdr.pack(fill='x')
+        report_hdr.pack_propagate(False)
+        tk.Label(report_hdr,
+                 text="📝  Abschließender Bericht für Direktion & Frühdienst",
+                 font=("Segoe UI", 10, "bold"), bg='#37474F', fg='white',
+                 anchor='w', padx=10).pack(fill='both', expand=True)
+        report_body = tk.Frame(report_lf, bg=C_CARD, padx=12, pady=10)
         report_body.pack(fill='x')
         tc = tk.Frame(report_body, bg=C_CARD)
         tc.pack(fill='x')
@@ -8841,9 +8866,11 @@ class MODRundgangApp:
         self.report_text.bind("<Button-5>",   _on_report_wheel)
 
         # ── SIGNATURE CARD ─────────────────────────────────────────────────────
-        sign_card = _shadow_card(self.scroll_frame, pady=(6, 10))
-        tk.Frame(sign_card, bg='#0078D7', height=3).pack(fill='x')
-        sign_inner = tk.Frame(sign_card, bg=C_CARD, padx=15, pady=12)
+        sign_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=0)
+        sign_lf.pack(fill='x', padx=12, pady=(6, 10))
+        sign_hdr = tk.Frame(sign_lf, bg='#0078D7', height=3)
+        sign_hdr.pack(fill='x')
+        sign_inner = tk.Frame(sign_lf, bg=C_CARD, padx=15, pady=12)
         sign_inner.pack(fill='x')
         tk.Label(sign_inner, text="✍️  Digitale Unterschrift / Bestätigung:",
                  font=("Segoe UI", 11, "bold"), bg=C_CARD, fg='#2C3E50').pack(side='left')
