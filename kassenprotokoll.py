@@ -13312,6 +13312,7 @@ class KassenprotokollApp:
                 'Shuttle_Overlay': {'type': 'symbol', 'value': '👁️ Info-Fenster', 'is_active': True},
                 'Shuttle_ManualBackup': {'type': 'symbol', 'value': '💾 Man. Backup', 'is_active': True},
                 'Shuttle_ManageBackups': {'type': 'symbol', 'value': '🗃️ Backups', 'is_active': True},
+                'Shuttle_DeleteDone': {'type': 'symbol', 'value': '🗑️ Erledigte löschen', 'is_active': True},
             },
 
             
@@ -13830,6 +13831,8 @@ class KassenprotokollApp:
         
         self.taxi_data_cache = []
         self.taxibestellung_tree = None
+        self.shuttle_hinfahrt_cb_canvas = None
+        self.shuttle_rueckfahrt_cb_canvas = None
 
         self.ta_einnahmen_fo_frueh_var = tk.StringVar(value="0,00 €")
         self.ta_einnahmen_fo_spaet_var = tk.StringVar(value="0,00 €")
@@ -14189,41 +14192,47 @@ class KassenprotokollApp:
         
         
     def _setup_custom_styles(self):
-        """Erstellt und konfiguriert alle benutzerdefinierten ttk-Stile zentral."""
-        if hasattr(self.master, '_image_references') and \
-           'checked_checkbox' in self.master._image_references and \
-           'unchecked_checkbox' in self.master._image_references:
-            
-            try:
-                unchecked_img_ref = self.master._image_references['unchecked_checkbox']
-                checked_img_ref = self.master._image_references['checked_checkbox']
+        """Erstellt und konfiguriert alle benutzerdefinierten ttk-Stile zentral.
+        Wird beim Start einmalig aufgerufen, um große Checkboxen für alle ttk.Checkbutton zu aktivieren."""
+        if getattr(self, '_checkbox_style_created', False):
+            return
 
+        if getattr(self, 'checked_image', None) and getattr(self, 'unchecked_image', None):
+            try:
                 self.style.element_create(
                     "LargeCheckbutton.indicator", "image",
-                    [('!checked', unchecked_img_ref),
-                     ('checked', checked_img_ref)],
+                    self.unchecked_image,
+                    ('selected', '!disabled', self.checked_image),
+                    ('selected', 'disabled', self.checked_image),
                     border=0, sticky='w'
                 )
-
-                self.style.layout("LargeChecklist.TCheckbutton", [
+                large_layout = [
                     ("LargeCheckbutton.indicator", {'side': 'left', 'sticky': ''}),
                     ("Checkbutton.focus", {'side': 'left', 'sticky': '', 'children': [
                         ("Checkbutton.padding", {'side': 'left', 'sticky': '', 'children': [
                             ("Checkbutton.label", {'side': 'left', 'sticky': ''})
                         ]})
                     ]})
-                ])
-                
-                # vvvvvvvvvvvvvvvv HIER IST DIE ENTSCHEIDENDE KORREKTUR vvvvvvvvvvvvvvvv
-                # Dieser Padding-Wert sorgt dafür, dass die gesamte Zeile hoch genug ist,
-                # um das Bild vertikal zu zentrieren und vollständig anzuzeigen.
-                # Wir berechnen den notwendigen vertikalen Abstand aus der Bildgröße.
+                ]
+                # Globaler TCheckbutton – betrifft ALLE ttk.Checkbutton-Widgets
+                self.style.layout("TCheckbutton", large_layout)
+                # Benannter Stil als Alias (Rückwärtskompatibilität)
+                self.style.layout("LargeChecklist.TCheckbutton", large_layout)
+
                 vertical_padding = max(0, (self.checkbox_size - 16) // 2)
+                self.style.configure("TCheckbutton", padding=(5, vertical_padding))
                 self.style.configure("LargeChecklist.TCheckbutton", padding=(5, vertical_padding))
-                # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                
+                self._checkbox_style_created = True
             except tk.TclError as e:
                 print(f"Fehler beim Erstellen des benutzerdefinierten Checkbox-Stils: {e}")
+                # Fallback: nur Font und Padding vergrößern
+                self.style.configure("TCheckbutton", padding=(6, 8))
+        else:
+            # Fallback ohne PIL: indicatorsize + Padding
+            try:
+                self.style.configure("TCheckbutton", indicatorsize=18, padding=(6, 8))
+            except tk.TclError:
+                pass
         
         
         
@@ -16136,8 +16145,17 @@ class KassenprotokollApp:
         tree_frame = ttk.Frame(content_frame)
         tree_frame.grid(row=0, column=0, sticky="nsew")
         tree_frame.rowconfigure(0, weight=1)
-        tree_frame.columnconfigure(0, weight=1)
+        tree_frame.columnconfigure(0, weight=0)  # Checkbox-Canvas
+        tree_frame.columnconfigure(1, weight=1)  # Treeview
+        tree_frame.columnconfigure(2, weight=0)  # Scrollbar
 
+        # --- Canvas-Checkbox-Spalte links neben der Treeview ---
+        cb_col_width = self.checkbox_size + 14  # z.B. 44 px bei checkbox_size=30
+        cb_canvas = tk.Canvas(tree_frame, width=cb_col_width,
+                              highlightthickness=0, cursor="hand2")
+        cb_canvas.grid(row=0, column=0, sticky="ns")
+
+        # --- Treeview (ohne Status-Spalte) ---
         columns = ("datum", "zeit", "gastname", "zimmer", "personen")
         tree = ttk.Treeview(tree_frame, columns=columns, show="headings", style=style_name)
         tree.heading("datum", text="Datum")
@@ -16151,17 +16169,34 @@ class KassenprotokollApp:
         tree.column("gastname", width=350, anchor="w")
         tree.column("zimmer", width=120, anchor="center")
         tree.column("personen", width=100, anchor="center", stretch=tk.NO)
-        
+
+        tree.tag_configure('erledigt_tag', background='#c8e6c9', foreground='#4a7c59')
+
+        # Scrollbar – beim Scrollen auch den Canvas aktualisieren
+        vsb = ttk.Scrollbar(tree_frame, orient="vertical")
+        vsb.grid(row=0, column=2, sticky="ns")
+
+        def _on_shuttle_scroll(*args):
+            vsb.set(*args)
+            self._redraw_shuttle_cb_canvas(booking_type)
+
+        tree.configure(yscrollcommand=_on_shuttle_scroll)
+        vsb.configure(command=lambda *a: (tree.yview(*a),
+                                          self._redraw_shuttle_cb_canvas(booking_type)))
+
+        tree.grid(row=0, column=1, sticky="nsew")
+
+        # Canvas-Klick → Checkbox toggeln
+        cb_canvas.bind("<Button-1>",
+                       lambda e, bt=booking_type: self._handle_shuttle_cb_click(bt, e.y))
+
+        # Treeview-Refs und Canvas-Refs speichern
         if booking_type == 'Hinfahrt':
             self.shuttle_hinfahrt_tree = tree
+            self.shuttle_hinfahrt_cb_canvas = cb_canvas
         else:
             self.shuttle_rueckfahrt_tree = tree
-
-        vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=tree.yview)
-        tree.configure(yscrollcommand=vsb.set)
-        
-        tree.grid(row=0, column=0, sticky="nsew")
-        vsb.grid(row=0, column=1, sticky="ns")
+            self.shuttle_rueckfahrt_cb_canvas = cb_canvas
 
         tree.bind("<Double-1>", lambda e, b_type=booking_type: self._edit_shuttle_entry(b_type))
         self._setupTreeViewCellNavigation(tree, edit_command_func=lambda: self._edit_shuttle_entry(booking_type))
@@ -16175,11 +16210,11 @@ class KassenprotokollApp:
 
         button_configs = self.current_settings.get('shuttle_button_configs', {})
 
-        # --- HIER WURDE DER FEHLENDE BUTTON EINGEFÜGT ---
         button_defs = [
             ('Shuttle_Add', 'Buchen', lambda: self._add_shuttle_entry(booking_type)),
             ('Shuttle_Edit', 'Bearbeiten', lambda: self._edit_shuttle_entry(booking_type)),
             ('Shuttle_Delete', 'Stornieren', lambda: self._delete_shuttle_entry(booking_type)),
+            ('Shuttle_DeleteDone', 'Erledigte löschen', lambda: self._delete_erledigte_shuttle(booking_type)),
             (None, None, None),
             ('Shuttle_SavePDF', 'PDF Speichern', lambda: self._save_shuttle_list_to_pdf(booking_type)),
             ('Shuttle_Print', 'Drucken', lambda: self._print_shuttle_list(booking_type)),
@@ -16774,6 +16809,88 @@ class KassenprotokollApp:
             self.style.configure(unique_style_name, font=custom_font)
             button_widget.config(style=unique_style_name, text=btn_value)
 
+    def _redraw_shuttle_cb_canvas(self, booking_type):
+        """Zeichnet die Checkbox-Bilder auf den Canvas links neben der Shuttle-Treeview."""
+        tree = self.shuttle_hinfahrt_tree if booking_type == 'Hinfahrt' else self.shuttle_rueckfahrt_tree
+        cb_canvas = (self.shuttle_hinfahrt_cb_canvas if booking_type == 'Hinfahrt'
+                     else self.shuttle_rueckfahrt_cb_canvas)
+        if not cb_canvas or not cb_canvas.winfo_exists():
+            return
+        if not tree or not tree.winfo_exists():
+            return
+
+        cb_canvas.delete("all")
+        cw = cb_canvas.winfo_width()
+        if cw <= 1:
+            cw = self.checkbox_size + 14
+        cx = cw // 2
+
+        children = tree.get_children()
+
+        # Überschrift "✓" im Heading-Bereich des Canvas zeichnen
+        heading_height = None
+        for item in children:
+            bbox = tree.bbox(item)
+            if bbox:
+                heading_height = bbox[1]
+                break
+        if heading_height is None:
+            try:
+                heading_height = int(self.style.lookup("Shuttle.Treeview", "rowheight") or 35)
+            except Exception:
+                heading_height = 35
+
+        try:
+            heading_bg = self.style.lookup("Shuttle.Treeview.Heading", "background") or '#d9d9d9'
+        except Exception:
+            heading_bg = '#d9d9d9'
+
+        cb_canvas.create_rectangle(0, 0, cw, heading_height,
+                                   fill=heading_bg, outline='#9e9e9e')
+        try:
+            font_size = self.current_settings.get('configurable_sizes', {}).get(
+                'shuttle_service', {}).get('font_size', 14)
+            base_family = tkFont.Font(font=self.style.lookup('TLabel', 'font')).actual('family')
+        except Exception:
+            font_size = 14
+            base_family = 'Segoe UI'
+        cb_canvas.create_text(cx, heading_height // 2, text="✓",
+                              font=(base_family, font_size, 'bold'), anchor="center")
+
+        # Checkbox-Bilder für jede sichtbare Zeile zeichnen
+        for item in children:
+            bbox = tree.bbox(item)
+            if bbox:
+                bx, by, bw, bh = bbox
+                entry = next((e for e in self.shuttle_data_cache if e.get('id') == item), None)
+                erledigt = entry.get('erledigt', False) if entry else False
+                img = (getattr(self, 'checked_image', None) if erledigt
+                       else getattr(self, 'unchecked_image', None))
+                cy = by + bh // 2
+                if img:
+                    cb_canvas.create_image(cx, cy, image=img, anchor="center")
+                else:
+                    cb_canvas.create_text(cx, cy, text='☑' if erledigt else '☐',
+                                          font=(base_family, font_size), anchor="center")
+
+    def _handle_shuttle_cb_click(self, booking_type, click_y):
+        """Toggelt den erledigt-Status bei Klick auf den Checkbox-Canvas."""
+        tree = self.shuttle_hinfahrt_tree if booking_type == 'Hinfahrt' else self.shuttle_rueckfahrt_tree
+        if not tree or not tree.winfo_exists():
+            return
+        for item in tree.get_children():
+            bbox = tree.bbox(item)
+            if bbox:
+                bx, by, bw, bh = bbox
+                if by <= click_y < by + bh:
+                    for entry in self.shuttle_data_cache:
+                        if entry.get('id') == item:
+                            entry['erledigt'] = not entry.get('erledigt', False)
+                            break
+                    self._save_shuttle_data()
+                    self._load_and_display_shuttle_data(booking_type)
+                    return
+
     def _load_and_display_shuttle_data(self, booking_type):
         tree = self.shuttle_hinfahrt_tree if booking_type == 'Hinfahrt' else self.shuttle_rueckfahrt_tree
         if not tree or not tree.winfo_exists():
@@ -16786,17 +16903,21 @@ class KassenprotokollApp:
         filtered_data.sort(key=lambda x: (x.get('datum', ''), x.get('zeit', '')))
 
         for entry in filtered_data:
-            # NEU: Wert für 'personen' hinzugefügt
+            erledigt = entry.get('erledigt', False)
             values = (
                 entry.get('datum', ''),
                 entry.get('zeit', ''),
                 entry.get('gastname', ''),
                 entry.get('zimmer', ''),
-                entry.get('personen', '') 
+                entry.get('personen', '')
             )
             item_id = entry.get('id', uuid.uuid4().hex)
-            tree.insert("", "end", values=values, iid=item_id)
-            
+            tags = ('erledigt_tag',) if erledigt else ()
+            tree.insert("", "end", values=values, iid=item_id, tags=tags)
+
+        # Canvas-Checkboxen nach dem Befüllen der Treeview neu zeichnen
+        tree.after(20, lambda bt=booking_type: self._redraw_shuttle_cb_canvas(bt))
+
     def _add_shuttle_entry(self, booking_type):
         """Öffnet den Dialog zum Hinzufügen von Shuttle-Buchungen mit autom. Backup."""
         def handle_save(new_entry_data):
@@ -16890,6 +17011,30 @@ class KassenprotokollApp:
             self.shuttle_overlay_window.update_display()
 
         SuccessToast(self.master, title="Storniert", message="Buchung storniert und Backup erstellt.", toast_type='success', colors=self.current_settings.get('toast_colors'))
+
+    def _toggle_shuttle_erledigt(self, booking_type, event=None):
+        """Nicht mehr direkt genutzt – Toggle erfolgt über _handle_shuttle_cb_click."""
+        pass
+
+    def _delete_erledigte_shuttle(self, booking_type):
+        """Löscht alle als erledigt markierten Shuttle-Einträge des gewählten Typs."""
+        erledigte = [e for e in self.shuttle_data_cache if e.get('type') == booking_type and e.get('erledigt', False)]
+        if not erledigte:
+            SuccessToast(self.master, title="Nichts zu löschen", message="Keine erledigten Buchungen vorhanden.", toast_type='info', colors=self.current_settings.get('toast_colors'))
+            return
+        count = len(erledigte)
+        if not messagebox.askyesno("Erledigte löschen", f"{count} erledigte Buchung(en) endgültig löschen?", parent=self.master):
+            return
+        for entry in erledigte:
+            self._save_list_entry_to_history(entry, "Erledigt gelöscht", "Shuttle")
+        self.shuttle_data_cache = [e for e in self.shuttle_data_cache if not (e.get('type') == booking_type and e.get('erledigt', False))]
+        self._save_shuttle_data()
+        self._perform_manual_backup_shuttle(ask_confirmation=False)
+        self._load_and_display_shuttle_data(booking_type)
+        self._update_notifications()
+        if self.shuttle_overlay_window and self.shuttle_overlay_window.winfo_exists():
+            self.shuttle_overlay_window.update_display()
+        SuccessToast(self.master, title="Gelöscht", message=f"{count} erledigte Buchung(en) gelöscht.", toast_type='success', colors=self.current_settings.get('toast_colors'))
 
     def _load_shuttle_data(self):
         if os.path.exists(self.shuttle_data_file):
@@ -20465,7 +20610,12 @@ class KassenprotokollApp:
         # Wichtig: Auch das Label braucht den Hintergrund, damit es nicht den Frame überdeckt.
         self.style.configure('Highlight.TLabel', background=checklist_highlight_bg)
         # ^^^^^ ENDE DES NEUEN BLOCKS ^^^^^
-        
+
+        # Vergrößerte Checkboxen: einmalig Bild-Stil aufbauen, dann Font anpassen
+        self._setup_custom_styles()
+        self.style.configure('TCheckbutton', font=(font_family, base_font_size_val + 1))
+        self.style.configure('LargeChecklist.TCheckbutton', font=(font_family, base_font_size_val + 1))
+
         self._update_button_appearances() 
         if hasattr(self, '_update_diff_label_colors'): self._update_diff_label_colors() 
         self._update_notebook_style()        
@@ -29593,14 +29743,15 @@ class KassenprotokollApp:
             'Shuttle_Add',           # Hauptseite: Buchen
             'Shuttle_Add_Next',      # Dialog: Hinzufügen (für Ihr rotes Plus)
             'Shuttle_Dialog_Done',   # Dialog: Fertig
-            'Shuttle_Edit', 
-            'Shuttle_Delete', 
+            'Shuttle_Edit',
+            'Shuttle_Delete',
             'Shuttle_History',
             'Shuttle_SavePDF',
             'Shuttle_Print',
             'Shuttle_Overlay',
             'Shuttle_ManualBackup',
-            'Shuttle_ManageBackups'
+            'Shuttle_ManageBackups',
+            'Shuttle_DeleteDone',    # Erledigte löschen
         ]
         
         new_row = self._create_generic_button_config_section(
