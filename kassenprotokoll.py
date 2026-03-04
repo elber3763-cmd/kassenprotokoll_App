@@ -8688,25 +8688,45 @@ class MODRundgangApp:
                                      bg=C_CARD, fg='#2C3E50', width=5)
         self.progress_lbl.pack(side='left', padx=8)
         self.progress_var = tk.DoubleVar(value=0)
-        self.pb = ttk.Progressbar(prog_row, variable=self.progress_var, maximum=100, length=1)
+        # NOTE: no ttk.Progressbar – custom canvas bar is used instead
 
-        # ── SCROLL AREA (packed last → fills all remaining space) ──────────────
-        scroll_outer = tk.Frame(self.parent_frame, bg=C_PAGE)
+        # ── SCROLL AREA ────────────────────────────────────────────────────────
+        # Use ttk.Frame for scroll_outer and scroll_frame (identical to proven
+        # original pattern) to ensure proper canvas-window resizing behaviour.
+        scroll_outer = ttk.Frame(self.parent_frame)
         scroll_outer.pack(fill='both', expand=True)
 
         canvas = tk.Canvas(scroll_outer, highlightthickness=0, bg=C_PAGE)
         sb = ttk.Scrollbar(scroll_outer, orient="vertical", command=canvas.yview)
-        self.scroll_frame = tk.Frame(canvas, bg=C_PAGE)
+        self.scroll_frame = ttk.Frame(canvas)
 
         self.win_id = canvas.create_window((0, 0), window=self.scroll_frame, anchor="nw")
         canvas.configure(yscrollcommand=sb.set)
         canvas.pack(side="left", fill="both", expand=True)
         sb.pack(side="right", fill="y")
 
-        self.scroll_frame.bind("<Configure>",
-                               lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        canvas.bind("<Configure>",
-                    lambda e: canvas.itemconfig(self.win_id, width=e.width))
+        def _on_scroll_frame_configure(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        def _on_canvas_configure(event):
+            canvas.itemconfig(self.win_id, width=event.width)
+            # Also update scrollregion in case new width changes scroll_frame height
+            canvas.after_idle(lambda: canvas.configure(
+                scrollregion=canvas.bbox("all") or (0, 0, 0, 0)))
+
+        self.scroll_frame.bind("<Configure>", _on_scroll_frame_configure)
+        canvas.bind("<Configure>", _on_canvas_configure)
+
+        # Fallback: force scrollregion after a short delay so content is always visible
+        def _force_scrollregion():
+            try:
+                bb = canvas.bbox("all")
+                if bb:
+                    canvas.configure(scrollregion=bb)
+            except tk.TclError:
+                pass
+
+        canvas.after(200, _force_scrollregion)
 
         def _on_mousewheel(event):
             if self.scroll_frame.winfo_height() > canvas.winfo_height():
