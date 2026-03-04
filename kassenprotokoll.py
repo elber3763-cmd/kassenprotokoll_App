@@ -8537,16 +8537,15 @@ class MODRundgangApp:
 
         _defaults = self.app.default_settings.get('mod_rundgang_colors', {})
         clr = {**_defaults, **self.app.current_settings.get('mod_rundgang_colors', {})}
-        C_HDR1    = clr.get('header_from',   '#1E3A5F')
-        C_HDR2    = clr.get('header_to',     '#2980B9')
-        C_BAR     = clr.get('actionbar_bg',  '#1E2D40')
-        C_PG1     = clr.get('progress_from', '#00B09B')
-        C_PG2     = clr.get('progress_to',   '#4CAF50')
-        C_DONE    = clr.get('task_done_bg',  '#E8F5E9')
-        C_CARD    = clr.get('card_bg',       '#FFFFFF')
-        C_PAGE    = clr.get('page_bg',       '#F0F4F8')
-        C_SHADOW  = clr.get('shadow_color',  '#B0BEC5')
-        C_WARN    = clr.get('warning_fg',    '#C0392B')
+        C_HDR1 = clr.get('header_from',   '#1E3A5F')
+        C_HDR2 = clr.get('header_to',     '#2980B9')
+        C_BAR  = clr.get('actionbar_bg',  '#1E2D40')
+        C_PG1  = clr.get('progress_from', '#00B09B')
+        C_PG2  = clr.get('progress_to',   '#4CAF50')
+        C_DONE = clr.get('task_done_bg',  '#E8F5E9')
+        C_WARN = clr.get('warning_fg',    '#C0392B')
+
+        BG = self.app.style.lookup('AppBackground.TFrame', 'background')
 
         SECTION_COLORS = [
             '#1565C0', '#2E7D32', '#4527A0', '#E65100',
@@ -8559,22 +8558,6 @@ class MODRundgangApp:
             return (f'#{int(r1+(r2-r1)*t):02x}'
                     f'{int(g1+(g2-g1)*t):02x}'
                     f'{int(b1+(b2-b1)*t):02x}')
-
-        def _shadow_card(parent, pady=(6, 2), padx=16):
-            outer = tk.Frame(parent, bg=C_SHADOW)
-            outer.pack(fill='x', padx=padx, pady=pady)
-            inner = tk.Frame(outer, bg=C_CARD)
-            inner.pack(fill='x', padx=1, pady=1)
-            return inner
-
-        def _card_header(card, text, bg_color, height=34):
-            """Solid-colour header bar with white label – fast, no per-pixel gradient."""
-            hdr = tk.Frame(card, bg=bg_color, height=height)
-            hdr.pack(fill='x')
-            hdr.pack_propagate(False)
-            tk.Label(hdr, text=f"◆  {text}", font=("Segoe UI", 10, "bold"),
-                     bg=bg_color, fg='white', anchor='w', padx=10).pack(
-                fill='both', expand=True)
 
         # ── TOP ACTION BAR ─────────────────────────────────────────────────────
         action_bar = tk.Frame(self.parent_frame, bg=C_BAR, pady=5)
@@ -8590,25 +8573,11 @@ class MODRundgangApp:
         email_btn.pack(side='left', padx=4)
         self.app._configure_mod_rundgang_button(email_btn, 'MOD_Email', '📧 E-Mail senden')
 
-        # ── FOOTER ACTION BAR (packed BEFORE scroll so expand works correctly) ─
-        footer = tk.Frame(self.parent_frame, bg=C_BAR, padx=14, pady=10)
-        footer.pack(fill='x', side='bottom')
-
-        reset_btn = ttk.Button(footer, text="🗑️ Zurücksetzen", command=self.reset_all)
-        reset_btn.pack(side='left', padx=5)
-        self.app._configure_mod_rundgang_button(reset_btn, 'MOD_Reset', '🗑️ Zurücksetzen')
-
-        pdf_btn = ttk.Button(footer, text="📄 PDF exportieren", command=self.export_pdf)
-        pdf_btn.pack(side='right', padx=5)
-        self.app._configure_mod_rundgang_button(pdf_btn, 'MOD_PDF', '📄 PDF exportieren')
-
         # ── GRADIENT HERO HEADER ───────────────────────────────────────────────
-        # bg=C_HDR1 so even before gradient renders it looks dark/correct
         hero = tk.Canvas(self.parent_frame, height=88, highlightthickness=0, bg=C_HDR1)
         hero.pack(fill='x')
 
         def _draw_hero(event=None):
-            """Single handler: gradient + static text + raises clock tag."""
             hero.delete('bg')
             hero.delete('static')
             ww = hero.winfo_width()
@@ -8617,17 +8586,15 @@ class MODRundgangApp:
             if hh < 4: hh = 88
             for i in range(hh):
                 hero.create_line(0, i, ww, i,
-                                 fill=_hex_lerp(C_HDR1, C_HDR2, i / max(hh-1, 1)),
+                                 fill=_hex_lerp(C_HDR1, C_HDR2, i / max(hh - 1, 1)),
                                  tags='bg')
-            hero.create_text(ww // 2, 33,
-                             text="🏨   MOD-Rundgang Protokoll",
+            hero.create_text(ww // 2, 33, text="🏨   MOD-Rundgang Protokoll",
                              font=("Segoe UI", 20, "bold"), fill='white',
                              anchor='center', tags='static')
             today_str = datetime.datetime.now().strftime("%A, %d. %B %Y")
             hero.create_text(ww // 2, 61, text=today_str,
                              font=("Segoe UI", 10), fill='#BDD5EA',
                              anchor='center', tags='static')
-            # Ensure clock (drawn by _mod_tick) stays on top of gradient
             try:
                 hero.tag_raise('clock')
             except tk.TclError:
@@ -8653,80 +8620,50 @@ class MODRundgangApp:
 
         _mod_tick()
 
-        # ── INPUT / PROGRESS CARD ──────────────────────────────────────────────
-        inp_card = _shadow_card(self.parent_frame, pady=(8, 4), padx=14)
+        # ── INPUT / PROGRESS (ttk widgets – reliable layout) ───────────────────
+        top_fields = ttk.Frame(self.parent_frame, style='Card.TFrame', padding=15)
+        top_fields.pack(fill='x', padx=20, pady=5)
 
-        inp_row = tk.Frame(inp_card, bg=C_CARD, padx=12, pady=10)
-        inp_row.pack(fill='x')
-
-        tk.Label(inp_row, text="👤  Name / MOD:", font=("Segoe UI", 11, "bold"),
-                 bg=C_CARD, fg='#2C3E50').grid(row=0, column=0, sticky='w', padx=(0, 4))
+        ttk.Label(top_fields, text="👤  Name / MOD:",
+                  font=("Segoe UI", 12, "bold")).pack(side='left', padx=5)
         self.mod_name_var = tk.StringVar()
-        tk.Entry(inp_row, textvariable=self.mod_name_var, width=28,
-                 font=("Segoe UI", 11), relief='solid', bd=1,
-                 fg='#2C3E50', insertbackground='#0078D7').grid(row=0, column=1,
-                                                                 sticky='w', padx=(0, 16))
-        tk.Label(inp_row, text="📅  Datum:", font=("Segoe UI", 11, "bold"),
-                 bg=C_CARD, fg='#2C3E50').grid(row=0, column=2, sticky='w', padx=(0, 4))
+        ttk.Entry(top_fields, textvariable=self.mod_name_var, width=28,
+                  font=("Segoe UI", 12)).pack(side='left', padx=5)
+
+        ttk.Label(top_fields, text="📅  Datum:",
+                  font=("Segoe UI", 12, "bold")).pack(side='left', padx=(20, 5))
         self.date_var = tk.StringVar(value=datetime.date.today().strftime("%d.%m.%Y"))
-        tk.Entry(inp_row, textvariable=self.date_var, width=14,
-                 font=("Segoe UI", 11), relief='solid', bd=1,
-                 fg='#2C3E50').grid(row=0, column=3, sticky='w')
+        ttk.Entry(top_fields, textvariable=self.date_var, width=14,
+                  font=("Segoe UI", 12)).pack(side='left', padx=5)
 
-        prog_row = tk.Frame(inp_card, bg=C_CARD, padx=12, pady=(0, 10))
-        prog_row.pack(fill='x')
-        tk.Label(prog_row, text="Fortschritt:", font=("Segoe UI", 10, "bold"),
-                 bg=C_CARD, fg='#2C3E50').pack(side='left', padx=(0, 8))
-
-        self._mod_prog_canvas = tk.Canvas(prog_row, height=20, width=340,
-                                          highlightthickness=1, highlightbackground='#CFD8DC',
-                                          bg='#ECEFF1')
-        self._mod_prog_canvas.pack(side='left')
-        self._mod_prog_clr = (C_PG1, C_PG2)
-
-        self.progress_lbl = tk.Label(prog_row, text="0%", font=("Segoe UI", 10, "bold"),
-                                     bg=C_CARD, fg='#2C3E50', width=5)
-        self.progress_lbl.pack(side='left', padx=8)
         self.progress_var = tk.DoubleVar(value=0)
-        # NOTE: no ttk.Progressbar – custom canvas bar is used instead
+        self._mod_prog_canvas = tk.Canvas(top_fields, height=20, width=200,
+                                          highlightthickness=1,
+                                          highlightbackground='#CFD8DC',
+                                          bg='#ECEFF1')
+        self._mod_prog_canvas.pack(side='right', padx=(0, 5))
+        self._mod_prog_clr = (C_PG1, C_PG2)
+        self.progress_lbl = ttk.Label(top_fields, text="0%")
+        self.progress_lbl.pack(side='right', padx=5)
 
-        # ── SCROLL AREA ────────────────────────────────────────────────────────
-        # Use ttk.Frame for scroll_outer and scroll_frame (identical to proven
-        # original pattern) to ensure proper canvas-window resizing behaviour.
-        scroll_outer = ttk.Frame(self.parent_frame)
-        scroll_outer.pack(fill='both', expand=True)
+        # ── SCROLL AREA (EXACT original proven mechanism) ──────────────────────
+        container = ttk.Frame(self.parent_frame)
+        container.pack(fill='both', expand=True, padx=10, pady=5)
 
-        canvas = tk.Canvas(scroll_outer, highlightthickness=0, bg=C_PAGE)
-        sb = ttk.Scrollbar(scroll_outer, orient="vertical", command=canvas.yview)
-        self.scroll_frame = ttk.Frame(canvas)
+        canvas = tk.Canvas(container, highlightthickness=0, bg=BG)
+        sb = ttk.Scrollbar(container, orient="vertical", command=canvas.yview)
+        self.scroll_frame = ttk.Frame(canvas, style='AppBackground.TFrame')
 
         self.win_id = canvas.create_window((0, 0), window=self.scroll_frame, anchor="nw")
         canvas.configure(yscrollcommand=sb.set)
         canvas.pack(side="left", fill="both", expand=True)
         sb.pack(side="right", fill="y")
 
-        def _on_scroll_frame_configure(event):
-            canvas.configure(scrollregion=canvas.bbox("all"))
-
-        def _on_canvas_configure(event):
-            canvas.itemconfig(self.win_id, width=event.width)
-            # Also update scrollregion in case new width changes scroll_frame height
-            canvas.after_idle(lambda: canvas.configure(
-                scrollregion=canvas.bbox("all") or (0, 0, 0, 0)))
-
-        self.scroll_frame.bind("<Configure>", _on_scroll_frame_configure)
-        canvas.bind("<Configure>", _on_canvas_configure)
-
-        # Fallback: force scrollregion after a short delay so content is always visible
-        def _force_scrollregion():
-            try:
-                bb = canvas.bbox("all")
-                if bb:
-                    canvas.configure(scrollregion=bb)
-            except tk.TclError:
-                pass
-
-        canvas.after(200, _force_scrollregion)
+        # Original simple bindings (identical to the version that worked):
+        self.scroll_frame.bind("<Configure>",
+                               lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.bind("<Configure>",
+                    lambda e: canvas.itemconfig(self.win_id, width=e.width))
 
         def _on_mousewheel(event):
             if self.scroll_frame.winfo_height() > canvas.winfo_height():
@@ -8745,48 +8682,31 @@ class MODRundgangApp:
             for child in widget.winfo_children():
                 _bind_recursive(child)
 
-        # ── SECTION CARDS ──────────────────────────────────────────────────────
-        # Use ttk.LabelFrame as the outer container (proven to work inside canvas
-        # windows) and place the colored header tk.Frame *inside* it, so the
-        # tk children get proper widths from the already-sized ttk parent.
+        # ── SECTION CARDS (ttk.LabelFrame – original proven container type) ────
         self.ui_data = []
         for sec_idx, sec_def in enumerate(self.sections_def):
-            accent = SECTION_COLORS[sec_idx % len(SECTION_COLORS)]
-            lf = ttk.LabelFrame(self.scroll_frame, text='', padding=0)
-            lf.pack(fill='x', padx=12, pady=(6, 2))
-
-            # Coloured header bar inside the LabelFrame
-            hdr = tk.Frame(lf, bg=accent, height=34)
-            hdr.pack(fill='x')
-            hdr.pack_propagate(False)
-            tk.Label(hdr, text=f"◆  {sec_def['title']}",
-                     font=("Segoe UI", 10, "bold"),
-                     bg=accent, fg='white', anchor='w', padx=10
-                     ).pack(fill='both', expand=True)
-
-            tasks_frame = tk.Frame(lf, bg=C_CARD, padx=10, pady=6)
-            tasks_frame.pack(fill='x')
+            sec_frame = ttk.LabelFrame(self.scroll_frame,
+                                       text=f"  {sec_def['title']}  ",
+                                       padding=12)
+            sec_frame.pack(fill='x', pady=8, padx=5)
 
             tasks = []
-            first = True
             for t_text in sec_def['tasks']:
-                if not first:
-                    tk.Frame(tasks_frame, bg='#ECEFF1', height=1).pack(fill='x')
-                first = False
+                row = ttk.Frame(sec_frame)
+                row.pack(fill='x', pady=2)
 
                 v, c_v = tk.BooleanVar(), tk.StringVar()
-                row = tk.Frame(tasks_frame, bg=C_CARD, pady=3)
-                row.pack(fill='x')
 
                 is_warn = "!!!" in t_text or "ACHTUNG" in t_text
-                fg = C_WARN if is_warn else '#2C3E50'
+                fg = C_WARN if is_warn else "black"
                 fn = ("Segoe UI", 10, "bold") if is_warn else ("Segoe UI", 10)
 
-                cb = tk.Label(row, image=self.app.unchecked_image, cursor="hand2", bg=C_CARD)
-                cb.pack(side='left', padx=(4, 6))
+                cb = tk.Label(row, image=self.app.unchecked_image,
+                              cursor="hand2", bg=BG)
+                cb.pack(side='left', padx=5)
 
-                lbl = tk.Label(row, text=t_text, wraplength=780, fg=fg,
-                               bg=C_CARD, font=fn, anchor='w', justify='left')
+                lbl = tk.Label(row, text=t_text, wraplength=850,
+                               fg=fg, bg=BG, font=fn, anchor='w', justify='left')
                 lbl.pack(side='left', padx=5, fill='x', expand=True)
 
                 cmt_btn = ttk.Button(row, text="💬", width=3)
@@ -8796,11 +8716,12 @@ class MODRundgangApp:
                     "text": t_text, "var": v, "comment_var": c_v,
                     "cb": cb, "frame": row, "label": lbl,
                     "cmt_btn": cmt_btn,
-                    "done_bg": C_DONE, "default_bg": C_CARD,
+                    "done_bg": C_DONE, "default_bg": BG,
                 }
                 cmt_btn.config(command=lambda o=t_obj:
                                self._edit_comment_mod(o['comment_var'], o['text'],
-                                                      o['frame'], o['default_bg'], o['done_bg']))
+                                                      o['frame'], o['default_bg'],
+                                                      o['done_bg']))
                 cb.bind("<Button-1>",  lambda e, o=t_obj: self._toggle_task(o))
                 lbl.bind("<Button-1>", lambda e, o=t_obj: self._toggle_task(o))
                 tasks.append(t_obj)
@@ -8808,44 +8729,27 @@ class MODRundgangApp:
             self.ui_data.append({"title": sec_def['title'], "tasks": tasks})
 
         # ── ALARM CARD ─────────────────────────────────────────────────────────
-        alarm_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=0)
-        alarm_lf.pack(fill='x', padx=12, pady=(6, 2))
-        alarm_hdr = tk.Frame(alarm_lf, bg='#BF360C', height=34)
-        alarm_hdr.pack(fill='x')
-        alarm_hdr.pack_propagate(False)
-        tk.Label(alarm_hdr, text="🚨  Alarm-Status (An Rezeption auflaufend)",
-                 font=("Segoe UI", 10, "bold"), bg='#BF360C', fg='white',
-                 anchor='w', padx=10).pack(fill='both', expand=True)
-        alarm_body = tk.Frame(alarm_lf, bg=C_CARD, padx=14, pady=8)
-        alarm_body.pack(fill='x')
+        alarm_frame = ttk.LabelFrame(
+            self.scroll_frame,
+            text="  🚨  Alarm-Status (An Rezeption auflaufend)  ",
+            padding=12)
+        alarm_frame.pack(fill='x', pady=10, padx=5)
         self.alarms = ["Notruf Sauna", "Heizung Residence", "Heizung Kronsberg Tower",
                        "Heizung Deluxe Tower", "BMZ Brandmeldezentrale"]
         for a in self.alarms:
-            ar = tk.Frame(alarm_body, bg=C_CARD)
-            ar.pack(fill='x', pady=2)
-            dot = tk.Canvas(ar, width=12, height=12, bg=C_CARD, highlightthickness=0)
-            dot.create_oval(1, 1, 11, 11, fill='#FF5722', outline='')
-            dot.pack(side='left', padx=(0, 7))
-            tk.Label(ar, text=a, font=("Segoe UI", 10, "italic"),
-                     bg=C_CARD, fg='#BF360C').pack(side='left')
+            ttk.Label(alarm_frame, text=f"• {a}",
+                      font=("Segoe UI", 10, "italic")).pack(anchor='w', padx=20)
 
         # ── REPORT CARD ────────────────────────────────────────────────────────
-        report_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=0)
-        report_lf.pack(fill='x', padx=12, pady=(6, 2))
-        report_hdr = tk.Frame(report_lf, bg='#37474F', height=34)
-        report_hdr.pack(fill='x')
-        report_hdr.pack_propagate(False)
-        tk.Label(report_hdr,
-                 text="📝  Abschließender Bericht für Direktion & Frühdienst",
-                 font=("Segoe UI", 10, "bold"), bg='#37474F', fg='white',
-                 anchor='w', padx=10).pack(fill='both', expand=True)
-        report_body = tk.Frame(report_lf, bg=C_CARD, padx=12, pady=10)
-        report_body.pack(fill='x')
-        tc = tk.Frame(report_body, bg=C_CARD)
-        tc.pack(fill='x')
+        report_frame = ttk.LabelFrame(
+            self.scroll_frame,
+            text="  📝  Abschließender Bericht für Direktion & Frühdienst  ",
+            padding=12)
+        report_frame.pack(fill='x', pady=10, padx=5)
+        tc = ttk.Frame(report_frame)
+        tc.pack(fill='x', padx=5, pady=5)
         self.report_text = tk.Text(tc, height=6, font=("Segoe UI", 11), undo=True,
-                                   wrap=tk.WORD, padx=8, pady=8, relief='solid', bd=1,
-                                   fg='#2C3E50', insertbackground='#0078D7', bg='#FAFAFA')
+                                   wrap=tk.WORD, padx=8, pady=8, relief='sunken')
         self.report_text.pack(side='left', fill='both', expand=True)
         rtsb = ttk.Scrollbar(tc, orient="vertical", command=self.report_text.yview)
         rtsb.pack(side='right', fill='y')
@@ -8865,23 +8769,30 @@ class MODRundgangApp:
         self.report_text.bind("<Button-4>",   _on_report_wheel)
         self.report_text.bind("<Button-5>",   _on_report_wheel)
 
-        # ── SIGNATURE CARD ─────────────────────────────────────────────────────
-        sign_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=0)
-        sign_lf.pack(fill='x', padx=12, pady=(6, 10))
-        sign_hdr = tk.Frame(sign_lf, bg='#0078D7', height=3)
-        sign_hdr.pack(fill='x')
-        sign_inner = tk.Frame(sign_lf, bg=C_CARD, padx=15, pady=12)
-        sign_inner.pack(fill='x')
-        tk.Label(sign_inner, text="✍️  Digitale Unterschrift / Bestätigung:",
-                 font=("Segoe UI", 11, "bold"), bg=C_CARD, fg='#2C3E50').pack(side='left')
+        # ── SIGNATURE ──────────────────────────────────────────────────────────
+        sign_frame = ttk.Frame(self.scroll_frame, padding=20)
+        sign_frame.pack(fill='x')
+        ttk.Separator(sign_frame, orient='horizontal').pack(fill='x', pady=10)
+        ttk.Label(sign_frame, text="✍️  Digitale Unterschrift / Bestätigung:",
+                  font=("Segoe UI", 12, "bold")).pack(side='left')
         self.signed_var = tk.BooleanVar(value=False)
         self.sign_check = tk.Checkbutton(
-            sign_inner, text="Rundgang ordnungsgemäß abgeschlossen",
-            variable=self.signed_var, font=("Segoe UI", 11), command=self.save_state,
-            bg=C_CARD, fg='#2C3E50', selectcolor='#E8F5E9', activebackground=C_CARD,
-            cursor='hand2'
-        )
+            sign_frame, text="Rundgang ordnungsgemäß abgeschlossen",
+            variable=self.signed_var, font=("Segoe UI", 12),
+            command=self.save_state, bg=BG)
         self.sign_check.pack(side='left', padx=20)
+
+        # ── FOOTER ACTION BAR (packed after container so expand works) ─────────
+        footer = tk.Frame(self.parent_frame, bg=C_BAR, padx=14, pady=10)
+        footer.pack(fill='x')
+
+        reset_btn = ttk.Button(footer, text="🗑️ Zurücksetzen", command=self.reset_all)
+        reset_btn.pack(side='left', padx=5)
+        self.app._configure_mod_rundgang_button(reset_btn, 'MOD_Reset', '🗑️ Zurücksetzen')
+
+        pdf_btn = ttk.Button(footer, text="📄 PDF exportieren", command=self.export_pdf)
+        pdf_btn.pack(side='right', padx=5)
+        self.app._configure_mod_rundgang_button(pdf_btn, 'MOD_PDF', '📄 PDF exportieren')
 
         # ── MOUSEWHEEL BINDING ─────────────────────────────────────────────────
         canvas.bind("<MouseWheel>", _on_mousewheel)
