@@ -373,6 +373,16 @@ try:
 except ImportError:
     pil_available_for_rechnungen = False
 
+
+def _get_pdf_logo_path(settings, key):
+    """Gibt den konfigurierten Logo-Pfad für ein PDF-Dokument zurück.
+    Fällt auf das Standard-Logo zurück, wenn kein Pfad konfiguriert oder die Datei nicht vorhanden ist."""
+    path = settings.get('pdf_logo_paths', {}).get(key, '')
+    if path and os.path.exists(path):
+        return path
+    return resource_path("icons/bwp_logo.png")
+
+
 class OffeneRechnungenPDF(FPDF):
     """
     Erstellt eine PDF-Datei für die Liste der offenen Rechnungen.
@@ -1954,7 +1964,7 @@ class OffeneRechnungenApp:
                 except OSError: pass
                 
     def _generate_pdf(self, file_path):
-        pdf = OffeneRechnungenPDF(logo_path=resource_path("icons/bwp_logo.png"), datum_str=self.app.date_display_var.get())
+        pdf = OffeneRechnungenPDF(logo_path=_get_pdf_logo_path(self.app.current_settings, 'offene_rechnungen'), datum_str=self.app.date_display_var.get())
         pdf.add_page()
         col_configs = {'bk_ref':{'text':'BK','width_pct':0.076},'gruppenname':{'text':'Name','width_pct':0.147},'anreise':{'text':'Anr.','width_pct':0.065},'abreise':{'text':'Abr.','width_pct':0.065},'info_sent':{'text':'Info','width_pct':0.108},'info_kuerzel':{'text':'K.','width_pct':0.033},'info_datum':{'text':'Datum','width_pct':0.072},'erneut_sent':{'text':'Erneut','width_pct':0.108},'erneut_kuerzel':{'text':'K.','width_pct':0.033},'erneut_datum':{'text':'Datum','width_pct':0.072},'final_sent':{'text':'Final','width_pct':0.108},'final_kuerzel':{'text':'K.','width_pct':0.033},'final_datum':{'text':'Datum','width_pct':0.072}}
         
@@ -3139,7 +3149,7 @@ class LayoverApp:
 
         try:
             calculated_data = self._calculate_data()
-            logo_path = resource_path("icons/bwp_logo.png")
+            logo_path = _get_pdf_logo_path(self.app.current_settings, 'layover')
             pdf = LayoverPDF(logo_path=logo_path, datum_str=self.app.date_display_var.get())
             pdf.add_page()
             pdf.create_overview(self.data, calculated_data)
@@ -3488,6 +3498,7 @@ class NamenslistePDF(FPDF):
         
         self.processed_logo_path = None
         self.temp_logo_to_delete = None
+        self.logo_render_h = 0  # Gerenderete Logo-Höhe in mm bei w=40
 
         # --- Interne Logo-Verarbeitung ---
         source_logo_path = logo_path
@@ -3503,12 +3514,15 @@ class NamenslistePDF(FPDF):
             try:
                 with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
                     self.temp_logo_to_delete = temp_file.name
-                
+
                 img = Image.open(source_logo_path).convert("RGBA")
+                iw, ih = img.size
+                if iw > 0:
+                    self.logo_render_h = 40 * ih / iw  # proportionale Höhe bei w=40mm
                 background = Image.new("RGBA", img.size, (255, 255, 255))
                 background.paste(img, (0, 0), img)
                 background.convert("RGB").save(self.temp_logo_to_delete, "PNG")
-                
+
                 self.processed_logo_path = self.temp_logo_to_delete
             except Exception as e:
                 print(f"Fehler bei der Logo-Verarbeitung für PDF: {e}")
@@ -3528,13 +3542,21 @@ class NamenslistePDF(FPDF):
             print(f"PDF Font Warning (Namensliste): {e}")
 
     def header(self):
+        logo_w = 40
         if self.processed_logo_path and os.path.exists(self.processed_logo_path):
-            self.image(self.processed_logo_path, x=10, y=8, w=40)
-        
+            x_center = (self.w - logo_w) / 2
+            self.image(self.processed_logo_path, x=x_center, y=8, w=logo_w)
+
         self.set_font(self.font_family, '', 12)
         self.cell(0, 10, self.datum_str, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='R')
-        
-        self.ln(5)
+
+        # Y-Cursor sicherstellen: Text beginnt UNTER dem Logo
+        min_y = 8 + self.logo_render_h + 3
+        if self.get_y() < min_y:
+            self.set_y(min_y)
+        else:
+            self.ln(3)
+
         self.set_font(self.font_family, 'B', 11)
         self.cell(0, 7, f"Firmenname: {self.firmenname}", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
         self.set_font(self.font_family, '', 11)
@@ -3570,41 +3592,36 @@ class NamenslistePDF(FPDF):
         self.set_font(self.font_family, '', 8)
         self.cell(0, 10, f'Seite {self.page_no()}', 0, align='C')
 
-    def create_table(self, data, num_empty_rows=15):
-        self.set_font(self.font_family, 'B', 10)
-        self.set_fill_color(220, 220, 220)
-        
-        # ANPASSUNG: Spaltenbreiten für das Querformat optimiert (Gesamtbreite A4-Querformat: 277mm nutzbar)
-        col_widths = {"name": 50, "nationality": 25, "contact": 125, "car": 35, "signature": 42}
+    def create_table(self, data, num_empty_rows=15, col_widths=None):
+        DEFAULTS = {"name": 50, "nationality": 25, "contact": 125, "car": 35, "signature": 42}
+        cw = {k: int(col_widths.get(k, DEFAULTS[k])) if col_widths else DEFAULTS[k] for k in DEFAULTS}
 
-        self.cell(col_widths["name"], 8, "Nachname, Vorname", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
-        self.cell(col_widths["nationality"], 8, "Nationalität", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
-        self.cell(col_widths["contact"], 8, "E-Mail / Telefon", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
-        self.cell(col_widths["car"], 8, "PKW", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
-        self.cell(col_widths["signature"], 8, "Unterschrift", 1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C', fill=1)
+        def _draw_header():
+            self.set_font(self.font_family, 'B', 10)
+            self.set_fill_color(220, 220, 220)
+            self.cell(cw["name"],        8, "Nachname, Vorname", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
+            self.cell(cw["nationality"], 8, "Nationalität",      1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
+            self.cell(cw["contact"],     8, "E-Mail / Telefon",  1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
+            self.cell(cw["car"],         8, "PKW",               1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
+            self.cell(cw["signature"],   8, "Unterschrift",      1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C', fill=1)
 
+        _draw_header()
         self.set_font(self.font_family, '', 10)
         fill = False
         all_rows = data + ([{}] * num_empty_rows)
 
         for row in all_rows:
             if self.get_y() > (self.h - self.b_margin - 15):
-                 self.add_page()
-                 self.set_font(self.font_family, 'B', 10)
-                 self.set_fill_color(220, 220, 220)
-                 self.cell(col_widths["name"], 8, "Nachname, Vorname", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
-                 self.cell(col_widths["nationality"], 8, "Nationalität", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
-                 self.cell(col_widths["contact"], 8, "E-Mail / Telefon", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
-                 self.cell(col_widths["car"], 8, "PKW", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
-                 self.cell(col_widths["signature"], 8, "Unterschrift", 1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C', fill=1)
-                 self.set_font(self.font_family, '', 10)
+                self.add_page()
+                _draw_header()
+                self.set_font(self.font_family, '', 10)
 
             self.set_fill_color(245, 245, 245) if fill else self.set_fill_color(255, 255, 255)
-            self.cell(col_widths["name"], 10, row.get('name', ''), 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
-            self.cell(col_widths["nationality"], 10, row.get('nationality', ''), 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
-            self.cell(col_widths["contact"], 10, row.get('contact', ''), 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
-            self.cell(col_widths["car"], 10, row.get('car', ''), 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
-            self.cell(col_widths["signature"], 10, '', 1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L', fill=1)
+            self.cell(cw["name"],        10, row.get('name', ''),        1, new_x=XPos.RIGHT,  new_y=YPos.TOP,  align='L', fill=1)
+            self.cell(cw["nationality"], 10, row.get('nationality', ''), 1, new_x=XPos.RIGHT,  new_y=YPos.TOP,  align='L', fill=1)
+            self.cell(cw["contact"],     10, row.get('contact', ''),     1, new_x=XPos.RIGHT,  new_y=YPos.TOP,  align='L', fill=1)
+            self.cell(cw["car"],         10, row.get('car', ''),         1, new_x=XPos.RIGHT,  new_y=YPos.TOP,  align='L', fill=1)
+            self.cell(cw["signature"],   10, '',                         1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L', fill=1)
             fill = not fill
 
 
@@ -6086,10 +6103,11 @@ class TaxiOverlayWindow(SafeToplevel):
         
 class WeckrufPDF(FPDF):
     """ Erstellt eine PDF-Datei für die Weckrufliste. """
-    def __init__(self, data, title="Weckrufliste"):
+    def __init__(self, data, title="Weckrufliste", logo_path=None):
         super().__init__(orientation='P', unit='mm', format='A4')
         self.data = data
         self.title_text = title
+        self.logo_path = logo_path
         self.font_family = "Helvetica"
         try:
             font_dir = resource_path('fonts')
@@ -6099,10 +6117,12 @@ class WeckrufPDF(FPDF):
                 self.add_font("DejaVuSans", "", dejavu_sans_path)
                 self.add_font("DejaVuSans", "B", dejavu_sans_bold_path)
                 self.font_family = "DejaVuSans"
-        except Exception as e: 
+        except Exception as e:
             print(f"PDF Font Warning (Weckruf): {e}")
 
     def header(self):
+        if self.logo_path and os.path.exists(self.logo_path):
+            self.image(self.logo_path, x=10, y=8, w=30)
         self.set_font(self.font_family, 'B', 16)
         # KORREKTUR: Veralteten ln-Parameter ersetzt
         self.cell(0, 10, self.title_text, 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
@@ -6144,10 +6164,11 @@ class WeckrufPDF(FPDF):
 
 class TaxiPDF(FPDF):
     """ Erstellt eine PDF-Datei für die Taxibestellungen. """
-    def __init__(self, data, title="Taxibestellungen"):
+    def __init__(self, data, title="Taxibestellungen", logo_path=None):
         super().__init__(orientation='P', unit='mm', format='A4')
         self.data = data
         self.title_text = title
+        self.logo_path = logo_path
         self.font_family = "Helvetica"
         try:
             font_dir = resource_path('fonts')
@@ -6157,10 +6178,12 @@ class TaxiPDF(FPDF):
                 self.add_font("DejaVuSans", "", dejavu_sans_path)
                 self.add_font("DejaVuSans", "B", dejavu_sans_bold_path)
                 self.font_family = "DejaVuSans"
-        except Exception as e: 
+        except Exception as e:
             print(f"PDF Font Warning (Taxi): {e}")
 
     def header(self):
+        if self.logo_path and os.path.exists(self.logo_path):
+            self.image(self.logo_path, x=10, y=8, w=30)
         self.set_font(self.font_family, 'B', 16)
         # KORREKTUR: Veralteten ln-Parameter ersetzt
         self.cell(0, 10, self.title_text, 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
@@ -8758,12 +8781,12 @@ class MODRundgangApp:
             "alarms": self.alarms
         }
         
-        pdf = MODRundgangPDF(pdf_data, logo_path=resource_path("icons/bwp_logo.png"))
+        pdf = MODRundgangPDF(pdf_data, logo_path=_get_pdf_logo_path(self.app.current_settings, 'mod_rundgang'))
         pdf.add_page()
-        
+
         # Aufruf der korrigierten Methode
         pdf.create_content(self.ui_data)
-        
+
         pdf.output(path)
         SuccessToast(self.app.master, title="Archiviert", message=f"PDF im O-Laufwerk gespeichert.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
         self.app._open_folder(folder)
@@ -8810,7 +8833,7 @@ class MODRundgangApp:
                 "ui_data": self.ui_data
             }
             
-            pdf = MODRundgangPDF(pdf_data, logo_path=resource_path("icons/bwp_logo.png"))
+            pdf = MODRundgangPDF(pdf_data, logo_path=_get_pdf_logo_path(self.app.current_settings, 'mod_rundgang'))
             pdf.add_page()
             pdf.create_content(self.ui_data)
             pdf.output(temp_pdf_path)
@@ -12894,6 +12917,20 @@ class KassenprotokollApp:
         'overall_header_fg': '#ECEFF4',
         'overall_header_font_size': 14, 
         'header_logo_path': '',
+        'namensliste_col_widths': {
+            'name': 50, 'nationality': 25, 'contact': 125, 'car': 35, 'signature': 42,
+        },
+        'pdf_logo_paths': {
+            'offene_rechnungen': '',
+            'layover': '',
+            'namensliste': '',
+            'urlaubsantrag': '',
+            'ueberstundenantrag': '',
+            'weckruf': '',
+            'taxi': '',
+            'zimmerreservierung': '',
+            'mod_rundgang': '',
+        },
         'general_font_size': 14, 
         'number_font_size': 14, 
         'general_font_color': '#D8DEE9',
@@ -15853,7 +15890,7 @@ class KassenprotokollApp:
             file_name = f"Weckrufliste_{datetime.date.today().strftime('%Y-%m-%d')}.pdf"
             file_path = os.path.join(target_folder, file_name)
 
-            pdf = WeckrufPDF(self.weckruf_data_cache)
+            pdf = WeckrufPDF(self.weckruf_data_cache, logo_path=_get_pdf_logo_path(self.current_settings, 'weckruf'))
             pdf.add_page()
             pdf.create_table()
             pdf.output(file_path)
@@ -15870,7 +15907,7 @@ class KassenprotokollApp:
         try:
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_file:
                 temp_pdf_path = temp_file.name
-            pdf = WeckrufPDF(self.weckruf_data_cache)
+            pdf = WeckrufPDF(self.weckruf_data_cache, logo_path=_get_pdf_logo_path(self.current_settings, 'weckruf'))
             pdf.add_page()
             pdf.create_table()
             pdf.output(temp_pdf_path)
@@ -15893,7 +15930,7 @@ class KassenprotokollApp:
             file_name = f"Taxibestellungen_{datetime.date.today().strftime('%Y-%m-%d')}.pdf"
             file_path = os.path.join(target_folder, file_name)
 
-            pdf = TaxiPDF(self.taxi_data_cache)
+            pdf = TaxiPDF(self.taxi_data_cache, logo_path=_get_pdf_logo_path(self.current_settings, 'taxi'))
             pdf.add_page()
             pdf.create_table()
             pdf.output(file_path)
@@ -15910,7 +15947,7 @@ class KassenprotokollApp:
         try:
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_file:
                 temp_pdf_path = temp_file.name
-            pdf = TaxiPDF(self.taxi_data_cache)
+            pdf = TaxiPDF(self.taxi_data_cache, logo_path=_get_pdf_logo_path(self.current_settings, 'taxi'))
             pdf.add_page()
             pdf.create_table()
             pdf.output(temp_pdf_path)
@@ -27174,8 +27211,7 @@ class KassenprotokollApp:
         if not save_path: return
 
         try:
-            logo_path = resource_path("icons/bwp_logo.png")
-            pdf = UrlaubsantragPDF(antrag_data, logo_path=logo_path)
+            pdf = UrlaubsantragPDF(antrag_data, logo_path=_get_pdf_logo_path(self.current_settings, 'urlaubsantrag'))
             pdf.create_form()
             pdf.output(save_path)
             SuccessToast(self.master, title="Erfolg", message="Antrag als PDF gespeichert.", toast_type='success', colors=self.current_settings.get('toast_colors'))
@@ -27196,8 +27232,7 @@ class KassenprotokollApp:
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf_file:
                 temp_pdf_path = temp_pdf_file.name
 
-            logo_path = resource_path("icons/bwp_logo.png")
-            pdf = UrlaubsantragPDF(antrag_data, logo_path=logo_path)
+            pdf = UrlaubsantragPDF(antrag_data, logo_path=_get_pdf_logo_path(self.current_settings, 'urlaubsantrag'))
             pdf.create_form()
             pdf.output(temp_pdf_path)
 
@@ -29649,6 +29684,60 @@ class KassenprotokollApp:
         return new_row
     # ^^^^^ HIER ENDET DER NEUE CODEBLOCK ^^^^^
 
+    def _create_settings_namensliste_columns_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
+        """Spaltenbreiten der Namensliste-Tabelle konfigurieren (Summe = 277 mm für A4-Querformat)."""
+        TOTAL_WIDTH = 277
+        COLUMNS = [
+            ('name',        "Nachname, Vorname"),
+            ('nationality', "Nationalität"),
+            ('contact',     "E-Mail / Telefon"),
+            ('car',         "PKW"),
+            ('signature',   "Unterschrift"),
+        ]
+        DEFAULTS = self.default_settings.get('namensliste_col_widths', {})
+
+        frame = ttk.LabelFrame(parent_frame, text="Namensliste: Spaltenbreiten (mm, Summe = 277 mm)", style='TLabelframe')
+        frame.grid(row=start_row, column=0, columnspan=4, sticky='ew', padx=5, pady=8)
+        frame.columnconfigure(1, weight=1)
+
+        cfg = temp_settings.setdefault('namensliste_col_widths', dict(DEFAULTS))
+
+        col_vars = {}
+        total_var = tk.StringVar()
+
+        def update_total(*_):
+            try:
+                s = sum(v.get() for v in col_vars.values())
+                total_var.set(f"Summe: {s} mm")
+                total_lbl.config(foreground='green' if s == TOTAL_WIDTH else 'red')
+            except Exception:
+                pass
+
+        for i, (key, label) in enumerate(COLUMNS):
+            ttk.Label(frame, text=f"{label}:", anchor='w', width=22).grid(
+                row=i, column=0, sticky='w', padx=(8, 4), pady=3)
+            var = tk.IntVar(value=cfg.get(key, DEFAULTS.get(key, 40)))
+            col_vars[key] = var
+            sp = ttk.Spinbox(frame, from_=10, to=200, textvariable=var, width=7)
+            sp.grid(row=i, column=1, sticky='w', padx=4, pady=3)
+            ttk.Label(frame, text="mm").grid(row=i, column=2, sticky='w')
+            var.trace_add('write', lambda *_, k=key, v=var: (cfg.update({k: v.get()}), update_total()))
+
+        total_lbl = ttk.Label(frame, textvariable=total_var, font=('', 10, 'bold'))
+        total_lbl.grid(row=len(COLUMNS), column=0, columnspan=2, sticky='w', padx=8, pady=(6, 4))
+
+        def reset_defaults():
+            for key, var in col_vars.items():
+                var.set(DEFAULTS.get(key, 40))
+                cfg[key] = DEFAULTS.get(key, 40)
+            update_total()
+
+        ttk.Button(frame, text="Auf Standard zurücksetzen", command=reset_defaults).grid(
+            row=len(COLUMNS), column=2, columnspan=2, sticky='e', padx=8, pady=(6, 4))
+
+        dialog_vars['namensliste_col_width_vars'] = col_vars
+        update_total()
+        return start_row + 1
 
     def _create_settings_main_menu_buttons_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
         """Erstellt den Abschnitt zur Konfiguration der Hauptmenü-Kacheln (Tiles) im Einstellungsdialog."""
@@ -30559,7 +30648,13 @@ class KassenprotokollApp:
             
             if 'offene_rechnungen_icon_path_var' in dialog_vars:
                 temp_settings['offene_rechnungen_icon_path'] = dialog_vars['offene_rechnungen_icon_path_var'].get()
-            
+
+            if 'pdf_logo_path_vars' in dialog_vars:
+                if 'pdf_logo_paths' not in temp_settings:
+                    temp_settings['pdf_logo_paths'] = {}
+                for key, var in dialog_vars['pdf_logo_path_vars'].items():
+                    temp_settings['pdf_logo_paths'][key] = var.get()
+
             if 'window_width_var' in dialog_vars: temp_settings['window_width'] = dialog_vars['window_width_var'].get()
             if 'window_height_var' in dialog_vars: temp_settings['window_height'] = dialog_vars['window_height_var'].get()
             if 'tab_header_bold_var' in dialog_vars: temp_settings['tab_header_bold'] = dialog_vars['tab_header_bold_var'].get()
@@ -30625,6 +30720,7 @@ class KassenprotokollApp:
             
             self.current_settings = temp_settings
             self._save_settings()
+            canvas.unbind_all("<MouseWheel>")
             settings_window.destroy()
 
             self._apply_settings_to_styles()
@@ -30658,6 +30754,8 @@ class KassenprotokollApp:
                 messagebox.showinfo("Speicherort Geändert", "Der Datenspeicherort wurde geändert. Die Anwendung verwendet nun den neuen Pfad.\nBitte stellen Sie sicher, dass vorhandene Daten bei Bedarf manuell kopiert werden.", parent=self.master)
 
         def cancel_and_close_settings():
+            if canvas.winfo_exists():
+                canvas.unbind_all("<MouseWheel>")
             settings_window.destroy()
 
         # --- UI Aufbau ---
@@ -30685,20 +30783,28 @@ class KassenprotokollApp:
         settings_content_frame.bind("<Configure>", _on_frame_configure)
         canvas.bind("<Configure>", _on_canvas_configure)
 
+        def _on_mousewheel(event):
+            if canvas.winfo_exists():
+                canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
         settings_notebook = ttk.Notebook(settings_content_frame)
         settings_notebook.pack(fill='both', expand=True)
-        
+
         tab_general = ttk.Frame(settings_notebook, padding=10)
         tab_appearance = ttk.Frame(settings_notebook, padding=10)
         tab_content_logic = ttk.Frame(settings_notebook, padding=10)
-        
+        tab_pdf_logos = ttk.Frame(settings_notebook, padding=10)
+
         settings_notebook.add(tab_general, text="Allgemein")
         settings_notebook.add(tab_appearance, text="Darstellung")
         settings_notebook.add(tab_content_logic, text="Inhalte & Logik")
-        
+        settings_notebook.add(tab_pdf_logos, text="PDF-Logos")
+
         self._populate_general_settings_tab(tab_general, temp_settings, dialog_vars)
         self._populate_appearance_settings_tab(tab_appearance, temp_settings, dialog_vars)
         self._populate_content_logic_settings_tab(tab_content_logic, temp_settings, dialog_vars)
+        self._populate_pdf_logos_settings_tab(tab_pdf_logos, temp_settings, dialog_vars)
 
         settings_window.protocol("WM_DELETE_WINDOW", cancel_and_close_settings)
         
@@ -32025,8 +32131,9 @@ class KassenprotokollApp:
         # Fügt den neuen Verwaltungsabschnitt für die Kürzel hinzu
         row_idx = self._create_settings_kuerzel_management_section(parent_frame, temp_settings, start_row=row_idx)
         # ^^^^^^^^^^^^^^^^^^^^^^^^ ENDE DES NEUEN AUFRUFS ^^^^^^^^^^^^^^^^^^^^^^^^
-        
-        
+
+        row_idx = self._create_settings_namensliste_columns_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
+
         row_idx = self._create_settings_zimmerreservierung_email_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
 
         row_idx = self._create_settings_anrufliste_email_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
@@ -32073,6 +32180,112 @@ class KassenprotokollApp:
             entry_show = "*" if key == 'password' else None
             ttk.Entry(smtp_frame, textvariable=var, show=entry_show).grid(row=r, column=1, sticky='ew', padx=5, pady=3)
     
+    def _populate_pdf_logos_settings_tab(self, parent_frame, temp_settings, dialog_vars):
+        """Füllt den 'PDF-Logos'-Tab: Für jedes PDF-Dokument kann ein eigenes Logo gewählt werden."""
+
+        PDF_DOCUMENTS = [
+            ('offene_rechnungen',   "Offene Rechnungen"),
+            ('layover',             "Layover-Übersicht"),
+            ('namensliste',         "Namensliste"),
+            ('urlaubsantrag',       "Urlaubsantrag"),
+            ('ueberstundenantrag',  "Überstundenantrag"),
+            ('weckruf',             "Weckrufliste"),
+            ('taxi',                "Taxibestellungen"),
+            ('zimmerreservierung',  "Zimmerreservierung"),
+            ('mod_rundgang',        "MOD-Rundgang"),
+        ]
+
+        # Scrollbarer Bereich
+        canvas = tk.Canvas(parent_frame, borderwidth=0, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(parent_frame, orient="vertical", command=canvas.yview)
+        scroll_frame = ttk.Frame(canvas)
+        scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        canvas.bind("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
+
+        ttk.Label(scroll_frame, text="Wählen Sie für jedes PDF-Dokument ein eigenes Logo.\nLeere Auswahl verwendet das Standard-Logo.", justify='left').grid(
+            row=0, column=0, columnspan=5, sticky='w', padx=10, pady=(8, 14))
+
+        pdf_logo_paths = temp_settings.setdefault('pdf_logo_paths', {})
+        dialog_vars['pdf_logo_path_vars'] = {}
+
+        DEFAULT_LABEL = "(Standard-Logo)"
+        PREVIEW_W, PREVIEW_H = 80, 55
+
+        def make_row(row_idx, key, label):
+            ttk.Label(scroll_frame, text=label, width=22, anchor='w').grid(
+                row=row_idx, column=0, sticky='w', padx=(10, 4), pady=6)
+
+            path_var = tk.StringVar(value=pdf_logo_paths.get(key, ''))
+            dialog_vars['pdf_logo_path_vars'][key] = path_var
+
+            # Pfad-Anzeige (readonly)
+            display_var = tk.StringVar(value=path_var.get() or DEFAULT_LABEL)
+            entry = ttk.Entry(scroll_frame, textvariable=display_var, state='readonly', width=38)
+            entry.grid(row=row_idx, column=1, sticky='ew', padx=4, pady=6)
+
+            # Vorschau-Container
+            preview_container = ttk.Frame(scroll_frame, relief='sunken', width=PREVIEW_W + 4, height=PREVIEW_H + 4)
+            preview_container.grid(row=row_idx, column=2, padx=4, pady=6)
+            preview_container.grid_propagate(False)
+            preview_lbl = ttk.Label(preview_container, text="—")
+            preview_lbl.pack(expand=True)
+
+            def refresh_preview(path, lbl=preview_lbl):
+                try:
+                    load_path = path if (path and os.path.exists(path)) else None
+                    if not load_path:
+                        try:
+                            dp = resource_path("icons/bwp_logo.png")
+                            if os.path.exists(dp):
+                                load_path = dp
+                        except Exception:
+                            pass
+                    if load_path:
+                        img = Image.open(load_path)
+                        img.thumbnail((PREVIEW_W, PREVIEW_H))
+                        photo = ImageTk.PhotoImage(img)
+                        lbl.config(image=photo, text="")
+                        lbl.image = photo
+                    else:
+                        lbl.config(image='', text="Kein Logo")
+                        lbl.image = None
+                except Exception:
+                    lbl.config(image='', text="Fehler")
+                    lbl.image = None
+
+            refresh_preview(path_var.get())
+
+            def browse(k=key, pv=path_var, dv=display_var, rp=refresh_preview):
+                fpath = filedialog.askopenfilename(
+                    title=f"Logo für '{label}' auswählen",
+                    filetypes=[("Bilddateien", "*.png *.jpg *.jpeg"), ("Alle Dateien", "*.*")],
+                    parent=parent_frame.winfo_toplevel()
+                )
+                if fpath:
+                    pv.set(fpath)
+                    dv.set(fpath)
+                    temp_settings.setdefault('pdf_logo_paths', {})[k] = fpath
+                    rp(fpath)
+
+            def reset(k=key, pv=path_var, dv=display_var, rp=refresh_preview):
+                pv.set('')
+                dv.set(DEFAULT_LABEL)
+                temp_settings.setdefault('pdf_logo_paths', {})[k] = ''
+                rp('')
+
+            ttk.Button(scroll_frame, text="Durchsuchen...", command=browse, width=14).grid(
+                row=row_idx, column=3, padx=4, pady=6)
+            ttk.Button(scroll_frame, text="Standard", command=reset, width=10).grid(
+                row=row_idx, column=4, padx=(0, 10), pady=6)
+
+        scroll_frame.columnconfigure(1, weight=1)
+        for i, (key, label) in enumerate(PDF_DOCUMENTS):
+            make_row(i + 1, key, label)
+
     def _open_tagesabrechnung_history_dialog(self):
         history_data = self._load_tagesabrechnung_history()
         if not history_data:
@@ -32737,13 +32950,10 @@ class KassenprotokollApp:
             extra_infos = self.namensliste_extra_infos_var.get()
             datum_str = self.namensliste_datum_var.get().strip()
 
-            # Pfad zum originalen Logo-Icon holen
-            logo_path = resource_path("icons/bwp_logo.png")
-
             # Die PDF-Klasse kümmert sich intern um die Bildverarbeitung
-            pdf = NamenslistePDF(firmenname=firmenname, extra_infos=extra_infos, logo_path=logo_path, datum_str=datum_str)
+            pdf = NamenslistePDF(firmenname=firmenname, extra_infos=extra_infos, logo_path=_get_pdf_logo_path(self.current_settings, 'namensliste'), datum_str=datum_str)
             pdf.add_page()
-            pdf.create_table(self.namensliste_data_cache)
+            pdf.create_table(self.namensliste_data_cache, col_widths=self.current_settings.get('namensliste_col_widths'))
             
             save_path = filedialog.asksaveasfilename(
                 defaultextension=".pdf",
@@ -32779,16 +32989,14 @@ class KassenprotokollApp:
             firmenname = self.namensliste_firmenname_var.get()
             extra_infos = self.namensliste_extra_infos_var.get()
             datum_str = self.namensliste_datum_var.get().strip()
-            logo_path = resource_path("icons/bwp_logo.png")
-
             # Temporäre Datei für die PDF-Ausgabe erstellen
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf_file:
                 temp_pdf_path = temp_pdf_file.name
 
             # PDF-Instanz erstellen, die das Logo intern verarbeitet
-            pdf_instance = NamenslistePDF(firmenname=firmenname, extra_infos=extra_infos, logo_path=logo_path, datum_str=datum_str)
+            pdf_instance = NamenslistePDF(firmenname=firmenname, extra_infos=extra_infos, logo_path=_get_pdf_logo_path(self.current_settings, 'namensliste'), datum_str=datum_str)
             pdf_instance.add_page()
-            pdf_instance.create_table(self.namensliste_data_cache)
+            pdf_instance.create_table(self.namensliste_data_cache, col_widths=self.current_settings.get('namensliste_col_widths'))
             pdf_instance.output(temp_pdf_path)
 
             # PDF im Standard-Viewer öffnen
@@ -32887,10 +33095,10 @@ class KassenprotokollApp:
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf_file:
                 temp_pdf_path = temp_pdf_file.name
 
-            pdf = ZimmerreservierungPDF(entry_data)
+            pdf = ZimmerreservierungPDF(entry_data, logo_path=_get_pdf_logo_path(self.current_settings, 'zimmerreservierung'))
             pdf.create_form()
             pdf.output(temp_pdf_path)
-            
+
             SuccessToast(self.master, title="Druckvorschau wird geöffnet", message="Das Dokument wird in Ihrem PDF-Programm geöffnet.", toast_type='info', colors=self.current_settings.get('toast_colors'))
             self._open_file(temp_pdf_path)
             self._schedule_temp_file_cleanup(temp_pdf_path)
@@ -33201,7 +33409,7 @@ class KassenprotokollApp:
             temp_dir = tempfile.gettempdir()
             temp_pdf_path = os.path.join(temp_dir, f"Reservierung_{entry_data.get('id')}.pdf")
             
-            pdf = ZimmerreservierungPDF(entry_data, logo_path=resource_path("icons/bwp_logo.png"))
+            pdf = ZimmerreservierungPDF(entry_data, logo_path=_get_pdf_logo_path(self.current_settings, 'zimmerreservierung'))
             pdf.create_form()
             pdf.output(temp_pdf_path)
 
@@ -33750,7 +33958,7 @@ class KassenprotokollApp:
         )
         if not save_path: return
         try:
-            pdf = UeberstundenantragPDF(antrag_data, logo_path=resource_path("icons/bwp_logo.png"))
+            pdf = UeberstundenantragPDF(antrag_data, logo_path=_get_pdf_logo_path(self.current_settings, 'ueberstundenantrag'))
             pdf.create_form()
             pdf.output(save_path)
         except Exception as e:
@@ -33763,7 +33971,7 @@ class KassenprotokollApp:
         try:
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf_file:
                 temp_pdf_path = temp_pdf_file.name
-            pdf = UeberstundenantragPDF(antrag_data, logo_path=resource_path("icons/bwp_logo.png"))
+            pdf = UeberstundenantragPDF(antrag_data, logo_path=_get_pdf_logo_path(self.current_settings, 'ueberstundenantrag'))
             pdf.create_form()
             pdf.output(temp_pdf_path)
             self._open_file(temp_pdf_path)
