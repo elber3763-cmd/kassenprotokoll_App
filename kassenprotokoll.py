@@ -8328,37 +8328,57 @@ class MODRundgangPDF(FPDF):
         except: pass
 
     def header(self):
-        # Logo zeichnen
-        if self.logo_path and os.path.exists(self.logo_path):
-            # Logo bei X=10, Breite=35
-            self.image(self.logo_path, x=10, y=8, w=35)
-        
-        self.set_font(self.font_family, 'B', 15)
-        
-        # --- FIX START ---
-        # Wir verschieben den Cursor nach rechts, NEBEN das Logo.
-        # X = 10 (Rand) + 35 (Logo-Breite) + 5 (Abstand) = 50
-        # Y = 8 (Gleiche Höhe wie Logo-Start)
-        self.set_xy(50, 8)
-        
-        # cell(0) nutzt nun nur noch den verfügbaren Platz von X=50 bis zum rechten Rand.
-        # align='C' zentriert den Text innerhalb dieses verfügbaren Bereichs.
-        self.cell(0, 10, "M O D - R U N D G A N G   P R O T O K O L L", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
-        # --- FIX ENDE ---
+        HEADER_TOP = 8      # mm from top edge
+        MAX_LOGO_W = 35     # max logo width in mm
+        MAX_LOGO_H = 20     # max logo height in mm
 
-        self.set_font(self.font_family, '', 10)
-        
-        # Datumszeile
+        logo_bottom_y = HEADER_TOP  # tracks how far down the logo reaches
+
+        if self.logo_path and os.path.exists(self.logo_path):
+            try:
+                from PIL import Image as _PILImg
+                with _PILImg.open(self.logo_path) as _im:
+                    orig_w, orig_h = _im.size
+                if orig_w > 0 and orig_h > 0:
+                    scale = min(MAX_LOGO_W / orig_w, MAX_LOGO_H / orig_h)
+                    logo_w = orig_w * scale
+                    logo_h = orig_h * scale
+                else:
+                    logo_w, logo_h = MAX_LOGO_W, MAX_LOGO_H
+            except Exception:
+                logo_w, logo_h = MAX_LOGO_W, MAX_LOGO_H
+            # Vertical center within the max area
+            logo_y = HEADER_TOP + (MAX_LOGO_H - logo_h) / 2
+            self.image(self.logo_path, x=10, y=logo_y, w=logo_w)
+            logo_bottom_y = logo_y + logo_h
+
+        # Title – positioned to the right of the logo area
+        title_x = 10 + MAX_LOGO_W + 5
+        self.set_font(self.font_family, 'B', 15)
+        self.set_xy(title_x, HEADER_TOP)
+        self.cell(0, 10, "M O D - R U N D G A N G   P R O T O K O L L",
+                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
+
+        # Date / MOD line
         date_str = self.data.get('date', '')
         mod_name = self.data.get('mod_name', '')
-        
-        # Auch hier setzen wir X neu, damit es bündig aussieht (oder wir lassen es zentriert über alles)
-        # Da dies die zweite Zeile ist, zentrieren wir sie über die ganze Seite für Balance, 
-        # oder wir rücken sie auch ein. Hier lasse ich es zentriert über die volle Breite (LMARGIN), 
-        # da es unter dem Logo ist.
-        self.set_x(self.l_margin) 
-        self.cell(0, 7, f"Datum: {date_str} | Name / MOD: {mod_name}", new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
-        self.ln(5)
+        self.set_font(self.font_family, '', 10)
+        self.set_x(title_x)
+        self.cell(0, 7, f"Datum: {date_str}  |  Name / MOD: {mod_name}",
+                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
+
+        # Separator line – always below both logo and text
+        text_bottom_y = HEADER_TOP + 10 + 7  # title(10) + date(7) rows
+        sep_y = max(logo_bottom_y, text_bottom_y) + 3
+
+        self.set_draw_color(160, 160, 160)
+        self.set_line_width(0.4)
+        self.line(self.l_margin, sep_y, self.w - self.r_margin, sep_y)
+        self.set_draw_color(0, 0, 0)
+        self.set_line_width(0.2)
+
+        # Position cursor below the separator with a small gap
+        self.set_y(sep_y + 4)
 
     def footer(self):
         self.set_y(-15)
@@ -8512,209 +8532,348 @@ class MODRundgangApp:
         ]
 
     def _build_ui(self):
-        for w in self.parent_frame.winfo_children(): w.destroy()
-        
-        
-                # Button-Frame für Aktionen
-        button_frame = ttk.Frame(self.parent_frame, style='AppBackground.TFrame')
-        button_frame.pack(fill='x', padx=15, pady=10)
+        for w in self.parent_frame.winfo_children():
+            w.destroy()
 
-        # Speichern-Button (bereits vorhanden)
-        save_btn = ttk.Button(button_frame, text="💾 Speichern", command=self.save_state)
-        save_btn.pack(side='left', padx=5)
+        clr = self.app.current_settings.get('mod_rundgang_colors',
+              self.app.default_settings.get('mod_rundgang_colors', {}))
+        C_HDR1    = clr.get('header_from',   '#1E3A5F')
+        C_HDR2    = clr.get('header_to',     '#2980B9')
+        C_BAR     = clr.get('actionbar_bg',  '#1E2D40')
+        C_PG1     = clr.get('progress_from', '#00B09B')
+        C_PG2     = clr.get('progress_to',   '#4CAF50')
+        C_DONE    = clr.get('task_done_bg',  '#E8F5E9')
+        C_CARD    = clr.get('card_bg',       '#FFFFFF')
+        C_PAGE    = clr.get('page_bg',       '#F0F4F8')
+        C_SHADOW  = clr.get('shadow_color',  '#B0BEC5')
+        C_WARN    = clr.get('warning_fg',    '#C0392B')
 
-        # NEU: E-Mail-Button
-        email_btn = ttk.Button(button_frame, text="📧 E-Mail senden", 
-                              command=self._send_mod_checkliste_email)
-        email_btn.pack(side='left', padx=5)
+        SECTION_COLORS = [
+            '#1565C0', '#2E7D32', '#4527A0', '#E65100',
+            '#00695C', '#AD1457', '#37474F', '#6A1B9A',
+        ]
 
-        
-        # Header
-        header = ttk.Frame(self.parent_frame, style='AppBackground.TFrame')
-        header.pack(fill='x', padx=20, pady=10)
-        self.app._create_home_button(header).pack(side='left')
-        ttk.Label(header, text="MOD-Rundgang Protokoll", font=("Segoe UI", 24, "bold")).pack(side='left', padx=20)
-        
-        # Kopfbereich (MOD & DATUM)
-        top_fields = ttk.Frame(self.parent_frame, style='Card.TFrame', padding=15)
-        top_fields.pack(fill='x', padx=20, pady=5)
-        
-        ttk.Label(top_fields, text="Name / MOD:", font=("Segoe UI", 12, "bold")).pack(side='left', padx=5)
+        # ── HELPERS ───────────────────────────────────────────────────────────
+        def _hex_lerp(c1, c2, t):
+            r1,g1,b1 = int(c1[1:3],16), int(c1[3:5],16), int(c1[5:7],16)
+            r2,g2,b2 = int(c2[1:3],16), int(c2[3:5],16), int(c2[5:7],16)
+            return f'#{int(r1+(r2-r1)*t):02x}{int(g1+(g2-g1)*t):02x}{int(b1+(b2-b1)*t):02x}'
+
+        def _fill_gradient(canvas_w, c_from, c_to, vertical=True):
+            """Fill a Canvas with a linear gradient (called on <Configure>)."""
+            def _draw(event=None):
+                canvas_w.delete('gradient')
+                ww = canvas_w.winfo_width()
+                hh = canvas_w.winfo_height()
+                if ww < 2 or hh < 2:
+                    return
+                steps = hh if vertical else ww
+                for i in range(steps):
+                    col = _hex_lerp(c_from, c_to, i / max(steps - 1, 1))
+                    if vertical:
+                        canvas_w.create_line(0, i, ww, i, fill=col, tags='gradient')
+                    else:
+                        canvas_w.create_line(i, 0, i, hh, fill=col, tags='gradient')
+            canvas_w.bind('<Configure>', lambda e: _draw())
+            canvas_w.after_idle(_draw)
+
+        def _shadow_card(parent, pady=(6, 2), padx=16):
+            outer = tk.Frame(parent, bg=C_SHADOW)
+            outer.pack(fill='x', padx=padx, pady=pady)
+            inner = tk.Frame(outer, bg=C_CARD)
+            inner.pack(fill='x', padx=1, pady=1)
+            return inner
+
+        def _card_header(card, text, bg_color, height=34):
+            hdr = tk.Canvas(card, height=height, highlightthickness=0, bg=bg_color)
+            hdr.pack(fill='x')
+            def _draw(event=None):
+                hdr.delete('all')
+                ww = hdr.winfo_width()
+                if ww < 2: ww = 900
+                # horizontal gradient: solid left → 15 % darker right
+                r,g,b = int(bg_color[1:3],16), int(bg_color[3:5],16), int(bg_color[5:7],16)
+                for xi in range(ww):
+                    t = 1 - (xi / ww) * 0.18
+                    hdr.create_line(xi, 0, xi, height,
+                                    fill=f'#{int(r*t):02x}{int(g*t):02x}{int(b*t):02x}',
+                                    tags='all')
+                hdr.create_text(12, height // 2, text=f"◆  {text}",
+                                font=("Segoe UI", 10, "bold"), fill='white', anchor='w')
+            hdr.bind('<Configure>', lambda e: _draw())
+            hdr.after_idle(_draw)
+            return hdr
+
+        # ── TOP ACTION BAR ─────────────────────────────────────────────────────
+        action_bar = tk.Frame(self.parent_frame, bg=C_BAR, pady=5)
+        action_bar.pack(fill='x')
+        self.app._create_home_button(action_bar).pack(side='left', padx=8)
+
+        save_btn = ttk.Button(action_bar, text="💾 Speichern", command=self.save_state)
+        save_btn.pack(side='left', padx=4)
+        self.app._configure_mod_rundgang_button(save_btn, 'MOD_Save', '💾 Speichern')
+
+        email_btn = ttk.Button(action_bar, text="📧 E-Mail senden",
+                               command=self._send_mod_checkliste_email)
+        email_btn.pack(side='left', padx=4)
+        self.app._configure_mod_rundgang_button(email_btn, 'MOD_Email', '📧 E-Mail senden')
+
+        # ── GRADIENT HERO HEADER ───────────────────────────────────────────────
+        hero = tk.Canvas(self.parent_frame, height=88, highlightthickness=0)
+        hero.pack(fill='x')
+        _fill_gradient(hero, C_HDR1, C_HDR2)
+
+        def _draw_hero_static(event=None):
+            hero.delete('static')
+            ww = hero.winfo_width()
+            if ww < 2: ww = 900
+            hero.create_text(ww // 2, 34,
+                             text="🏨   MOD-Rundgang Protokoll",
+                             font=("Segoe UI", 20, "bold"), fill='white',
+                             anchor='center', tags='static')
+            today_str = datetime.datetime.now().strftime("%A, %d. %B %Y")
+            hero.create_text(ww // 2, 62, text=today_str,
+                             font=("Segoe UI", 10), fill='#BDD5EA',
+                             anchor='center', tags='static')
+
+        hero.bind('<Configure>', _draw_hero_static)
+        hero.after_idle(_draw_hero_static)
+
+        # Live clock (top-right corner of hero)
+        def _mod_tick():
+            if not hero.winfo_exists():
+                return
+            hero.delete('clock')
+            ww = hero.winfo_width()
+            if ww < 2: ww = 900
+            hero.create_text(ww - 16, 44,
+                             text=datetime.datetime.now().strftime("🕐 %H:%M:%S"),
+                             font=("Segoe UI", 13, "bold"), fill='white',
+                             anchor='e', tags='clock')
+            hero.after(1000, _mod_tick)
+
+        _mod_tick()
+
+        # ── INPUT / PROGRESS CARD ──────────────────────────────────────────────
+        inp_card = _shadow_card(self.parent_frame, pady=(8, 4), padx=14)
+
+        inp_row = tk.Frame(inp_card, bg=C_CARD, padx=12, pady=10)
+        inp_row.pack(fill='x')
+
+        tk.Label(inp_row, text="👤  Name / MOD:", font=("Segoe UI", 11, "bold"),
+                 bg=C_CARD, fg='#2C3E50').grid(row=0, column=0, sticky='w', padx=(0, 4))
         self.mod_name_var = tk.StringVar()
-        ttk.Entry(top_fields, textvariable=self.mod_name_var, width=30, font=("Segoe UI", 12)).pack(side='left', padx=5)
-        
-        ttk.Label(top_fields, text="Datum:", font=("Segoe UI", 12, "bold")).pack(side='left', padx=(30, 5))
-        self.date_var = tk.StringVar(value=datetime.date.today().strftime("%d.%m.%Y"))
-        ttk.Entry(top_fields, textvariable=self.date_var, width=15, font=("Segoe UI", 12)).pack(side='left', padx=5)
-        
-        # Progress
-        self.progress_var = tk.DoubleVar(value=0)
-        self.pb = ttk.Progressbar(top_fields, variable=self.progress_var, maximum=100, length=200)
-        self.pb.pack(side='right', padx=10)
-        self.progress_lbl = ttk.Label(top_fields, text="0%")
-        self.progress_lbl.pack(side='right')
+        tk.Entry(inp_row, textvariable=self.mod_name_var, width=28,
+                 font=("Segoe UI", 11), relief='solid', bd=1,
+                 fg='#2C3E50', insertbackground='#0078D7').grid(row=0, column=1, sticky='w', padx=(0, 16))
 
-        # Scroll-Bereich
-        container = ttk.Frame(self.parent_frame)
-        container.pack(fill='both', expand=True, padx=20, pady=10)
-        
-        canvas = tk.Canvas(container, highlightthickness=0, bg=self.app.style.lookup('AppBackground.TFrame', 'background'))
-        sb = ttk.Scrollbar(container, orient="vertical", command=canvas.yview)
-        self.scroll_frame = ttk.Frame(canvas, style='AppBackground.TFrame')
-        
+        tk.Label(inp_row, text="📅  Datum:", font=("Segoe UI", 11, "bold"),
+                 bg=C_CARD, fg='#2C3E50').grid(row=0, column=2, sticky='w', padx=(0, 4))
+        self.date_var = tk.StringVar(value=datetime.date.today().strftime("%d.%m.%Y"))
+        tk.Entry(inp_row, textvariable=self.date_var, width=14,
+                 font=("Segoe UI", 11), relief='solid', bd=1,
+                 fg='#2C3E50').grid(row=0, column=3, sticky='w')
+
+        # Custom animated progress bar
+        prog_row = tk.Frame(inp_card, bg=C_CARD, padx=12, pady=(0, 10))
+        prog_row.pack(fill='x')
+        tk.Label(prog_row, text="Fortschritt:", font=("Segoe UI", 10, "bold"),
+                 bg=C_CARD, fg='#2C3E50').pack(side='left', padx=(0, 8))
+
+        self._mod_prog_canvas = tk.Canvas(prog_row, height=20, width=340,
+                                          highlightthickness=1, highlightbackground='#CFD8DC',
+                                          bg='#ECEFF1')
+        self._mod_prog_canvas.pack(side='left')
+        self._mod_prog_clr = (C_PG1, C_PG2)
+
+        self.progress_lbl = tk.Label(prog_row, text="0%", font=("Segoe UI", 10, "bold"),
+                                     bg=C_CARD, fg='#2C3E50', width=5)
+        self.progress_lbl.pack(side='left', padx=8)
+
+        # Invisible compat widget
+        self.progress_var = tk.DoubleVar(value=0)
+        self.pb = ttk.Progressbar(prog_row, variable=self.progress_var, maximum=100, length=1)
+
+        # ── SCROLL AREA ────────────────────────────────────────────────────────
+        scroll_outer = tk.Frame(self.parent_frame, bg=C_PAGE)
+        scroll_outer.pack(fill='both', expand=True)
+
+        canvas = tk.Canvas(scroll_outer, highlightthickness=0, bg=C_PAGE)
+        sb = ttk.Scrollbar(scroll_outer, orient="vertical", command=canvas.yview)
+        self.scroll_frame = tk.Frame(canvas, bg=C_PAGE)
+
         self.win_id = canvas.create_window((0, 0), window=self.scroll_frame, anchor="nw")
         canvas.configure(yscrollcommand=sb.set)
-        
         canvas.pack(side="left", fill="both", expand=True)
         sb.pack(side="right", fill="y")
-        
-        # Konfiguration des Scroll-Bereichs
-        self.scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+        self.scroll_frame.bind("<Configure>",
+                               lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         canvas.bind("<Configure>", lambda e: canvas.itemconfig(self.win_id, width=e.width))
 
-        # --- MAUSRAD-LOGIK START ---
         def _on_mousewheel(event):
-            # Nur scrollen, wenn der Inhalt größer ist als das Fenster
             if self.scroll_frame.winfo_height() > canvas.winfo_height():
                 if platform.system() == 'Windows':
-                    canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-                elif platform.system() == 'Darwin': # macOS
-                    canvas.yview_scroll(int(-1*event.delta), "units")
-                else: # Linux
+                    canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+                elif platform.system() == 'Darwin':
+                    canvas.yview_scroll(int(-1 * event.delta), "units")
+                else:
                     if event.num == 4: canvas.yview_scroll(-1, "units")
                     elif event.num == 5: canvas.yview_scroll(1, "units")
 
         def _bind_recursive(widget):
-            # Bindet das Mausrad an das Widget selbst
             widget.bind("<MouseWheel>", _on_mousewheel, add='+')
-            widget.bind("<Button-4>", _on_mousewheel, add='+')
-            widget.bind("<Button-5>", _on_mousewheel, add='+')
-            # Rekursiv für alle Kinder
+            widget.bind("<Button-4>",   _on_mousewheel, add='+')
+            widget.bind("<Button-5>",   _on_mousewheel, add='+')
             for child in widget.winfo_children():
                 _bind_recursive(child)
-        # --- MAUSRAD-LOGIK ENDE ---
 
-        # Sektionen rendern
+        # ── SECTION CARDS ──────────────────────────────────────────────────────
         self.ui_data = []
-        for sec_def in self.sections_def:
-            sec_frame = ttk.LabelFrame(self.scroll_frame, text=f" {sec_def['title']} ", padding=12)
-            sec_frame.pack(fill='x', pady=8, padx=5)
-            
-            tasks = []
-            for t_text in sec_def['tasks']:
-                row = ttk.Frame(sec_frame)
-                row.pack(fill='x', pady=2)
-                
-                v, c_v = tk.BooleanVar(), tk.StringVar()
-                
-                # Highlight Warnungen
-                fg = "black"
-                if "!!!" in t_text or "ACHTUNG" in t_text: fg = "red"
+        for sec_idx, sec_def in enumerate(self.sections_def):
+            accent = SECTION_COLORS[sec_idx % len(SECTION_COLORS)]
+            card = _shadow_card(self.scroll_frame)
+            _card_header(card, sec_def['title'], accent)
 
-                cb = tk.Label(row, image=self.app.unchecked_image, cursor="hand2", bg=self.app.style.lookup('AppBackground.TFrame', 'background'))
-                cb.pack(side='left', padx=5)
-                
-                lbl = ttk.Label(row, text=t_text, wraplength=850, foreground=fg)
+            tasks_frame = tk.Frame(card, bg=C_CARD, padx=10, pady=6)
+            tasks_frame.pack(fill='x')
+
+            tasks = []
+            first = True
+            for t_text in sec_def['tasks']:
+                if not first:
+                    tk.Frame(tasks_frame, bg='#ECEFF1', height=1).pack(fill='x')
+                first = False
+
+                v, c_v = tk.BooleanVar(), tk.StringVar()
+                row = tk.Frame(tasks_frame, bg=C_CARD, pady=3)
+                row.pack(fill='x')
+
+                fg = C_WARN if ("!!!" in t_text or "ACHTUNG" in t_text) else '#2C3E50'
+                fn = ("Segoe UI", 10, "bold") if ("!!!" in t_text or "ACHTUNG" in t_text) \
+                     else ("Segoe UI", 10)
+
+                cb = tk.Label(row, image=self.app.unchecked_image, cursor="hand2", bg=C_CARD)
+                cb.pack(side='left', padx=(4, 6))
+
+                lbl = tk.Label(row, text=t_text, wraplength=780, fg=fg,
+                               bg=C_CARD, font=fn, anchor='w', justify='left')
                 lbl.pack(side='left', padx=5, fill='x', expand=True)
-                
-                cmt_btn = ttk.Button(row, text="💬", width=3, command=lambda cv=c_v, txt=t_text: self._edit_comment(cv, txt))
+
+                cmt_btn = ttk.Button(row, text="💬", width=3,
+                                     command=lambda cv=c_v, txt=t_text, ro=row, cb_=None:
+                                     self._edit_comment_mod(cv, txt, ro, C_CARD, C_DONE))
                 cmt_btn.pack(side='right', padx=5)
-                
-                t_obj = {"text": t_text, "var": v, "comment_var": c_v, "cb": cb, "frame": row, "label": lbl}
-                cb.bind("<Button-1>", lambda e, o=t_obj: self._toggle_task(o))
+
+                t_obj = {
+                    "text": t_text, "var": v, "comment_var": c_v,
+                    "cb": cb, "frame": row, "label": lbl,
+                    "cmt_btn": cmt_btn,
+                    "done_bg": C_DONE, "default_bg": C_CARD,
+                    "accent": accent,
+                }
+                # Fix cmt_btn closure to have correct t_obj ref
+                cmt_btn.config(command=lambda cv=c_v, txt=t_text, o=t_obj:
+                               self._edit_comment_mod(cv, txt, o['frame'], o['default_bg'], o['done_bg']))
+
+                cb.bind("<Button-1>",  lambda e, o=t_obj: self._toggle_task(o))
+                lbl.bind("<Button-1>", lambda e, o=t_obj: self._toggle_task(o))
                 tasks.append(t_obj)
-            
+
             self.ui_data.append({"title": sec_def['title'], "tasks": tasks})
 
-        # Alarme
-        alarm_frame = ttk.LabelFrame(self.scroll_frame, text=" Alarm-Status (An Rezeption auflaufend) ", padding=12)
-        alarm_frame.pack(fill='x', pady=10, padx=5)
-        self.alarms = ["Notruf Sauna", "Heizung Residence", "Heizung Kronsberg Tower", "Heizung Deluxe Tower", "BMZ Brandmeldezentrale"]
+        # ── ALARM CARD ─────────────────────────────────────────────────────────
+        alarm_card = _shadow_card(self.scroll_frame)
+        _card_header(alarm_card, "🚨  Alarm-Status (An Rezeption auflaufend)", '#BF360C')
+        alarm_body = tk.Frame(alarm_card, bg=C_CARD, padx=14, pady=8)
+        alarm_body.pack(fill='x')
+        self.alarms = ["Notruf Sauna", "Heizung Residence", "Heizung Kronsberg Tower",
+                       "Heizung Deluxe Tower", "BMZ Brandmeldezentrale"]
         for a in self.alarms:
-            ttk.Label(alarm_frame, text=f"• {a}", font=("Segoe UI", 10, "italic")).pack(anchor='w', padx=20)
+            r = tk.Frame(alarm_body, bg=C_CARD)
+            r.pack(fill='x', pady=2)
+            dot = tk.Canvas(r, width=12, height=12, bg=C_CARD, highlightthickness=0)
+            dot.create_oval(1, 1, 11, 11, fill='#FF5722', outline='')
+            dot.pack(side='left', padx=(0, 7))
+            tk.Label(r, text=a, font=("Segoe UI", 10, "italic"),
+                     bg=C_CARD, fg='#BF360C').pack(side='left')
 
-        # Berichtsfeld MIT SCROLLLEISTE und Mausrad-Unterstützung
-        report_frame = ttk.LabelFrame(self.scroll_frame, text=" Abschließender Bericht für Direktion & Frühdienst ", padding=12)
-        report_frame.pack(fill='x', pady=15, padx=5)
-
-        # Container für Text + Scrollleiste
-        text_container = ttk.Frame(report_frame)
-        text_container.pack(fill='x', padx=5, pady=5)
-
-        # Textbereich
-        self.report_text = tk.Text(
-            text_container,
-            height=6,
-            font=("Segoe UI", 11),
-            undo=True,
-            wrap=tk.WORD,
-            padx=8,
-            pady=8,
-            relief="sunken"
-        )
+        # ── REPORT CARD ────────────────────────────────────────────────────────
+        report_card = _shadow_card(self.scroll_frame, pady=(6, 2))
+        _card_header(report_card, "📝  Abschließender Bericht für Direktion & Frühdienst", '#37474F')
+        report_body = tk.Frame(report_card, bg=C_CARD, padx=12, pady=10)
+        report_body.pack(fill='x')
+        tc = tk.Frame(report_body, bg=C_CARD)
+        tc.pack(fill='x')
+        self.report_text = tk.Text(tc, height=6, font=("Segoe UI", 11), undo=True,
+                                   wrap=tk.WORD, padx=8, pady=8, relief='solid', bd=1,
+                                   fg='#2C3E50', insertbackground='#0078D7',
+                                   bg='#FAFAFA')
         self.report_text.pack(side='left', fill='both', expand=True)
+        rtsb = ttk.Scrollbar(tc, orient="vertical", command=self.report_text.yview)
+        rtsb.pack(side='right', fill='y')
+        self.report_text.config(yscrollcommand=rtsb.set)
 
-        # Vertikale Scrollleiste
-        report_scrollbar = ttk.Scrollbar(
-            text_container,
-            orient="vertical",
-            command=self.report_text.yview
-        )
-        report_scrollbar.pack(side='right', fill='y')
-        self.report_text.config(yscrollcommand=report_scrollbar.set)
-
-        # ───────────────────────────────────────────────────────
-        # MAUSRAD-UNTERSTÜTZUNG FÜR DAS TEXTWIDGET (KERN DER LÖSUNG)
-        # ───────────────────────────────────────────────────────
-        def _on_report_mousewheel(event):
-            """Scrollt NUR das Textwidget und stoppt die Propagation zum Canvas."""
-            # Plattform-spezifisches Scrollen
+        def _on_report_wheel(event):
             if platform.system() == 'Windows':
                 self.report_text.yview_scroll(int(-1 * (event.delta / 120)), "units")
-            elif platform.system() == 'Darwin':  # macOS
+            elif platform.system() == 'Darwin':
                 self.report_text.yview_scroll(int(-1 * event.delta), "units")
-            else:  # Linux
-                if event.num == 4:
-                    self.report_text.yview_scroll(-1, "units")
-                elif event.num == 5:
-                    self.report_text.yview_scroll(1, "units")
-            # ⚠️ WICHTIG: Stoppt die Event-Propagation zum übergeordneten Canvas!
+            else:
+                if event.num == 4: self.report_text.yview_scroll(-1, "units")
+                elif event.num == 5: self.report_text.yview_scroll(1, "units")
             return "break"
 
-        # Binden für alle Plattformen (muss NACH der Widget-Erstellung erfolgen)
-        self.report_text.bind("<MouseWheel>", _on_report_mousewheel)  # Windows/macOS
-        self.report_text.bind("<Button-4>", _on_report_mousewheel)    # Linux (hoch)
-        self.report_text.bind("<Button-5>", _on_report_mousewheel)    # Linux (runter)
-        # ───────────────────────────────────────────────────────
-        # Unterschrift
-        sign_frame = ttk.Frame(self.scroll_frame, padding=20)
-        sign_frame.pack(fill='x')
-        ttk.Separator(sign_frame, orient='horizontal').pack(fill='x', pady=10)
-        
-        ttk.Label(sign_frame, text="Digitale Unterschrift / Bestätigung:", font=("Segoe UI", 12, "bold")).pack(side='left')
+        self.report_text.bind("<MouseWheel>", _on_report_wheel)
+        self.report_text.bind("<Button-4>",   _on_report_wheel)
+        self.report_text.bind("<Button-5>",   _on_report_wheel)
+
+        # ── SIGNATURE CARD ─────────────────────────────────────────────────────
+        sign_card = _shadow_card(self.scroll_frame, pady=(6, 10))
+        tk.Frame(sign_card, bg='#0078D7', height=3).pack(fill='x')
+        sign_inner = tk.Frame(sign_card, bg=C_CARD, padx=15, pady=12)
+        sign_inner.pack(fill='x')
+        tk.Label(sign_inner, text="✍️  Digitale Unterschrift / Bestätigung:",
+                 font=("Segoe UI", 11, "bold"), bg=C_CARD, fg='#2C3E50').pack(side='left')
         self.signed_var = tk.BooleanVar(value=False)
-        self.sign_check = tk.Checkbutton(sign_frame, text="Rundgang ordnungsgemäß abgeschlossen", variable=self.signed_var, font=("Segoe UI", 12), command=self.save_state)
+        self.sign_check = tk.Checkbutton(
+            sign_inner, text="Rundgang ordnungsgemäß abgeschlossen",
+            variable=self.signed_var, font=("Segoe UI", 11), command=self.save_state,
+            bg=C_CARD, fg='#2C3E50', selectcolor='#E8F5E9', activebackground=C_CARD,
+            cursor='hand2'
+        )
         self.sign_check.pack(side='left', padx=20)
 
-        # Footer Buttons
-        footer_btns = ttk.Frame(self.parent_frame, padding=15)
-        footer_btns.pack(fill='x')
-        ttk.Button(footer_btns, text="🗑️ Alles Zurücksetzen", command=self.reset_all).pack(side='left', padx=5)
-        ttk.Button(footer_btns, text="📄 PDF Export & O-Laufwerk Archivierung", command=self.export_pdf).pack(side='right', padx=5)
+        # ── FOOTER ACTION BAR ──────────────────────────────────────────────────
+        footer = tk.Frame(self.parent_frame, bg=C_BAR, padx=14, pady=10)
+        footer.pack(fill='x', side='bottom')
 
-        # --- MAUSRAD-BINDING AKTIVIEREN ---
-        # Dies sorgt dafür, dass das Scrollen überall funktioniert, auch über Labels und Buttons
+        reset_btn = ttk.Button(footer, text="🗑️ Zurücksetzen", command=self.reset_all)
+        reset_btn.pack(side='left', padx=5)
+        self.app._configure_mod_rundgang_button(reset_btn, 'MOD_Reset', '🗑️ Zurücksetzen')
+
+        pdf_btn = ttk.Button(footer, text="📄 PDF exportieren", command=self.export_pdf)
+        pdf_btn.pack(side='right', padx=5)
+        self.app._configure_mod_rundgang_button(pdf_btn, 'MOD_PDF', '📄 PDF exportieren')
+
+        # ── MOUSEWHEEL BINDING ─────────────────────────────────────────────────
         canvas.bind("<MouseWheel>", _on_mousewheel)
-        canvas.bind("<Button-4>", _on_mousewheel)
-        canvas.bind("<Button-5>", _on_mousewheel)
+        canvas.bind("<Button-4>",   _on_mousewheel)
+        canvas.bind("<Button-5>",   _on_mousewheel)
         _bind_recursive(self.scroll_frame)
 
     def _toggle_task(self, o):
         new_val = not o['var'].get()
         o['var'].set(new_val)
         o['cb'].config(image=self.app.checked_image if new_val else self.app.unchecked_image)
-        bg = self.app.current_settings.get('checklist_highlight_color', '#DFF0D8') if new_val else self.app.style.lookup('AppBackground.TFrame', 'background')
-        o['label'].config(background=bg)
+        done_bg = o.get('done_bg', '#E8F5E9')
+        default_bg = o.get('default_bg', '#FFFFFF')
+        bg = done_bg if new_val else default_bg
+        for widget in (o['frame'], o['cb'], o['label']):
+            try:
+                widget.config(bg=bg)
+            except tk.TclError:
+                pass
         self._update_progress()
         self.save_state()
 
@@ -8722,12 +8881,51 @@ class MODRundgangApp:
         res = simpledialog.askstring("Bemerkung", f"Notiz zu:\n{title}", initialvalue=var.get())
         if res is not None: var.set(res); self.save_state()
 
+    def _edit_comment_mod(self, var, title, row_frame, default_bg, done_bg):
+        """Extended comment editor that refreshes the comment button indicator."""
+        res = simpledialog.askstring("Notiz", f"Notiz zu:\n{title}", initialvalue=var.get())
+        if res is not None:
+            var.set(res)
+            self.save_state()
+
+    def _mod_draw_progress(self, value):
+        """Render the custom animated progress bar canvas."""
+        canvas = self._mod_prog_canvas
+        if not canvas.winfo_exists():
+            return
+        canvas.delete('all')
+        ww = canvas.winfo_width()
+        hh = canvas.winfo_height()
+        if ww < 2: ww = 340
+        if hh < 2: hh = 20
+        # Track background
+        canvas.create_rectangle(0, 0, ww, hh, fill='#ECEFF1', outline='')
+        fill_w = max(0, int(ww * value / 100))
+        if fill_w > 0:
+            c1, c2 = self._mod_prog_clr
+            r1,g1,b1 = int(c1[1:3],16), int(c1[3:5],16), int(c1[5:7],16)
+            r2,g2,b2 = int(c2[1:3],16), int(c2[3:5],16), int(c2[5:7],16)
+            for xi in range(fill_w):
+                t = xi / max(fill_w - 1, 1)
+                col = f'#{int(r1+(r2-r1)*t):02x}{int(g1+(g2-g1)*t):02x}{int(b1+(b2-b1)*t):02x}'
+                canvas.create_line(xi, 0, xi, hh, fill=col)
+            # 3D top-highlight strip
+            if fill_w > 4:
+                hl_h = max(3, hh // 4)
+                canvas.create_rectangle(1, 1, fill_w - 1, hl_h,
+                                        fill='#B2DFDB', outline='', width=0)
+        text_col = '#FFFFFF' if value >= 50 else '#37474F'
+        canvas.create_text(ww // 2, hh // 2, text=f"{value}%",
+                           font=("Segoe UI", 8, "bold"), fill=text_col)
+
     def _update_progress(self):
         total = sum(len(s['tasks']) for s in self.ui_data)
         done = sum(1 for s in self.ui_data for t in s['tasks'] if t['var'].get())
-        p = int((done/total)*100) if total > 0 else 0
+        p = int((done / total) * 100) if total > 0 else 0
         self.progress_var.set(p)
         self.progress_lbl.config(text=f"{p}%")
+        if hasattr(self, '_mod_prog_canvas'):
+            self._mod_draw_progress(p)
 
     def save_state(self):
         data = {
@@ -13315,6 +13513,26 @@ class KassenprotokollApp:
                 'Shuttle_DeleteDone': {'type': 'symbol', 'value': '🗑️ Erledigte löschen', 'is_active': True},
             },
 
+            'mod_rundgang_button_configs': {
+                'MOD_Save':  {'type': 'symbol', 'value': '💾 Speichern',       'is_active': True},
+                'MOD_Email': {'type': 'symbol', 'value': '📧 E-Mail senden',   'is_active': True},
+                'MOD_Reset': {'type': 'symbol', 'value': '🗑️ Zurücksetzen',   'is_active': True},
+                'MOD_PDF':   {'type': 'symbol', 'value': '📄 PDF exportieren', 'is_active': True},
+            },
+
+            'mod_rundgang_colors': {
+                'header_from':    '#1E3A5F',
+                'header_to':      '#2980B9',
+                'actionbar_bg':   '#1E2D40',
+                'progress_from':  '#00B09B',
+                'progress_to':    '#4CAF50',
+                'task_done_bg':   '#E8F5E9',
+                'card_bg':        '#FFFFFF',
+                'page_bg':        '#F0F4F8',
+                'shadow_color':   '#B0BEC5',
+                'warning_fg':     '#C0392B',
+            },
+
             
             
             
@@ -16806,6 +17024,55 @@ class KassenprotokollApp:
                 slant=base_slant
             )
             
+            self.style.configure(unique_style_name, font=custom_font)
+            button_widget.config(style=unique_style_name, text=btn_value)
+
+    def _configure_mod_rundgang_button(self, button_widget, config_key, default_text):
+        configs = self.current_settings.get('mod_rundgang_button_configs', {})
+        config = configs.get(config_key, {'type': 'symbol', 'value': default_text, 'is_active': True})
+
+        if not config.get('is_active', True):
+            try:
+                button_widget.pack_forget()
+            except tk.TclError:
+                pass
+            return
+
+        style_cfg = self.current_settings.get('list_views_button_style', self.default_settings['list_views_button_style'])
+        icon_size = style_cfg.get('icon_size', 24)
+        btn_type = config.get('type', 'symbol')
+        btn_value = config.get('value', default_text)
+
+        if not hasattr(self, 'mod_rundgang_button_images'):
+            self.mod_rundgang_button_images = {}
+
+        if btn_type == 'image' and btn_value and os.path.exists(btn_value) and Image and ImageTk:
+            try:
+                img = Image.open(btn_value).resize((icon_size, icon_size), Image.Resampling.LANCZOS)
+                photo = ImageTk.PhotoImage(img)
+                self.mod_rundgang_button_images[config_key] = photo
+                button_widget.image = photo
+                button_widget.config(image=photo, text="", compound='center')
+            except Exception as e:
+                print(f"Fehler beim Laden des Bildes für Button '{config_key}': {e}")
+                button_widget.config(text=default_text, image="")
+        else:
+            unique_style_name = f"{config_key}.{icon_size}px.TButton"
+            try:
+                base_font_info = tkFont.Font(font=self.style.lookup('TButton', 'font'))
+                base_family = base_font_info.actual("family")
+                base_weight = base_font_info.actual("weight")
+                base_slant = base_font_info.actual("slant")
+            except (tk.TclError, AttributeError):
+                base_family = "Segoe UI"
+                base_weight = "normal"
+                base_slant = "roman"
+            custom_font = tkFont.Font(
+                family=base_family,
+                size=-abs(icon_size),
+                weight=base_weight,
+                slant=base_slant
+            )
             self.style.configure(unique_style_name, font=custom_font)
             button_widget.config(style=unique_style_name, text=btn_value)
 
@@ -29047,6 +29314,8 @@ class KassenprotokollApp:
         row_idx = self._create_settings_offene_rechnungen_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         row_idx = self._create_settings_offene_rechnungen_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         row_idx = self._create_settings_auth_code_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
+        row_idx = self._create_generic_button_config_section(parent_frame, temp_settings, dialog_vars, "MOD-Rundgang: Button-Icons", 'mod_rundgang_button_configs', ['MOD_Save', 'MOD_Email', 'MOD_Reset', 'MOD_PDF'], row_idx)
+        row_idx = self._create_settings_mod_rundgang_colors_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         row_idx = self._create_settings_layover_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         row_idx = self._create_settings_list_views_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         
@@ -29198,6 +29467,55 @@ class KassenprotokollApp:
         
         return start_row + 1
     
+    def _create_settings_mod_rundgang_colors_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
+        """Farbkonfiguration für den MOD-Rundgang Bereich."""
+        frame = ttk.LabelFrame(parent_frame, text="MOD-Rundgang: Farbdesign", style='TLabelframe')
+        frame.grid(row=start_row, column=0, columnspan=4, sticky='ew', padx=5, pady=10)
+        frame.columnconfigure(1, weight=1)
+
+        key_labels = {
+            'header_from':   'Header-Verlauf (Start)',
+            'header_to':     'Header-Verlauf (Ende)',
+            'actionbar_bg':  'Aktionsleiste Hintergrund',
+            'progress_from': 'Fortschrittsbalken (Start)',
+            'progress_to':   'Fortschrittsbalken (Ende)',
+            'task_done_bg':  'Erledigte Aufgabe Hintergrund',
+            'card_bg':       'Karten-Hintergrund',
+            'page_bg':       'Seiten-Hintergrund',
+            'shadow_color':  'Schatten-Farbe',
+            'warning_fg':    'Warnungstext-Farbe',
+        }
+
+        if 'mod_rundgang_colors' not in dialog_vars:
+            dialog_vars['mod_rundgang_colors'] = {}
+
+        current_colors = temp_settings.get('mod_rundgang_colors',
+                         self.default_settings.get('mod_rundgang_colors', {}))
+
+        for row_i, (k, label_text) in enumerate(key_labels.items()):
+            default_val = self.default_settings.get('mod_rundgang_colors', {}).get(k, '#FFFFFF')
+            initial = current_colors.get(k, default_val)
+
+            ttk.Label(frame, text=f"{label_text}:").grid(row=row_i, column=0, sticky='w', padx=5, pady=3)
+            cv = tk.StringVar(value=initial)
+            dialog_vars['mod_rundgang_colors'][k] = cv
+
+            swatch = tk.Label(frame, textvariable=cv, width=12, relief='solid', borderwidth=1, bg=initial)
+            swatch.grid(row=row_i, column=1, sticky='w', padx=5)
+
+            def _pick(k=k, v=cv, sw=swatch):
+                res = colorchooser.askcolor(title=f"Farbe für '{k}'", initialcolor=v.get(),
+                                            parent=parent_frame.winfo_toplevel())
+                if res and res[1]:
+                    hex_c = res[1].upper()
+                    v.set(hex_c)
+                    sw.config(bg=hex_c)
+                    temp_settings.setdefault('mod_rundgang_colors', {})[k] = hex_c
+
+            ttk.Button(frame, text="Farbe wählen...", command=_pick).grid(row=row_i, column=2, padx=5, pady=2)
+
+        return start_row + 1
+
     def _create_settings_offene_rechnungen_buttons_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
         """Erstellt den Abschnitt für die Buttons im Bereich 'Offene Rechnungen'."""
         settings_key = 'offene_rechnungen_button_configs'
