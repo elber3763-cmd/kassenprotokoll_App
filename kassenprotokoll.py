@@ -8587,12 +8587,8 @@ class MODRundgangApp:
         action_bar = tk.Frame(self.parent_frame, bg=C_BAR, pady=5)
         action_bar.pack(fill='x')
 
-        home_btn = self.app._create_home_button(action_bar)
+        home_btn = self.app._create_home_button(action_bar, bar_color=C_BAR)
         home_btn.pack(side='left', padx=8)
-        try:  # make home button blend into the bar if possible
-            home_btn.config(bg=C_BAR, activebackground=_lighten(C_BAR, 22))
-        except tk.TclError:
-            pass
 
         save_btn = _bar_btn(action_bar, "💾 Speichern", self.save_state)
         save_btn.pack(side='left', padx=4)
@@ -15235,7 +15231,13 @@ class KassenprotokollApp:
               for child in widget.winfo_children(): 
                    self.bind_mousewheel_recursively(child, func)
 
-    def _create_home_button(self, parent_frame):
+    def _create_home_button(self, parent_frame, bar_color=None):
+        """Create the home/back button.
+
+        If *bar_color* is given the button is a plain tk.Button that blends
+        seamlessly into a coloured toolbar (no themed border / grey background).
+        Without it the classic ttk.Button is returned (backwards-compatible).
+        """
         home_cfg = self.current_settings.get('home_button_config', self.default_settings['home_button_config'])
 
         if not home_cfg.get('is_visible', True):
@@ -15245,24 +15247,39 @@ class KassenprotokollApp:
         btn_type = home_cfg.get('type', 'text')
         img_path = home_cfg.get('image_path', '')
         icon_size = home_cfg.get('icon_size', 18)
-        
-        home_button = ttk.Button(parent_frame, command=lambda: self.show_page("Dashboard"))
 
-        # --- KORREKTUR START: Hier wird der NameError behoben ---
+        if bar_color:
+            def _lc(h, a=22):
+                return '#{:02x}{:02x}{:02x}'.format(
+                    min(255, int(h[1:3], 16) + a),
+                    min(255, int(h[3:5], 16) + a),
+                    min(255, int(h[5:7], 16) + a))
+            home_button = tk.Button(
+                parent_frame,
+                command=lambda: self.show_page("Dashboard"),
+                bg=bar_color, fg='white',
+                activebackground=_lc(bar_color),
+                activeforeground='white',
+                relief='flat', bd=0,
+                highlightthickness=0,
+                cursor='hand2',
+                font=("Segoe UI", 10))
+        else:
+            home_button = ttk.Button(parent_frame, command=lambda: self.show_page("Dashboard"))
+
         if btn_type == 'image' and img_path and os.path.exists(img_path) and pil_available:
-        # --- KORREKTUR ENDE ---
             try:
                 img = Image.open(img_path)
                 img_resized = img.resize((icon_size, icon_size), Image.Resampling.LANCZOS)
                 photo = ImageTk.PhotoImage(img_resized)
-                home_button.image = photo 
+                home_button.image = photo
                 home_button.config(image=photo, text=f" {btn_text}", compound='left')
             except Exception as e:
                 print(f"Error loading home button icon: {e}")
                 home_button.config(text=btn_text)
         else:
             home_button.config(text=btn_text)
-            
+
         return home_button
         
         
