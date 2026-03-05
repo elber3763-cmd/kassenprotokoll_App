@@ -8682,74 +8682,167 @@ class MODRundgangApp:
             for child in widget.winfo_children():
                 _bind_recursive(child)
 
-        # ── SECTION CARDS (ttk.LabelFrame – original proven container type) ────
+        # ── 3D CARD HELPERS ────────────────────────────────────────────────────
+        CB_SIZE = 22
+
+        def _lighten(hex_c, amt=25):
+            return '#{:02x}{:02x}{:02x}'.format(
+                min(255, int(hex_c[1:3], 16) + amt),
+                min(255, int(hex_c[3:5], 16) + amt),
+                min(255, int(hex_c[5:7], 16) + amt))
+
+        def _darken(hex_c, amt=20):
+            return '#{:02x}{:02x}{:02x}'.format(
+                max(0, int(hex_c[1:3], 16) - amt),
+                max(0, int(hex_c[3:5], 16) - amt),
+                max(0, int(hex_c[5:7], 16) - amt))
+
+        def _draw_cb_unchecked(c):
+            """Draw a 3-D unchecked checkbox on a Canvas."""
+            c.delete('all')
+            s = CB_SIZE
+            c.create_rectangle(3, 3, s - 1, s - 1, fill='#90A4AE', outline='')
+            c.create_rectangle(1, 1, s - 3, s - 3, fill='#FFFFFF', outline='#B0BEC5')
+            c.create_line(2, 2, s - 4, 2,   fill='#ECEFF1', width=1)
+            c.create_line(2, 2, 2, s - 4,   fill='#ECEFF1', width=1)
+            c.create_line(3, s - 4, s - 4, s - 4, fill='#78909C', width=1)
+            c.create_line(s - 4, 3, s - 4, s - 4, fill='#78909C', width=1)
+
+        def _draw_cb_checked(c):
+            """Draw a 3-D checked (green) checkbox on a Canvas."""
+            c.delete('all')
+            s = CB_SIZE
+            c.create_rectangle(3, 3, s - 1, s - 1, fill='#1B5E20', outline='')
+            c.create_rectangle(1, 1, s - 3, s - 3, fill='#43A047', outline='#2E7D32')
+            c.create_line(2, 2, s - 4, 2, fill='#66BB6A', width=1)
+            # White checkmark
+            mx, my = s // 2 - 1, s - 6
+            c.create_line(5, s // 2, mx, my,
+                          fill='white', width=2, capstyle='round', joinstyle='round')
+            c.create_line(mx, my, s - 5, 5,
+                          fill='white', width=2, capstyle='round', joinstyle='round')
+
+        def _make_3d_card(parent_lf, header_color):
+            """Build a raised 3-D card inside a ttk.LabelFrame; return (card, header, body)."""
+            card = tk.Frame(parent_lf, bg='#FFFFFF', relief='raised', bd=2)
+            card.pack(fill='x')
+            tk.Frame(card, bg=header_color, height=4).pack(fill='x')  # accent strip
+            hdr_dark = _darken(header_color, 25)
+            hdr = tk.Frame(card, bg=hdr_dark, height=40)
+            hdr.pack(fill='x')
+            hdr.pack_propagate(False)
+            body = tk.Frame(card, bg='#FFFFFF', padx=12, pady=8)
+            body.pack(fill='x')
+            return card, hdr, hdr_dark, body
+
+        def _bind_card_hover(hdr, lbl, base, lighter):
+            def _on_e(e): hdr.config(bg=lighter); lbl.config(bg=lighter)
+            def _on_l(e): hdr.config(bg=base);    lbl.config(bg=base)
+            for w in (hdr, lbl):
+                w.bind('<Enter>', _on_e, add='+')
+                w.bind('<Leave>', _on_l, add='+')
+
+        # ── SECTION CARDS ──────────────────────────────────────────────────────
         self.ui_data = []
         for sec_idx, sec_def in enumerate(self.sections_def):
-            sec_frame = ttk.LabelFrame(self.scroll_frame,
-                                       text=f"  {sec_def['title']}  ",
-                                       padding=12)
-            sec_frame.pack(fill='x', pady=8, padx=5)
+            accent = SECTION_COLORS[sec_idx % len(SECTION_COLORS)]
+
+            # ttk.LabelFrame stays as direct scroll_frame child (MUST remain ttk)
+            lf = ttk.LabelFrame(self.scroll_frame, text='', padding=(5, 6, 5, 8))
+            lf.pack(fill='x', pady=(4, 0), padx=5)
+
+            card, hdr, hdr_dark, body = _make_3d_card(lf, accent)
+
+            title_lbl = tk.Label(hdr, text=f"◆  {sec_def['title']}",
+                                 bg=hdr_dark, fg='white',
+                                 font=("Segoe UI", 10, "bold"),
+                                 anchor='w', padx=14)
+            title_lbl.pack(fill='both', expand=True)
+            _bind_card_hover(hdr, title_lbl, hdr_dark, _lighten(hdr_dark, 20))
 
             tasks = []
-            for t_text in sec_def['tasks']:
-                row = ttk.Frame(sec_frame)
-                row.pack(fill='x', pady=2)
+            for t_idx, t_text in enumerate(sec_def['tasks']):
+                if t_idx > 0:
+                    tk.Frame(body, bg='#E8EDF1', height=1).pack(fill='x', padx=4)
 
                 v, c_v = tk.BooleanVar(), tk.StringVar()
+                row = tk.Frame(body, bg='#FFFFFF', pady=4)
+                row.pack(fill='x')
 
                 is_warn = "!!!" in t_text or "ACHTUNG" in t_text
-                fg = C_WARN if is_warn else "black"
+                fg = C_WARN if is_warn else '#263238'
                 fn = ("Segoe UI", 10, "bold") if is_warn else ("Segoe UI", 10)
 
-                cb = tk.Label(row, image=self.app.unchecked_image,
-                              cursor="hand2", bg=BG)
-                cb.pack(side='left', padx=5)
+                # 3-D canvas checkbox
+                cb_c = tk.Canvas(row, width=CB_SIZE, height=CB_SIZE,
+                                 bg='#FFFFFF', highlightthickness=0, cursor='hand2')
+                cb_c.pack(side='left', padx=(4, 8))
+                _draw_cb_unchecked(cb_c)
 
-                lbl = tk.Label(row, text=t_text, wraplength=850,
-                               fg=fg, bg=BG, font=fn, anchor='w', justify='left')
-                lbl.pack(side='left', padx=5, fill='x', expand=True)
+                lbl = tk.Label(row, text=t_text, wraplength=820,
+                               fg=fg, bg='#FFFFFF', font=fn,
+                               anchor='w', justify='left')
+                lbl.pack(side='left', padx=(0, 5), fill='x', expand=True)
 
                 cmt_btn = ttk.Button(row, text="💬", width=3)
                 cmt_btn.pack(side='right', padx=5)
 
                 t_obj = {
                     "text": t_text, "var": v, "comment_var": c_v,
-                    "cb": cb, "frame": row, "label": lbl,
+                    "cb": cb_c, "frame": row, "label": lbl,
                     "cmt_btn": cmt_btn,
-                    "done_bg": C_DONE, "default_bg": BG,
+                    "done_bg": C_DONE, "default_bg": '#FFFFFF',
+                    "draw_checked":   lambda c=cb_c: _draw_cb_checked(c),
+                    "draw_unchecked": lambda c=cb_c: _draw_cb_unchecked(c),
                 }
                 cmt_btn.config(command=lambda o=t_obj:
                                self._edit_comment_mod(o['comment_var'], o['text'],
                                                       o['frame'], o['default_bg'],
                                                       o['done_bg']))
-                cb.bind("<Button-1>",  lambda e, o=t_obj: self._toggle_task(o))
-                lbl.bind("<Button-1>", lambda e, o=t_obj: self._toggle_task(o))
+                cb_c.bind("<Button-1>",  lambda e, o=t_obj: self._toggle_task(o))
+                lbl.bind("<Button-1>",   lambda e, o=t_obj: self._toggle_task(o))
                 tasks.append(t_obj)
 
             self.ui_data.append({"title": sec_def['title'], "tasks": tasks})
 
         # ── ALARM CARD ─────────────────────────────────────────────────────────
-        alarm_frame = ttk.LabelFrame(
-            self.scroll_frame,
-            text="  🚨  Alarm-Status (An Rezeption auflaufend)  ",
-            padding=12)
-        alarm_frame.pack(fill='x', pady=10, padx=5)
+        alarm_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=(5, 6, 5, 8))
+        alarm_lf.pack(fill='x', pady=(4, 0), padx=5)
+        _, alarm_hdr, alarm_hdr_dark, alarm_body = _make_3d_card(alarm_lf, '#BF360C')
+        alarm_title = tk.Label(alarm_hdr,
+                               text="🚨  Alarm-Status (An Rezeption auflaufend)",
+                               bg=alarm_hdr_dark, fg='white',
+                               font=("Segoe UI", 10, "bold"), anchor='w', padx=14)
+        alarm_title.pack(fill='both', expand=True)
+        _bind_card_hover(alarm_hdr, alarm_title, alarm_hdr_dark,
+                         _lighten(alarm_hdr_dark, 20))
         self.alarms = ["Notruf Sauna", "Heizung Residence", "Heizung Kronsberg Tower",
                        "Heizung Deluxe Tower", "BMZ Brandmeldezentrale"]
         for a in self.alarms:
-            ttk.Label(alarm_frame, text=f"• {a}",
-                      font=("Segoe UI", 10, "italic")).pack(anchor='w', padx=20)
+            ar = tk.Frame(alarm_body, bg='#FFFFFF')
+            ar.pack(fill='x', pady=2)
+            dot = tk.Canvas(ar, width=10, height=10, bg='#FFFFFF', highlightthickness=0)
+            dot.create_oval(1, 1, 9, 9, fill='#FF5722', outline='#D84315')
+            dot.pack(side='left', padx=(0, 8))
+            tk.Label(ar, text=a, font=("Segoe UI", 10, "italic"),
+                     bg='#FFFFFF', fg='#BF360C').pack(side='left')
 
         # ── REPORT CARD ────────────────────────────────────────────────────────
-        report_frame = ttk.LabelFrame(
-            self.scroll_frame,
-            text="  📝  Abschließender Bericht für Direktion & Frühdienst  ",
-            padding=12)
-        report_frame.pack(fill='x', pady=10, padx=5)
-        tc = ttk.Frame(report_frame)
-        tc.pack(fill='x', padx=5, pady=5)
+        report_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=(5, 6, 5, 8))
+        report_lf.pack(fill='x', pady=(4, 0), padx=5)
+        _, report_hdr, report_hdr_dark, report_body = _make_3d_card(report_lf, '#37474F')
+        report_title = tk.Label(report_hdr,
+                                text="📝  Abschließender Bericht für Direktion & Frühdienst",
+                                bg=report_hdr_dark, fg='white',
+                                font=("Segoe UI", 10, "bold"), anchor='w', padx=14)
+        report_title.pack(fill='both', expand=True)
+        _bind_card_hover(report_hdr, report_title, report_hdr_dark,
+                         _lighten(report_hdr_dark, 20))
+        tc = tk.Frame(report_body, bg='#FFFFFF')
+        tc.pack(fill='x')
         self.report_text = tk.Text(tc, height=6, font=("Segoe UI", 11), undo=True,
-                                   wrap=tk.WORD, padx=8, pady=8, relief='sunken')
+                                   wrap=tk.WORD, padx=8, pady=8, relief='solid', bd=1,
+                                   fg='#263238', insertbackground='#0078D7', bg='#FAFAFA')
         self.report_text.pack(side='left', fill='both', expand=True)
         rtsb = ttk.Scrollbar(tc, orient="vertical", command=self.report_text.yview)
         rtsb.pack(side='right', fill='y')
@@ -8769,18 +8862,24 @@ class MODRundgangApp:
         self.report_text.bind("<Button-4>",   _on_report_wheel)
         self.report_text.bind("<Button-5>",   _on_report_wheel)
 
-        # ── SIGNATURE ──────────────────────────────────────────────────────────
-        sign_frame = ttk.Frame(self.scroll_frame, padding=20)
-        sign_frame.pack(fill='x')
-        ttk.Separator(sign_frame, orient='horizontal').pack(fill='x', pady=10)
-        ttk.Label(sign_frame, text="✍️  Digitale Unterschrift / Bestätigung:",
-                  font=("Segoe UI", 12, "bold")).pack(side='left')
+        # ── SIGNATURE CARD ─────────────────────────────────────────────────────
+        sign_lf = ttk.LabelFrame(self.scroll_frame, text='', padding=(5, 6, 5, 10))
+        sign_lf.pack(fill='x', pady=(4, 8), padx=5)
+        _, sign_hdr, sign_hdr_dark, sign_body = _make_3d_card(sign_lf, '#0078D7')
+        sign_title = tk.Label(sign_hdr,
+                              text="✍️  Digitale Unterschrift / Bestätigung",
+                              bg=sign_hdr_dark, fg='white',
+                              font=("Segoe UI", 10, "bold"), anchor='w', padx=14)
+        sign_title.pack(fill='both', expand=True)
+        _bind_card_hover(sign_hdr, sign_title, sign_hdr_dark,
+                         _lighten(sign_hdr_dark, 20))
         self.signed_var = tk.BooleanVar(value=False)
         self.sign_check = tk.Checkbutton(
-            sign_frame, text="Rundgang ordnungsgemäß abgeschlossen",
-            variable=self.signed_var, font=("Segoe UI", 12),
-            command=self.save_state, bg=BG)
-        self.sign_check.pack(side='left', padx=20)
+            sign_body, text="Rundgang ordnungsgemäß abgeschlossen",
+            variable=self.signed_var, font=("Segoe UI", 11),
+            command=self.save_state, bg='#FFFFFF', fg='#263238',
+            selectcolor='#E8F5E9', activebackground='#FFFFFF', cursor='hand2')
+        self.sign_check.pack(anchor='w')
 
         # ── FOOTER ACTION BAR (packed after container so expand works) ─────────
         footer = tk.Frame(self.parent_frame, bg=C_BAR, padx=14, pady=10)
@@ -8803,7 +8902,18 @@ class MODRundgangApp:
     def _toggle_task(self, o):
         new_val = not o['var'].get()
         o['var'].set(new_val)
-        o['cb'].config(image=self.app.checked_image if new_val else self.app.unchecked_image)
+        # Canvas checkbox or image checkbox
+        if 'draw_checked' in o:
+            if new_val:
+                o['draw_checked']()
+            else:
+                o['draw_unchecked']()
+        else:
+            try:
+                o['cb'].config(
+                    image=self.app.checked_image if new_val else self.app.unchecked_image)
+            except tk.TclError:
+                pass
         done_bg = o.get('done_bg', '#E8F5E9')
         default_bg = o.get('default_bg', '#FFFFFF')
         bg = done_bg if new_val else default_bg
