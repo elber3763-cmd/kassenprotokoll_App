@@ -1265,23 +1265,37 @@ class UmsatzsteuerRechnerApp:
         for widget in self.parent_frame.winfo_children():
             widget.destroy()
 
-        self.parent_frame.grid_rowconfigure(1, weight=1)
+        self.parent_frame.grid_rowconfigure(2, weight=1)
         self.parent_frame.grid_columnconfigure(0, weight=1)
 
-        # --- Kopfzeile (Header) ---
-        header = ttk.Frame(self.parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
-        
-        # Home Button nutzen (falls in der Haupt-App vorhanden)
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        action_bar = tk.Frame(self.parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
         if hasattr(self.app, '_create_home_button'):
-            self.app._create_home_button(header).grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        
-        ttk.Label(header, text="Umsatzsteuer-Rechner", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
+            _hb = self.app._create_home_button(action_bar, bar_color=_C_BAR)
+            if _hb:
+                _ipady_hb = self.app.current_settings.get('home_button_config', {}).get('ipady', 2)
+                _hb.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=_ipady_hb)
+        hero_c = tk.Canvas(self.parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Umsatzsteuer-Rechner",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
 
         # --- Hauptcontainer für den Rechner ---
         container = ttk.Frame(self.parent_frame, style='AppBackground.TFrame', padding=30)
-        container.grid(row=1, column=0, sticky='nsew')
+        container.grid(row=2, column=0, sticky='nsew')
         
         calc_frame = ttk.LabelFrame(container, text="Berechnung", padding=20)
         calc_frame.pack(pady=20)
@@ -1393,44 +1407,83 @@ class OffeneRechnungenApp:
     
     def _build_ui(self):
         for widget in self.parent_frame.winfo_children(): widget.destroy()
-        
-        self.parent_frame.grid_rowconfigure(1, weight=1); self.parent_frame.grid_columnconfigure(0, weight=1)
 
-        header = ttk.Frame(self.parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew'); header.columnconfigure(1, weight=1)
-        self.app._create_home_button(header).grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Offene Rechnungen", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        ttk.Label(header, textvariable=self.app.date_display_var, font=("Segoe UI", 12)).grid(row=0, column=2, sticky='e', padx=20)
-        
-        table_frame = ttk.Frame(self.parent_frame, padding=10)
-        table_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(5, 10))
+        _C_BAR  = '#0D2137'
+        _C_H1   = '#0D2137'
+        _C_H2   = '#1B6CA8'
+        _HDR_H  = 55
+
+        self.parent_frame.grid_rowconfigure(2, weight=1)
+        self.parent_frame.grid_columnconfigure(0, weight=1)
+
+        # ── Solid dark bar with home button ───────────────────────────────────
+        action_bar = tk.Frame(self.parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+
+        home_btn = self.app._create_home_button(action_bar, bar_color=_C_BAR)
+        if home_btn:
+            ipady_hb = self.app.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_btn.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+
+        # ── Gradient hero canvas with title + date ────────────────────────────
+        hero_c = tk.Canvas(self.parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+
+        date_lbl = tk.Label(hero_c, textvariable=self.app.date_display_var,
+                            font=("Segoe UI", 11), bg='#1B6CA8', fg='#D0E8FF',
+                            anchor='e', padx=6)
+
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _mid = _HDR_H // 2
+            _c.create_text(ww // 2, _mid, text="Offene Rechnungen",
+                           font=("Segoe UI", 20, "bold"), fill='white', anchor='center')
+            _dlw = date_lbl.winfo_reqwidth() or 200
+            _c.create_window(ww - 10, _mid, window=date_lbl, anchor='e')
+
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
+        # ── Table ─────────────────────────────────────────────────────────────
+        table_frame = tk.Frame(self.parent_frame, bg='#B8CCE0', bd=1)
+        table_frame.grid(row=2, column=0, sticky='nsew', padx=15, pady=(4, 2))
         self.tree = self._create_table_view(table_frame)
 
-        button_frame = ttk.Frame(self.parent_frame, style='AppBackground.TFrame', padding=(15, 10))
-        button_frame.grid(row=2, column=0, sticky='ew', pady=(0, 10))
-        
+        # ── Action buttons: dark bar ──────────────────────────────────────────
+        button_frame = tk.Frame(self.parent_frame, bg=_C_BAR)
+        button_frame.grid(row=3, column=0, sticky='ew', pady=(2, 0))
+
         design_cfg = self.app.current_settings.get('offene_rechnungen_design_configs', {})
         ipady_val = design_cfg.get('ipady', 8)
-        
+
         button_defs = {
-            'OR_Import': {'text': 'Import', 'command': self._on_import_excel},
-            'OR_DeleteAll': {'text': 'Papierkorb', 'command': self._on_delete_all},
-            'OR_Edit': {'text': 'Bearbeiten', 'command': self._on_edit_selected_entry},
-            'OR_Kommentar': {'text': '💬 Kommentar', 'command': self._on_comment_selected_entry},
-            'OR_Cleanup': {'text': '>7 Tage löschen', 'command': self._on_cleanup_old},
-            'OR_SavePDF': {'text': 'PDF Speichern', 'command': self._on_save_and_export_pdf},
-            'OR_Email': {'text': 'E-Mail', 'command': self._on_email},
-            'OR_History': {'text': 'Verlauf', 'command': self._on_show_history},
+            'OR_Import':    {'text': 'Import',          'command': self._on_import_excel},
+            'OR_DeleteAll': {'text': 'Papierkorb',      'command': self._on_delete_all},
+            'OR_Edit':      {'text': 'Bearbeiten',      'command': self._on_edit_selected_entry},
+            'OR_Kommentar': {'text': '💬 Kommentar',    'command': self._on_comment_selected_entry},
+            'OR_Cleanup':   {'text': '>7 Tage löschen', 'command': self._on_cleanup_old},
+            'OR_SavePDF':   {'text': 'PDF Speichern',   'command': self._on_save_and_export_pdf},
+            'OR_Email':     {'text': 'E-Mail',          'command': self._on_email},
+            'OR_History':   {'text': 'Verlauf',         'command': self._on_show_history},
         }
         for key, props in button_defs.items():
             btn = ttk.Button(button_frame, command=props['command'])
-            btn.pack(side='left', fill='x', expand=True, padx=5, ipady=ipady_val)
+            btn.pack(side='left', fill='x', expand=True, padx=4, pady=4, ipady=ipady_val)
             self._configure_or_button(btn, key, props['text'])
             self.action_buttons[key] = btn
 
     def _create_table_view(self, parent):
         parent.grid_rowconfigure(0, weight=1); parent.grid_columnconfigure(0, weight=1)
-        tree_frame = ttk.Frame(parent); tree_frame.grid(row=0, column=0, sticky='nsew')
+        tree_frame = tk.Frame(parent, bg='#B8CCE0')
+        tree_frame.grid(row=0, column=0, sticky='nsew')
         tree_frame.rowconfigure(0, weight=1); tree_frame.columnconfigure(0, weight=1)
 
         cols = {
@@ -1442,8 +1495,13 @@ class OffeneRechnungenApp:
         }
 
         style_name = "OffeneRechnungen.Treeview"
-        self.app.style.configure(style_name, rowheight=40, font=("Segoe UI", 12))
-        self.app.style.configure(f"{style_name}.Heading", font=("Segoe UI", 14, "bold"))
+        self.app.style.configure(style_name, rowheight=40, font=("Segoe UI", 12),
+                                 background='#FFFFFF', fieldbackground='#FFFFFF')
+        self.app.style.configure(f"{style_name}.Heading",
+                                 font=("Segoe UI", 14, "bold"),
+                                 background='#1B6CA8', foreground='white', relief='flat')
+        self.app.style.map(f"{style_name}.Heading",
+                           background=[('active', '#0D2137')])
 
         tree = ttk.Treeview(tree_frame, columns=list(cols.keys()), show='tree headings', style=style_name)
         tree.column("#0", width=40, stretch=tk.NO, anchor='center')
@@ -2792,7 +2850,7 @@ class AuthCodeApp:
         if not self.internal_db_frame.winfo_viewable():
             password = simpledialog.askstring("Passwort", "Bitte Passwort eingeben:", show='*', parent=self.parent_frame)
             if password == "code":
-                self.internal_db_frame.grid(row=2, column=0, sticky='nsew', padx=15, pady=10)
+                self.internal_db_frame.grid(row=3, column=0, sticky='nsew', padx=15, pady=10)
 
     def populate_internal_table(self):
         for item in self.internal_db_tree.get_children(): self.internal_db_tree.delete(item)
@@ -2916,11 +2974,27 @@ class AuthCodeApp:
 
     def _build_ui(self):
         for widget in self.parent_frame.winfo_children(): widget.destroy()
-        self.parent_frame.grid_rowconfigure(2, weight=1); self.parent_frame.grid_columnconfigure(0, weight=1)
-        header = ttk.Frame(self.parent_frame, style='AppBackground.TFrame'); header.grid(row=0, column=0, sticky='ew'); header.columnconfigure(1, weight=1)
-        self.app._create_home_button(header).grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Autorisierungscode-Finder", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        ui_frame = ttk.LabelFrame(self.parent_frame, text="Suche", padding=15); ui_frame.grid(row=1, column=0, sticky='ew', padx=15, pady=10); ui_frame.columnconfigure(1, weight=1)
+        self.parent_frame.grid_rowconfigure(3, weight=1); self.parent_frame.grid_columnconfigure(0, weight=1)
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        _ab = tk.Frame(self.parent_frame, bg=_C_BAR); _ab.grid(row=0, column=0, sticky='ew')
+        _hb = self.app._create_home_button(_ab, bar_color=_C_BAR)
+        if _hb:
+            _hb.grid(row=0, column=0, sticky='w', padx=8, pady=4,
+                     ipady=self.app.current_settings.get('home_button_config', {}).get('ipady', 2))
+        _hc = tk.Canvas(self.parent_frame, height=_HDR_H, highlightthickness=0, bd=0); _hc.grid(row=1, column=0, sticky='ew')
+        def _dh(ev=None, _c=_hc):
+            if not _c.winfo_exists(): return
+            _c.delete('all'); ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Autorisierungscode-Finder",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        _hc.bind('<Configure>', _dh); _hc.after(20, _dh)
+        ui_frame = ttk.LabelFrame(self.parent_frame, text="Suche", padding=15); ui_frame.grid(row=2, column=0, sticky='ew', padx=15, pady=10); ui_frame.columnconfigure(1, weight=1)
         
         try:
             base_font_family = tkFont.Font(font=self.app.style.lookup('TLabel', 'font')).actual('family')
@@ -3266,20 +3340,34 @@ class LayoverApp:
         for widget in self.parent_frame.winfo_children():
             widget.destroy()
 
-        self.parent_frame.grid_rowconfigure(1, weight=1)
+        self.parent_frame.grid_rowconfigure(2, weight=1)
         self.parent_frame.grid_columnconfigure(0, weight=1)
-        
-        header = ttk.Frame(self.parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
-        self.app._create_home_button(header).grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Layover Übersicht", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        
+
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        _ab = tk.Frame(self.parent_frame, bg=_C_BAR); _ab.grid(row=0, column=0, sticky='ew')
+        _hb = self.app._create_home_button(_ab, bar_color=_C_BAR)
+        if _hb:
+            _hb.grid(row=0, column=0, sticky='w', padx=8, pady=4,
+                     ipady=self.app.current_settings.get('home_button_config', {}).get('ipady', 2))
+        _hc = tk.Canvas(self.parent_frame, height=_HDR_H, highlightthickness=0, bd=0); _hc.grid(row=1, column=0, sticky='ew')
+        def _dh(ev=None, _c=_hc):
+            if not _c.winfo_exists(): return
+            _c.delete('all'); ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Layover Übersicht",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        _hc.bind('<Configure>', _dh); _hc.after(20, _dh)
+
         content_canvas = tk.Canvas(self.parent_frame, borderwidth=0, highlightthickness=0, bg=self.app.style.lookup('AppBackground.TFrame', 'background'))
         vsb = ttk.Scrollbar(self.parent_frame, orient="vertical", command=content_canvas.yview)
         content_canvas.configure(yscrollcommand=vsb.set)
-        content_canvas.grid(row=1, column=0, sticky='nsew', padx=15, pady=10)
-        vsb.grid(row=1, column=1, sticky='ns', pady=10)
+        content_canvas.grid(row=2, column=0, sticky='nsew', padx=15, pady=10)
+        vsb.grid(row=2, column=1, sticky='ns', pady=10)
         scrollable_frame = ttk.Frame(content_canvas, style='AppBackground.TFrame', padding=25)
         canvas_window = content_canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 
@@ -7552,25 +7640,47 @@ class TischreservierungApp:
         for widget in self.parent_frame.winfo_children():
             widget.destroy()
             
-        self.parent_frame.grid_rowconfigure(1, weight=1)
+        self.parent_frame.grid_rowconfigure(2, weight=1)
         self.parent_frame.grid_columnconfigure(0, weight=1)
 
-        header = ttk.Frame(self.parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
-        self.app._create_home_button(header).grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Tischreservierungen", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        self.app._add_time_display_to_header(header, 2)
-        
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        _ab = tk.Frame(self.parent_frame, bg=_C_BAR); _ab.grid(row=0, column=0, sticky='ew')
+        _hb = self.app._create_home_button(_ab, bar_color=_C_BAR)
+        if _hb:
+            _hb.grid(row=0, column=0, sticky='w', padx=8, pady=4,
+                     ipady=self.app.current_settings.get('home_button_config', {}).get('ipady', 2))
+        _hc = tk.Canvas(self.parent_frame, height=_HDR_H, highlightthickness=0, bd=0); _hc.grid(row=1, column=0, sticky='ew')
+        _time_lbl = tk.Label(_hc, textvariable=self.app.time_display_var,
+                             font=("Segoe UI", 11), bg='#1B6CA8', fg='#D0E8FF', padx=6)
+        _date_lbl = tk.Label(_hc, textvariable=self.app.date_display_var,
+                             font=("Segoe UI", 11), bg='#1B6CA8', fg='white', padx=6)
+        def _dh(ev=None, _c=_hc):
+            if not _c.winfo_exists(): return
+            _c.delete('all'); ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Tischreservierungen",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+            _tlw = _time_lbl.winfo_reqwidth() or 80
+            _c.create_window(ww - 10, _HDR_H // 2, window=_time_lbl, anchor='e')
+            _c.create_window(ww - 10 - _tlw - 6, _HDR_H // 2, window=_date_lbl, anchor='e')
+        _hc.bind('<Configure>', _dh); _hc.after(20, _dh)
+
         tree_frame = ttk.Frame(self.parent_frame, padding=(15, 8))
-        tree_frame.grid(row=1, column=0, sticky='nsew')
+        tree_frame.grid(row=2, column=0, sticky='nsew')
         tree_frame.columnconfigure(0, weight=1)
         tree_frame.rowconfigure(0, weight=1)
 
         self.style = self.app.style
         style_name = "Tischreservierung.Treeview"
         self.style.configure(style_name, rowheight=35, font=("Segoe UI", 12))
-        self.style.configure(f"{style_name}.Heading", font=("Segoe UI", 14, "bold"))
+        self.style.configure(f"{style_name}.Heading", font=("Segoe UI", 14, "bold"),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map(f"{style_name}.Heading", background=[('active', '#0D2137')])
         
         columns = ("datum", "uhrzeit", "name", "personen", "telefon", "angenommen_von", "wuensche")
         self.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", style=style_name)
@@ -7594,8 +7704,8 @@ class TischreservierungApp:
         TreeViewCellNavigation(self.tree, edit_command_func=self.app._edit_tischreservierung_entry)
         # ^^^^^ ENDE DER KORREKTUR ^^^^^
         
-        button_frame = ttk.Frame(self.parent_frame, style='AppBackground.TFrame', padding=(15, 10))
-        button_frame.grid(row=2, column=0, sticky='ew')
+        button_frame = tk.Frame(self.parent_frame, bg='#0D2137')
+        button_frame.grid(row=3, column=0, sticky='ew')
         
         style_cfg = self.app.current_settings.get('list_views_button_style', {})
         ipady = style_cfg.get('ipady', 5); pady = style_cfg.get('pady', 5)
@@ -7613,16 +7723,11 @@ class TischreservierungApp:
 
         for key, text, cmd in button_defs:
             if key is None:
-                ttk.Separator(button_frame, orient='vertical').pack(side='left', fill='y', padx=8, pady=4)
+                tk.Frame(button_frame, bg='#1B6CA8', width=2).pack(side='left', fill='y', padx=6, pady=4)
                 continue
-            
+
             btn = ttk.Button(button_frame, command=cmd)
-            
-            # vvvvv HIER IST DIE KORREKTUR vvvvv
-            # Der fehlende Parameter wird hier hinzugefügt, damit die korrekten Einstellungen geladen werden.
             self.app._configure_list_tab_button(btn, key, text, button_config_source=button_configs)
-            # ^^^^^ HIER ENDET DIE KORREKTUR ^^^^^
-            
             btn.pack(side="left", padx=2, ipady=ipady, pady=pady)
             self.buttons[key] = btn
 
@@ -13217,6 +13322,7 @@ class KassenprotokollApp:
         self.dashboard_kasse_total_display_var = tk.StringVar(value="0,00 €")
         self.dashboard_tip_display_var = tk.StringVar(value="0,00 €")
         self.dashboard_entnahme_display_var = tk.StringVar(value="0,00 €")
+        self.dashboard_bargeld_diff_var = tk.StringVar(value="0,00 €")
         
         self.dashboard_item_configs = {
             "UMSATZ_FRUEH": {"var": self.dashboard_umsatz_frueh_input_var, "icon_key": "umsatz_frueh", "widget_type": "input"},
@@ -14017,7 +14123,7 @@ class KassenprotokollApp:
                 {'key': 'QUITTUNG_3', 'label': 'Quittung 3:', 'typ': 'EINGABE', 'formel_string': '', 'initialwert_eingabe': 0.0, 'reihenfolge': 2, 'aktiv': True, 'style': 'normal_input'},
                 {'key': 'DIVERSES', 'label': 'Diverses:', 'typ': 'EINGABE', 'formel_string': '', 'initialwert_eingabe': 0.0, 'reihenfolge': 3, 'aktiv': True, 'style': 'normal_input'},
                 {'key': 'SUMME_POSTEN', 'label': 'Summe Posten:', 'typ': 'FORMEL', 'formel_string': '_SUMME_BARGELD + _SUMME_BRIEFMARKEN + QUITTUNG_1 + QUITTUNG_2 + QUITTUNG_3 + DIVERSES', 'initialwert_eingabe': 0.0, 'reihenfolge': 10, 'aktiv': True, 'style': 'sum_display'},
-                {'key': 'SOLL', 'label': 'Soll:', 'typ': 'FESTWERT_AUS_EINSTELLUNG', 'formel_string': '_STARTING_FLOAT_VALUE', 'initialwert_eingabe': 0.0, 'reihenfolge': 11, 'aktiv': True, 'style': 'bold_display'},
+                {'key': 'SOLL', 'label': 'Soll:', 'typ': 'FESTWERT_AUS_EINSTELLUNG', 'formel_string': '_STARTING_FLOAT_VALUE', 'initialwert_eingabe': 0.0, 'reihenfolge': 11, 'aktiv': True, 'style': 'sum_display'},
                 {'key': 'UMSATZ_FRUEH', 'label': 'Umsatz Früh:', 'typ': 'EINGABE_KERN', 'formel_string': '', 'initialwert_eingabe': 0.0, 'reihenfolge': 12, 'aktiv': True, 'style': 'normal_input'},
                 {'key': 'UMSATZ_SPAET', 'label': 'Umsatz Spät:', 'typ': 'EINGABE_KERN', 'formel_string': '', 'initialwert_eingabe': 0.0, 'reihenfolge': 13, 'aktiv': True, 'style': 'normal_input'},
                 {'key': 'UMSATZ_TOTAL', 'label': 'Umsatz Total:', 'typ': 'FORMEL', 'formel_string': 'UMSATZ_FRUEH + UMSATZ_SPAET', 'initialwert_eingabe': 0.0, 'reihenfolge': 14, 'aktiv': True, 'style': 'diff_display_auto'},
@@ -15750,24 +15856,44 @@ class KassenprotokollApp:
         for widget in parent_frame.winfo_children():
             widget.destroy()
         
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
-        
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(0, weight=0)
-        header.columnconfigure(1, weight=1)
-        header.columnconfigure(2, weight=0)
 
-        home_button = self._create_home_button(header)
+        # ── Modern header: solid bar + gradient hero ───────────────────────────
+        _C_BAR = '#0D2137'
+        _C_H1  = '#0D2137'
+        _C_H2  = '#1B6CA8'
+        _HDR_H = 55
+
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
             ipady = self.current_settings.get('home_button_config', {}).get('ipady', 2)
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10, ipady=ipady)
-        
-        ttk.Label(header, text="Trinkgeldliste", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady)
 
-        content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8,8))
-        content_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(0, 8))
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Trinkgeldliste",
+                           font=("Segoe UI", 20, "bold"), fill='white', anchor='center')
+
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
+        content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8, 8))
+        content_frame.grid(row=2, column=0, sticky='nsew', padx=15, pady=(0, 8))
         content_frame.columnconfigure(0, weight=1)
         content_frame.rowconfigure(1, weight=1)
 
@@ -15781,40 +15907,67 @@ class KassenprotokollApp:
         list_font = tkFont.Font(family=base_font_family, size=font_size)
         bold_list_font = tkFont.Font(family=base_font_family, size=font_size, weight="bold")
 
+        # ── Modern palette (matches card sections) ────────────────────────────
+        _C_BAR2 = '#0D2137'   # dark bar bg
+        _C_FLT  = '#1565C0'   # filter bar bg
+        _C_SUM1 = '#1B5E20'   # sum footer gradient start
+        _C_SUM2 = '#388E3C'   # sum footer gradient end
+        _SUM_H  = 42
+
+        # ── Treeview: modern blue headings + alternating rows ─────────────────
         style_name = "Trinkgeld.Treeview"
-        self.style.configure(style_name, font=list_font, rowheight=int(font_size * 2.5))
-        self.style.configure(f"{style_name}.Heading", font=(base_font_family, font_size, 'bold'))
+        self.style.configure(style_name, font=list_font,
+                             rowheight=int(font_size * 2.5),
+                             background='#FFFFFF', fieldbackground='#FFFFFF')
+        self.style.configure(f"{style_name}.Heading",
+                             font=(base_font_family, font_size, 'bold'),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map(f"{style_name}.Heading",
+                       background=[('active', '#0D2137')])
 
-        top_control_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        top_control_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=(5, 2))
+        # ── Filter bar (dark blue with white labels) ──────────────────────────
+        filter_bar = tk.Frame(content_frame, bg=_C_FLT)
+        filter_bar.grid(row=0, column=0, sticky="ew", padx=0, pady=(0, 4))
 
-        ttk.Label(top_control_frame, text="Monat:", style='TLabel', font=list_font).pack(side="left", padx=(0, 2))
+        tk.Label(filter_bar, text="Monat:", bg=_C_FLT, fg='white',
+                 font=list_font).pack(side="left", padx=(12, 4), pady=7)
         months = [str(i) for i in range(1, 13)]
-        self.trinkgeld_month_combo = ttk.Combobox(top_control_frame, textvariable=self.current_trinkgeld_month_var,
-                                                  values=months, width=4, state="readonly", font=list_font)
-        self.trinkgeld_month_combo.pack(side="left", padx=(0, 10))
+        self.trinkgeld_month_combo = ttk.Combobox(
+            filter_bar, textvariable=self.current_trinkgeld_month_var,
+            values=months, width=4, state="readonly", font=list_font)
+        self.trinkgeld_month_combo.pack(side="left", padx=(0, 10), pady=6)
 
-        ttk.Label(top_control_frame, text="Jahr:", style='TLabel', font=list_font).pack(side="left", padx=(0, 2))
+        tk.Label(filter_bar, text="Jahr:", bg=_C_FLT, fg='white',
+                 font=list_font).pack(side="left", padx=(0, 4))
         current_year = datetime.datetime.now().year
         years = [str(y) for y in range(current_year - 5, current_year + 6)]
-        self.trinkgeld_year_combo = ttk.Combobox(top_control_frame, textvariable=self.current_trinkgeld_year_var,
-                                                 values=years, width=6, state="readonly", font=list_font)
-        self.trinkgeld_year_combo.pack(side="left", padx=(0, 10))
-        
-        ttk.Button(top_control_frame, text="Anzeigen", style='TButton',
-                   command=self._load_and_display_trinkgeld_for_period).pack(side="left", padx=(0,5))
+        self.trinkgeld_year_combo = ttk.Combobox(
+            filter_bar, textvariable=self.current_trinkgeld_year_var,
+            values=years, width=6, state="readonly", font=list_font)
+        self.trinkgeld_year_combo.pack(side="left", padx=(0, 12), pady=6)
 
-        tree_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        tree_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=5)
+        tk.Button(filter_bar, text="Anzeigen",
+                  command=self._load_and_display_trinkgeld_for_period,
+                  bg='#0D2137', fg='white', activebackground='#1B6CA8',
+                  activeforeground='white', relief='flat', bd=0,
+                  highlightthickness=0, cursor='hand2',
+                  font=list_font, padx=12).pack(side="left", pady=6)
+
+        # ── Treeview ──────────────────────────────────────────────────────────
+        tree_frame = tk.Frame(content_frame, bg='#B8CCE0', bd=1)
+        tree_frame.grid(row=1, column=0, sticky="nsew", padx=0, pady=(0, 2))
         tree_frame.columnconfigure(0, weight=1)
         tree_frame.rowconfigure(0, weight=1)
 
         columns = list(self.trinkgeld_tree_columns_config.keys())
-        self.trinkgeld_tree = ttk.Treeview(tree_frame, columns=columns, show="headings", style="Trinkgeld.Treeview")
-        
+        self.trinkgeld_tree = ttk.Treeview(tree_frame, columns=columns,
+                                           show="headings", style="Trinkgeld.Treeview")
+
         for col_id, col_config in self.trinkgeld_tree_columns_config.items():
-            self.trinkgeld_tree.heading(col_id, text=col_config["text"], anchor=col_config.get("anchor_header", "center"))
-            self.trinkgeld_tree.column(col_id, width=col_config["width"], anchor=col_config["anchor"], stretch=tk.NO)
+            self.trinkgeld_tree.heading(col_id, text=col_config["text"],
+                                        anchor=col_config.get("anchor_header", "center"))
+            self.trinkgeld_tree.column(col_id, width=col_config["width"],
+                                       anchor=col_config["anchor"], stretch=tk.NO)
 
         vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=self.trinkgeld_tree.yview)
         hsb = ttk.Scrollbar(tree_frame, orient="horizontal", command=self.trinkgeld_tree.xview)
@@ -15823,50 +15976,69 @@ class KassenprotokollApp:
         self.trinkgeld_tree.grid(row=0, column=0, sticky="nsew")
         vsb.grid(row=0, column=1, sticky="ns")
         hsb.grid(row=1, column=0, sticky="ew")
-        
+
         self.trinkgeld_tree.bind("<Double-1>", self._handle_edit_trinkgeld_entry)
-        self._setupTreeViewCellNavigation(self.trinkgeld_tree, edit_command_func=self._handle_edit_trinkgeld_entry)
+        self._setupTreeViewCellNavigation(self.trinkgeld_tree,
+                                          edit_command_func=self._handle_edit_trinkgeld_entry)
 
-        summary_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        summary_frame.grid(row=2, column=0, sticky='e', padx=10, pady=(5,0))
-        
-        ttk.Label(summary_frame, text="Gesamt-Endstand:", style='Sum.TLabel', font=bold_list_font).pack(side='left', padx=(0,5))
-        ttk.Label(summary_frame, textvariable=self.trinkgeld_sum_total_einnahme_var, style='Sum.TLabel', font=bold_list_font).pack(side='left')
+        # ── Gesamt-Endstand: gradient canvas footer ───────────────────────────
+        sum_c = tk.Canvas(content_frame, height=_SUM_H, highlightthickness=0, bd=0)
+        sum_c.grid(row=2, column=0, sticky='ew', pady=(2, 0))
 
-        action_button_frame = ttk.Frame(content_frame, style='AppBackground.TFrame', padding=(0,5,0,0))
-        action_button_frame.grid(row=3, column=0, sticky="ew", padx=10, pady=(5,0))
-        
-        style_cfg = self.current_settings.get('list_views_button_style', self.default_settings['list_views_button_style'])
+        sum_val_lbl = tk.Label(sum_c, textvariable=self.trinkgeld_sum_total_einnahme_var,
+                               font=bold_list_font, bg='#2E7D32', fg='white',
+                               anchor='e', padx=8)
+
+        def _draw_sum_c(ev=None, _c=sum_c, _sl=sum_val_lbl):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_SUM_H):
+                _p = _i / max(_SUM_H - 1, 1)
+                _r = int(int(_C_SUM1[1:3], 16) + (int(_C_SUM2[1:3], 16) - int(_C_SUM1[1:3], 16)) * _p)
+                _g = int(int(_C_SUM1[3:5], 16) + (int(_C_SUM2[3:5], 16) - int(_C_SUM1[3:5], 16)) * _p)
+                _b = int(int(_C_SUM1[5:7], 16) + (int(_C_SUM2[5:7], 16) - int(_C_SUM1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _mid = _SUM_H // 2
+            _c.create_text(14, _mid, text="Gesamt-Endstand:",
+                           font=(base_font_family, font_size, 'bold'),
+                           fill='white', anchor='w')
+            _c.create_window(ww - 10, _mid, window=_sl, anchor='e')
+
+        sum_c.bind('<Configure>', _draw_sum_c)
+        sum_c.after(20, _draw_sum_c)
+
+        # ── Action buttons: dark bar ──────────────────────────────────────────
+        action_button_frame = tk.Frame(content_frame, bg=_C_BAR2)
+        action_button_frame.grid(row=3, column=0, sticky="ew", pady=(4, 0))
+
+        style_cfg = self.current_settings.get('list_views_button_style',
+                                              self.default_settings['list_views_button_style'])
         ipady = style_cfg.get('ipady', 5)
-        pady = style_cfg.get('pady', 5)
+        pady  = style_cfg.get('pady', 5)
 
-        # Holen der spezifischen Konfiguration für Trinkgeld-Buttons
         button_configs = self.current_settings.get('trinkgeldliste_button_configs', {})
-        
-         # HIER IST DIE ANPASSUNG: Die spezifische Konfiguration wird geladen
-        button_configs = self.current_settings.get('minibarliste_button_configs', {})
-       
+
         button_defs = [
-            ('List_Add', 'Neuer Eintrag', self._handle_add_trinkgeld_entry),
-            ('List_Edit', 'Eintrag bearbeiten', self._handle_edit_trinkgeld_entry),
-            ('List_Delete', 'Eintrag löschen', self._handle_delete_trinkgeld_entry),
+            ('List_Add',          'Neuer Eintrag',       self._handle_add_trinkgeld_entry),
+            ('List_Edit',         'Eintrag bearbeiten',  self._handle_edit_trinkgeld_entry),
+            ('List_Delete',       'Eintrag löschen',     self._handle_delete_trinkgeld_entry),
             (None, None, None),
-            ('List_SavePDF', 'Als PDF speichern', self._save_trinkgeldliste_to_pdf),
-            ('List_Refresh', 'Refresh', self._load_and_display_trinkgeld_for_period),
-            ('List_History', 'Verlauf', self._open_trinkgeld_history_dialog),
+            ('List_SavePDF',      'Als PDF speichern',   self._save_trinkgeldliste_to_pdf),
+            ('List_Refresh',      'Refresh',             self._load_and_display_trinkgeld_for_period),
+            ('List_History',      'Verlauf',             self._open_trinkgeld_history_dialog),
             (None, None, None),
-            ('List_ManageBackups', 'Backups verwalten', self._open_backup_manager_trinkgeld)
+            ('List_ManageBackups','Backups verwalten',   self._open_backup_manager_trinkgeld),
         ]
 
         for key, text, cmd in button_defs:
             if key is None:
-                ttk.Separator(action_button_frame, orient='vertical').pack(side='left', fill='y', padx=8, pady=4)
+                tk.Frame(action_button_frame, bg='#1B6CA8', width=2).pack(
+                    side='left', fill='y', padx=6, pady=4)
                 continue
-            
             btn = ttk.Button(action_button_frame, command=cmd)
-            # Hier wird die spezifische Konfiguration übergeben
             self._configure_list_tab_button(btn, key, text, button_config_source=button_configs)
-            btn.pack(side="left", padx=2, ipady=ipady, pady=pady, fill='x', expand=True)
+            btn.pack(side="left", padx=4, ipady=ipady, pady=pady, fill='x', expand=True)
             self.trinkgeldliste_buttons[key] = btn
     
     
@@ -15904,87 +16076,123 @@ class KassenprotokollApp:
         for widget in parent_frame.winfo_children():
             widget.destroy()
 
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
 
-        # Header
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(0, weight=0)
-        header.columnconfigure(1, weight=1)
+        # ── Modern header: solid bar + gradient hero ───────────────────────────
+        _C_BAR  = '#0D2137'
+        _C_H1   = '#0D2137'
+        _C_H2   = '#1B6CA8'
+        _C_FLT  = '#1565C0'
+        _C_SUM1 = '#1B5E20'
+        _C_SUM2 = '#388E3C'
+        _HDR_H  = 55
+        _SUM_H  = 42
 
-        home_button = self._create_home_button(header)
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
-            ipady = self.current_settings.get('home_button_config', {}).get('ipady', 2)
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10, ipady=ipady)
-        
-        ttk.Label(header, text="Minibarliste", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Minibarliste",
+                           font=("Segoe UI", 20, "bold"), fill='white', anchor='center')
+
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
         # Content Frame
-        content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8,8))
-        content_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(0, 8))
+        content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8, 8))
+        content_frame.grid(row=2, column=0, sticky='nsew', padx=15, pady=(0, 8))
         content_frame.columnconfigure(0, weight=1)
         content_frame.rowconfigure(1, weight=1)
-        
-        # --- KONFIGURATION START ---
-        
-        # 1. Hier definieren wir die Spalten BREITER, damit der Text passt
+
+        # Spalten-Konfiguration
         self.minibar_tree_columns_config = {
-            "datum": {"text": "Datum", "width": 130, "anchor": "w"},
-            "artikel_name": {"text": "Artikel", "width": 280, "anchor": "w"},
-            "menge": {"text": "Menge", "width": 100, "anchor": "center"},       # Verbreitert auf 100
-            "verlust_anzahl": {"text": "Verlust", "width": 100, "anchor": "center"}, # Verbreitert auf 100
-            "preis_pro_stueck": {"text": "Preis/Stk", "width": 120, "anchor": "e"},
-            "gesamt_umsatz": {"text": "Umsatz", "width": 120, "anchor": "e"},
+            "datum":           {"text": "Datum",     "width": 130, "anchor": "w"},
+            "artikel_name":    {"text": "Artikel",   "width": 280, "anchor": "w"},
+            "menge":           {"text": "Menge",     "width": 100, "anchor": "center"},
+            "verlust_anzahl":  {"text": "Verlust",   "width": 100, "anchor": "center"},
+            "preis_pro_stueck":{"text": "Preis/Stk", "width": 120, "anchor": "e"},
+            "gesamt_umsatz":   {"text": "Umsatz",    "width": 120, "anchor": "e"},
         }
 
-        # 2. Schriftart Einstellungen
         try:
             base_font_family = tkFont.Font(font=self.style.lookup('TLabel', 'font')).actual('family')
         except (tk.TclError, AttributeError):
             base_font_family = "Segoe UI"
-            
-        # Wir setzen die Schriftgröße für den Inhalt auf 11
+
         list_font = tkFont.Font(family=base_font_family, size=11)
+        bold_list_font = tkFont.Font(family=base_font_family, size=11, weight="bold")
 
+        # ── Treeview: modern blue headings ────────────────────────────────────
         style_name = "Minibar.Treeview"
-        self.style.configure(style_name, font=list_font, rowheight=35)
-        
-        # 3. HIER wird die Überschrift verkleinert (Fest auf Größe 10 und Fett)
-        self.style.configure(f"{style_name}.Heading", font=(base_font_family, 12, 'bold'))
-        
-        # --- KONFIGURATION ENDE ---
+        self.style.configure(style_name, font=list_font, rowheight=35,
+                             background='#FFFFFF', fieldbackground='#FFFFFF')
+        self.style.configure(f"{style_name}.Heading",
+                             font=(base_font_family, 12, 'bold'),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map(f"{style_name}.Heading",
+                       background=[('active', '#0D2137')])
 
-        # Top Controls (Monat/Jahr)
-        top_control_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        top_control_frame.grid(row=0, column=0, sticky="ew", padx=10, pady=(5, 2))
+        # ── Filter bar ────────────────────────────────────────────────────────
+        filter_bar = tk.Frame(content_frame, bg=_C_FLT)
+        filter_bar.grid(row=0, column=0, sticky="ew", padx=0, pady=(0, 4))
 
-        ttk.Label(top_control_frame, text="Monat:", style='TLabel').pack(side="left", padx=(0, 2))
+        tk.Label(filter_bar, text="Monat:", bg=_C_FLT, fg='white',
+                 font=list_font).pack(side="left", padx=(12, 4), pady=7)
         months = [str(i) for i in range(1, 13)]
-        self.minibar_month_combo = ttk.Combobox(top_control_frame, textvariable=self.current_minibar_month_var, values=months, width=4, state="readonly")
-        self.minibar_month_combo.pack(side="left", padx=(0, 10))
+        self.minibar_month_combo = ttk.Combobox(
+            filter_bar, textvariable=self.current_minibar_month_var,
+            values=months, width=4, state="readonly", font=list_font)
+        self.minibar_month_combo.pack(side="left", padx=(0, 10), pady=6)
 
-        ttk.Label(top_control_frame, text="Jahr:", style='TLabel').pack(side="left", padx=(0, 2))
+        tk.Label(filter_bar, text="Jahr:", bg=_C_FLT, fg='white',
+                 font=list_font).pack(side="left", padx=(0, 4))
         current_year = datetime.datetime.now().year
         years = [str(y) for y in range(current_year - 5, current_year + 6)]
-        self.minibar_year_combo = ttk.Combobox(top_control_frame, textvariable=self.current_minibar_year_var, values=years, width=6, state="readonly")
-        self.minibar_year_combo.pack(side="left", padx=(0, 10))
+        self.minibar_year_combo = ttk.Combobox(
+            filter_bar, textvariable=self.current_minibar_year_var,
+            values=years, width=6, state="readonly", font=list_font)
+        self.minibar_year_combo.pack(side="left", padx=(0, 12), pady=6)
 
-        ttk.Button(top_control_frame, text="Anzeigen", command=self._load_and_display_minibar_for_period, style='TButton').pack(side="left", padx=(0, 5))
+        tk.Button(filter_bar, text="Anzeigen",
+                  command=self._load_and_display_minibar_for_period,
+                  bg='#0D2137', fg='white', activebackground='#1B6CA8',
+                  activeforeground='white', relief='flat', bd=0,
+                  highlightthickness=0, cursor='hand2',
+                  font=list_font, padx=12).pack(side="left", pady=6)
 
-        # Treeview erstellen
-        tree_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        tree_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=5)
+        # ── Treeview ──────────────────────────────────────────────────────────
+        tree_frame = tk.Frame(content_frame, bg='#B8CCE0', bd=1)
+        tree_frame.grid(row=1, column=0, sticky="nsew", padx=0, pady=(0, 2))
         tree_frame.columnconfigure(0, weight=1)
         tree_frame.rowconfigure(0, weight=1)
 
         columns = list(self.minibar_tree_columns_config.keys())
-        
-        self.minibar_tree = ttk.Treeview(tree_frame, columns=columns, show="headings", style=style_name)
-        
+        self.minibar_tree = ttk.Treeview(tree_frame, columns=columns,
+                                         show="headings", style=style_name)
+
         for col_id, col_config in self.minibar_tree_columns_config.items():
-            self.minibar_tree.heading(col_id, text=col_config["text"], anchor=col_config.get("anchor_header", "center"))
-            self.minibar_tree.column(col_id, width=col_config["width"], anchor=col_config["anchor"], stretch=tk.NO)
+            self.minibar_tree.heading(col_id, text=col_config["text"],
+                                      anchor=col_config.get("anchor_header", "center"))
+            self.minibar_tree.column(col_id, width=col_config["width"],
+                                     anchor=col_config["anchor"], stretch=tk.NO)
 
         vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=self.minibar_tree.yview)
         hsb = ttk.Scrollbar(tree_frame, orient="horizontal", command=self.minibar_tree.xview)
@@ -15995,110 +16203,168 @@ class KassenprotokollApp:
         hsb.grid(row=1, column=0, columnspan=2, sticky="ew")
 
         self.minibar_tree.bind("<Double-1>", self._on_minibar_item_double_click)
-        self._setupTreeViewCellNavigation(self.minibar_tree, edit_command_func=self._handle_edit_minibar_entry)
+        self._setupTreeViewCellNavigation(self.minibar_tree,
+                                          edit_command_func=self._handle_edit_minibar_entry)
 
-        # Summary Frame
-        summary_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        summary_frame.grid(row=2, column=0, sticky='e', padx=10, pady=(5,0))
-        ttk.Label(summary_frame, text="Gesamtumsatz:", style='Sum.TLabel').pack(side='left', padx=(0,5))
-        ttk.Label(summary_frame, textvariable=self.minibar_total_umsatz_display_var, style='Sum.TLabel').pack(side='left')
-        
-        # Bottom Buttons
-        bottom_action_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        bottom_action_frame.grid(row=3, column=0, sticky="ew", padx=10, pady=(2, 10))
+        # ── Gesamtumsatz: gradient canvas footer ──────────────────────────────
+        sum_c = tk.Canvas(content_frame, height=_SUM_H, highlightthickness=0, bd=0)
+        sum_c.grid(row=2, column=0, sticky='ew', pady=(2, 0))
 
-        style_cfg = self.current_settings.get('list_views_button_style', self.default_settings['list_views_button_style'])
+        sum_val_lbl = tk.Label(sum_c, textvariable=self.minibar_total_umsatz_display_var,
+                               font=bold_list_font, bg='#2E7D32', fg='white',
+                               anchor='e', padx=8)
+
+        def _draw_sum_c(ev=None, _c=sum_c, _sl=sum_val_lbl):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_SUM_H):
+                _p = _i / max(_SUM_H - 1, 1)
+                _r = int(int(_C_SUM1[1:3], 16) + (int(_C_SUM2[1:3], 16) - int(_C_SUM1[1:3], 16)) * _p)
+                _g = int(int(_C_SUM1[3:5], 16) + (int(_C_SUM2[3:5], 16) - int(_C_SUM1[3:5], 16)) * _p)
+                _b = int(int(_C_SUM1[5:7], 16) + (int(_C_SUM2[5:7], 16) - int(_C_SUM1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _mid = _SUM_H // 2
+            _c.create_text(14, _mid, text="Gesamtumsatz:",
+                           font=(base_font_family, 11, 'bold'),
+                           fill='white', anchor='w')
+            _c.create_window(ww - 10, _mid, window=_sl, anchor='e')
+
+        sum_c.bind('<Configure>', _draw_sum_c)
+        sum_c.after(20, _draw_sum_c)
+
+        # ── Action buttons: dark bar ──────────────────────────────────────────
+        bottom_action_frame = tk.Frame(content_frame, bg=_C_BAR)
+        bottom_action_frame.grid(row=3, column=0, sticky="ew", pady=(4, 0))
+
+        style_cfg = self.current_settings.get('list_views_button_style',
+                                              self.default_settings['list_views_button_style'])
         ipady = style_cfg.get('ipady', 5)
-        pady = style_cfg.get('pady', 5)
+        pady  = style_cfg.get('pady', 5)
 
         button_configs = self.current_settings.get('minibarliste_button_configs', {})
-        
+
         button_defs = [
-            ('List_Add', 'Neuer Eintrag', self._on_minibar_add_new),
-            ('List_Edit', 'Eintrag bearbeiten', self._handle_edit_minibar_entry),
-            ('List_Delete', 'Eintrag löschen', self._on_minibar_delete_selected),
+            ('List_Add',          'Neuer Eintrag',          self._on_minibar_add_new),
+            ('List_Edit',         'Eintrag bearbeiten',     self._handle_edit_minibar_entry),
+            ('List_Delete',       'Eintrag löschen',        self._on_minibar_delete_selected),
             (None, None, None),
-            ('List_SavePDF', 'Als PDF speichern', self._save_minibarliste_to_pdf),
-            ('List_Refresh', 'Refresh', self._load_and_display_minibar_for_period),
-            ('List_History', 'Verlauf', self._open_minibar_history_dialog),
+            ('List_SavePDF',      'Als PDF speichern',      self._save_minibarliste_to_pdf),
+            ('List_Refresh',      'Refresh',                self._load_and_display_minibar_for_period),
+            ('List_History',      'Verlauf',                self._open_minibar_history_dialog),
             (None, None, None),
-            ('List_ManualBackup', 'Backup aktualisieren', self._perform_manual_backup_minibar),
-            ('List_ManageBackups', 'Backups verwalten', self._open_backup_manager_minibar)
+            ('List_ManualBackup', 'Backup aktualisieren',   self._perform_manual_backup_minibar),
+            ('List_ManageBackups','Backups verwalten',      self._open_backup_manager_minibar),
         ]
 
         for key, text, cmd in button_defs:
             if key is None:
-                ttk.Separator(bottom_action_frame, orient='vertical').pack(side="left", fill='y', padx=8, pady=4)
+                tk.Frame(bottom_action_frame, bg='#1B6CA8', width=2).pack(
+                    side='left', fill='y', padx=6, pady=4)
                 continue
-            
             btn = ttk.Button(bottom_action_frame, command=cmd)
             self._configure_list_tab_button(btn, key, text, button_config_source=button_configs)
-            btn.pack(side="left", padx=2, ipady=ipady, pady=pady, fill='x', expand=True)
+            btn.pack(side="left", padx=4, ipady=ipady, pady=pady, fill='x', expand=True)
             self.minibarliste_buttons[key] = btn
 
     def _create_tagesabrechnung_page(self, parent_frame):
         for widget in parent_frame.winfo_children():
             widget.destroy()
 
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
 
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-            
-        # ### START DER ÄNDERUNG ###
-        header.columnconfigure(0, weight=0)
-        header.columnconfigure(1, weight=1)
+        # ── Modern header: solid bar + gradient hero (wie MOD-Rundgang) ───────
+        _C_BAR = '#0D2137'   # solid dark bar – home button bg matches perfectly
+        _C_H1  = '#0D2137'   # gradient start
+        _C_H2  = '#1B6CA8'   # gradient end
+        _HDR_H = 55          # hero canvas height
 
-        home_button = self._create_home_button(header)
+        # 1. Solid dark action bar → home button has no visible background mismatch
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
             ipady = self.current_settings.get('home_button_config', {}).get('ipady', 2)
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10, ipady=ipady)
-            
-        ttk.Label(header, text="Tagesabrechnung", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        # ### ENDE DER ÄNDERUNG ###
-        
-        
-         # Frame für das neue Datumsfeld
-        date_frame = ttk.Frame(header, style='AppBackground.TFrame')
-        date_frame.grid(row=0, column=2, sticky='e', padx=20)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady)
 
-        ttk.Label(date_frame, text="Datum:", font=("Segoe UI", 12)).pack(side='left', padx=(0, 5))
-        
-        # Das eigentliche Eingabefeld für das Datum
-        date_entry = ttk.Entry(date_frame, textvariable=self.ta_datum_var, width=12, font=("Segoe UI", 12), justify='center')
-        date_entry.pack(side='left')
-        # ^^^^^ HIER ENDET DER NEUE/GEÄNDERTE CODEBLOCK ^^^^^
-        
-        
-        
-        
-        content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8,8))
-        content_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(0, 8))
+        # 2. Gradient hero canvas → title + date
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+
+        date_entry = tk.Entry(
+            hero_c, textvariable=self.ta_datum_var, width=12,
+            font=("Segoe UI", 12), justify='center',
+            bg='#FFFFFF', fg='#0D2137', relief='flat',
+            highlightthickness=1, highlightbackground='#90CAF9',
+            highlightcolor='#FFFFFF', insertbackground='#0D2137')
+
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _mid = _HDR_H // 2
+            _c.create_text(ww // 2, _mid, text="Tagesabrechnung",
+                           font=("Segoe UI", 20, "bold"), fill='white', anchor='center')
+            _dew = date_entry.winfo_reqwidth() or 115
+            _c.create_window(ww - 12, _mid, window=date_entry, anchor='e')
+            _c.create_text(ww - 12 - _dew - 6, _mid, text="Datum:",
+                           font=("Segoe UI", 11), fill='#90CAF9', anchor='e')
+
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
+        content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8, 8))
+        content_frame.grid(row=2, column=0, sticky='nsew', padx=15, pady=(0, 8))
         self._create_tagesabrechnung_widgets(content_frame)
 
     def _create_weckrufliste_page(self, parent_frame):
         for widget in parent_frame.winfo_children():
             widget.destroy()
         
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
 
-        # --- Header ---
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
-        
-        home_button = self._create_home_button(header)
+        # ── Modern palette ───────────────────────────────────────────────────
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+
+        # ── Solid dark bar with home button ──────────────────────────────────
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
-            ipady = self.current_settings.get('home_button_config', {}).get('ipady', 2)
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10, ipady=ipady)
-        
-        ttk.Label(header, text="Weckrufliste", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        
-        # --- Content-Bereich ---
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+
+        # ── Gradient hero canvas ─────────────────────────────────────────────
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Weckrufliste",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
+        # ── Content-Bereich ──────────────────────────────────────────────────
         content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8,8))
-        content_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(0, 8))
+        content_frame.grid(row=2, column=0, sticky='nsew', padx=15, pady=(0, 8))
         content_frame.columnconfigure(0, weight=1)
         content_frame.rowconfigure(1, weight=1)
 
@@ -16113,34 +16379,40 @@ class KassenprotokollApp:
             base_font_family = "Segoe UI"
         list_font = tkFont.Font(family=base_font_family, size=font_size)
 
-        # Filter-Frame
-        filter_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        filter_frame.grid(row=0, column=0, sticky='ew', pady=(0, 10))
-        ttk.Label(filter_frame, text="Von:", font=list_font).grid(row=0, column=0, padx=(0,2), pady=5)
+        # ── Filter bar ────────────────────────────────────────────────────────
+        filter_frame = tk.Frame(content_frame, bg='#1565C0')
+        filter_frame.grid(row=0, column=0, sticky='ew', pady=(0, 6))
+        _lkw = {'bg': '#1565C0', 'fg': 'white', 'font': list_font}
+        _ekw = {'bg': 'white', 'fg': '#0D2137', 'relief': 'flat', 'highlightthickness': 1,
+                'highlightbackground': '#90CAF9', 'font': list_font}
         self.weckruf_filter_von_var.set(datetime.date.today().strftime("%d.%m.%Y"))
-        ttk.Entry(filter_frame, textvariable=self.weckruf_filter_von_var, width=int(entry_width * 0.4), font=list_font).grid(row=0, column=1, padx=(0,10), pady=5)
-        ttk.Label(filter_frame, text="Bis:", font=list_font).grid(row=0, column=2, padx=(0,2), pady=5)
         self.weckruf_filter_bis_var.set((datetime.date.today() + datetime.timedelta(days=1)).strftime("%d.%m.%Y"))
-        ttk.Entry(filter_frame, textvariable=self.weckruf_filter_bis_var, width=int(entry_width * 0.4), font=list_font).grid(row=0, column=3, padx=(0,10), pady=5)
         times = [f"{h:02d}:{m:02d}" for h in range(24) for m in (0, 30)]
-        ttk.Label(filter_frame, text="Weckzeit von:", font=list_font).grid(row=0, column=4, padx=(0,2), pady=5)
-        ttk.Combobox(filter_frame, textvariable=self.weckruf_filter_zeit_von_var, values=[""] + times, width=int(entry_width * 0.25), state="readonly", font=list_font).grid(row=0, column=5, padx=(0,10), pady=5)
-        ttk.Label(filter_frame, text="Weckzeit bis:", font=list_font).grid(row=0, column=6, padx=(0,2), pady=5)
-        ttk.Combobox(filter_frame, textvariable=self.weckruf_filter_zeit_bis_var, values=[""] + times, width=int(entry_width * 0.25), state="readonly", font=list_font).grid(row=0, column=7, padx=(0,10), pady=5)
-        ttk.Label(filter_frame, text="Name:", font=list_font).grid(row=0, column=8, padx=(0,2), pady=5)
-        ttk.Entry(filter_frame, textvariable=self.weckruf_filter_name_var, width=int(entry_width * 0.5), font=list_font).grid(row=0, column=9, padx=(0,10), pady=5)
-        ttk.Label(filter_frame, text="Zimmer:", font=list_font).grid(row=0, column=10, padx=(0,2), pady=5)
-        ttk.Entry(filter_frame, textvariable=self.weckruf_filter_zimmer_var, width=int(entry_width * 0.25), font=list_font).grid(row=0, column=11, padx=(0,10), pady=5)
-        ttk.Button(filter_frame, text="🔍", command=self._load_and_display_weckrufe, width=3).grid(row=0, column=12, padx=(0,5), pady=5)
+        tk.Label(filter_frame, text="Von:", **_lkw).grid(row=0, column=0, padx=(8,2), pady=6)
+        tk.Entry(filter_frame, textvariable=self.weckruf_filter_von_var, width=int(entry_width * 0.4), **_ekw).grid(row=0, column=1, padx=(0,8), pady=6)
+        tk.Label(filter_frame, text="Bis:", **_lkw).grid(row=0, column=2, padx=(0,2), pady=6)
+        tk.Entry(filter_frame, textvariable=self.weckruf_filter_bis_var, width=int(entry_width * 0.4), **_ekw).grid(row=0, column=3, padx=(0,8), pady=6)
+        tk.Label(filter_frame, text="Weckzeit von:", **_lkw).grid(row=0, column=4, padx=(0,2), pady=6)
+        ttk.Combobox(filter_frame, textvariable=self.weckruf_filter_zeit_von_var, values=[""] + times, width=int(entry_width * 0.25), state="readonly", font=list_font).grid(row=0, column=5, padx=(0,8), pady=6)
+        tk.Label(filter_frame, text="Weckzeit bis:", **_lkw).grid(row=0, column=6, padx=(0,2), pady=6)
+        ttk.Combobox(filter_frame, textvariable=self.weckruf_filter_zeit_bis_var, values=[""] + times, width=int(entry_width * 0.25), state="readonly", font=list_font).grid(row=0, column=7, padx=(0,8), pady=6)
+        tk.Label(filter_frame, text="Name:", **_lkw).grid(row=0, column=8, padx=(0,2), pady=6)
+        tk.Entry(filter_frame, textvariable=self.weckruf_filter_name_var, width=int(entry_width * 0.5), **_ekw).grid(row=0, column=9, padx=(0,8), pady=6)
+        tk.Label(filter_frame, text="Zimmer:", **_lkw).grid(row=0, column=10, padx=(0,2), pady=6)
+        tk.Entry(filter_frame, textvariable=self.weckruf_filter_zimmer_var, width=int(entry_width * 0.25), **_ekw).grid(row=0, column=11, padx=(0,8), pady=6)
+        tk.Button(filter_frame, text="🔍", command=self._load_and_display_weckrufe, width=3,
+                  bg='#0D2137', fg='white', relief='flat', font=list_font, cursor='hand2').grid(row=0, column=12, padx=(0,8), pady=6)
 
         # Tree-Frame
-        tree_frame = ttk.Frame(content_frame)
+        tree_frame = tk.Frame(content_frame, bg='#B8CCE0')
         tree_frame.grid(row=1, column=0, sticky="nsew")
         tree_frame.rowconfigure(0, weight=1)
         tree_frame.columnconfigure(0, weight=1)
         style_name = "Weckruf.Treeview"
         self.style.configure(style_name, font=list_font, rowheight=int(font_size * 2.5))
-        self.style.configure(f"{style_name}.Heading", font=(base_font_family, font_size, 'bold'))
+        self.style.configure(f"{style_name}.Heading", font=(base_font_family, font_size, 'bold'),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map(f"{style_name}.Heading", background=[('active', '#0D2137')])
         columns = ("datum", "weckzeit", "zimmer", "gastname", "kuerzel")
         self.weckrufliste_tree = ttk.Treeview(tree_frame, columns=columns, show="headings", style=style_name)
         self.weckrufliste_tree.heading("datum", text="Datum"); self.weckrufliste_tree.column("datum", width=100, anchor="w")
@@ -16157,10 +16429,10 @@ class KassenprotokollApp:
         self.weckrufliste_tree.bind("<Double-1>", lambda e: self._edit_weckruf_entry())
         self._setupTreeViewCellNavigation(self.weckrufliste_tree, edit_command_func=self._edit_weckruf_entry)
 
-        # --- Untere Button-Leiste (OHNE MANUELLES BACKUP) ---
-        button_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        button_frame.grid(row=2, column=0, sticky='w', pady=(10, 0))
-        
+        # ── Button-Leiste ────────────────────────────────────────────────────
+        button_frame = tk.Frame(content_frame, bg='#0D2137')
+        button_frame.grid(row=2, column=0, sticky='ew', pady=(6, 0))
+
         style_cfg = self.current_settings.get('list_views_button_style', self.default_settings['list_views_button_style'])
         ipady = style_cfg.get('ipady', 5)
         pady = style_cfg.get('pady', 5)
@@ -16169,7 +16441,7 @@ class KassenprotokollApp:
             ('Weckruf_Add', 'Hinzufügen', self._add_weckruf_entry),
             ('Weckruf_Edit', 'Bearbeiten', self._edit_weckruf_entry),
             ('Weckruf_Delete', 'Löschen', self._delete_weckruf_entry),
-            (None, None, None), 
+            (None, None, None),
             ('Weckruf_SavePDF', 'PDF Speichern', self._save_weckruf_list_to_pdf),
             ('Weckruf_Print', 'Drucken', self._print_weckruf_list),
             ('Weckruf_History', 'Verlauf', self._open_weckruf_history_dialog),
@@ -16178,10 +16450,10 @@ class KassenprotokollApp:
             (None, None, None),
             ('Weckruf_Overlay', 'Info-Fenster', self._toggle_weckruf_overlay)
         ]
-        
+
         for key, text, cmd in button_defs:
             if key is None:
-                ttk.Separator(button_frame, orient='vertical').pack(side="left", fill='y', padx=8, pady=4)
+                tk.Frame(button_frame, bg='#1B6CA8', width=2).pack(side="left", fill='y', padx=6, pady=4)
                 continue
             btn = ttk.Button(button_frame, command=cmd)
             self._configure_weckrufliste_button(btn, key, text)
@@ -16587,25 +16859,43 @@ class KassenprotokollApp:
         for widget in parent_frame.winfo_children():
             widget.destroy()
 
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
-        
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-            
-        title = f"Shuttle-Service: {booking_type}"
-        header.columnconfigure(0, weight=0)
-        header.columnconfigure(1, weight=1)
-        
-        home_button = self._create_home_button(header)
-        if home_button:
-            ipady = self.current_settings.get('home_button_config', {}).get('ipady', 2)
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10, ipady=ipady)
 
-        ttk.Label(header, text=title, font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        
+        title = f"Shuttle-Service: {booking_type}"
+
+        # ── Modern palette ───────────────────────────────────────────────────
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+
+        # ── Solid dark bar with home button ──────────────────────────────────
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
+        if home_button:
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+
+        # ── Gradient hero canvas ─────────────────────────────────────────────
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+
+        def _draw_hero(ev=None, _c=hero_c, _t=title):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text=_t,
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
         content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8,8))
-        content_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(0, 8))
+        content_frame.grid(row=2, column=0, sticky='nsew', padx=15, pady=(0, 8))
         content_frame.columnconfigure(0, weight=1)
         content_frame.rowconfigure(0, weight=1)
 
@@ -16621,9 +16911,11 @@ class KassenprotokollApp:
 
         style_name = "Shuttle.Treeview"
         self.style.configure(style_name, font=list_font, rowheight=int(font_size * 2.5))
-        self.style.configure(f"{style_name}.Heading", font=(base_font_family, font_size, 'bold'))
+        self.style.configure(f"{style_name}.Heading", font=(base_font_family, font_size, 'bold'),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map(f"{style_name}.Heading", background=[('active', '#0D2137')])
 
-        tree_frame = ttk.Frame(content_frame)
+        tree_frame = tk.Frame(content_frame, bg='#B8CCE0')
         tree_frame.grid(row=0, column=0, sticky="nsew")
         tree_frame.rowconfigure(0, weight=1)
         tree_frame.columnconfigure(0, weight=0)  # Checkbox-Canvas
@@ -16682,8 +16974,8 @@ class KassenprotokollApp:
         tree.bind("<Double-1>", lambda e, b_type=booking_type: self._edit_shuttle_entry(b_type))
         self._setupTreeViewCellNavigation(tree, edit_command_func=lambda: self._edit_shuttle_entry(booking_type))
        
-        button_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        button_frame.grid(row=1, column=0, sticky='w', pady=(10, 0))
+        button_frame = tk.Frame(content_frame, bg='#0D2137')
+        button_frame.grid(row=1, column=0, sticky='ew', pady=(6, 0))
 
         style_cfg = self.current_settings.get('list_views_button_style', self.default_settings['list_views_button_style'])
         ipady = style_cfg.get('ipady', 5)
@@ -16701,7 +16993,7 @@ class KassenprotokollApp:
             ('Shuttle_Print', 'Drucken', lambda: self._print_shuttle_list(booking_type)),
             ('Shuttle_History', 'Verlauf', self._open_shuttle_history_dialog),
             (None, None, None),
-            ('Shuttle_ManualBackup', 'Manuelles Backup', self._perform_manual_backup_shuttle), # <--- Wieder da!
+            ('Shuttle_ManualBackup', 'Manuelles Backup', self._perform_manual_backup_shuttle),
             ('Shuttle_ManageBackups', 'Backups verwalten', self._open_backup_manager_shuttle),
             (None, None, None),
             ('Shuttle_Overlay', 'Info-Fenster', self._toggle_shuttle_overlay)
@@ -16709,9 +17001,9 @@ class KassenprotokollApp:
 
         for key, text, cmd in button_defs:
             if key is None:
-                ttk.Separator(button_frame, orient='vertical').pack(side="left", fill='y', padx=8, pady=4)
+                tk.Frame(button_frame, bg='#1B6CA8', width=2).pack(side="left", fill='y', padx=6, pady=4)
                 continue
-            
+
             btn = ttk.Button(button_frame, command=cmd)
             self._configure_shuttle_button(btn, key, text)
             btn.pack(side="left", padx=2, ipady=ipady, pady=pady)
@@ -16721,29 +17013,45 @@ class KassenprotokollApp:
         for widget in parent_frame.winfo_children():
             widget.destroy()
 
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
 
-        # --- Header ---
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
-        
-        home_button = self._create_home_button(header)
+        # ── Modern palette ───────────────────────────────────────────────────
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+
+        # ── Solid dark bar with home button ──────────────────────────────────
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10)
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
 
-        title_frame = ttk.Frame(header, style='AppBackground.TFrame')
-        title_frame.grid(row=0, column=1, sticky='w', padx=20, pady=10)
+        # ── Gradient hero canvas with phone numbers ───────────────────────────
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+        phone_lbl = tk.Label(hero_c, text="📞 0511/824444   📞 0511/3811",
+                             font=("Segoe UI", 11), bg='#1B6CA8', fg='#D0E8FF', padx=6)
 
-        ttk.Label(title_frame, text="Taxibestellungen", font=("Segoe UI", 20, "bold")).grid(row=0, column=0, sticky='w', pady=2)
-        phone_font = ("Segoe UI", 12, "bold")
-        ttk.Label(title_frame, text="📞 0511 / 824444", font=phone_font).grid(row=0, column=1, sticky='w', padx=(25, 15))
-        ttk.Label(title_frame, text="📞 0511 / 3811", font=phone_font).grid(row=0, column=2, sticky='w', padx=(0, 15))
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Taxibestellungen",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+            _c.create_window(ww - 10, _HDR_H // 2, window=phone_lbl, anchor='e')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
 
-        # --- Content ---
+        # ── Content ──────────────────────────────────────────────────────────
         content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(8,8))
-        content_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(0, 8))
+        content_frame.grid(row=2, column=0, sticky='nsew', padx=15, pady=(0, 8))
         content_frame.columnconfigure(0, weight=1)
         content_frame.rowconfigure(0, weight=1)
 
@@ -16759,9 +17067,11 @@ class KassenprotokollApp:
 
         style_name = "Taxi.Treeview"
         self.style.configure(style_name, font=list_font, rowheight=int(font_size * 2.5))
-        self.style.configure(f"{style_name}.Heading", font=(base_font_family, font_size, 'bold'))
+        self.style.configure(f"{style_name}.Heading", font=(base_font_family, font_size, 'bold'),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map(f"{style_name}.Heading", background=[('active', '#0D2137')])
 
-        tree_frame = ttk.Frame(content_frame)
+        tree_frame = tk.Frame(content_frame, bg='#B8CCE0')
         tree_frame.grid(row=0, column=0, sticky="nsew")
         tree_frame.rowconfigure(0, weight=1)
         tree_frame.columnconfigure(0, weight=1)
@@ -16790,9 +17100,9 @@ class KassenprotokollApp:
         self.taxibestellung_tree.bind("<Double-1>", lambda e: self._edit_taxi_entry())
         self._setupTreeViewCellNavigation(self.taxibestellung_tree, edit_command_func=self._edit_taxi_entry)
 
-        # --- Button Leiste ---
-        button_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        button_frame.grid(row=1, column=0, sticky='w', pady=(10, 0))
+        # ── Button-Leiste ────────────────────────────────────────────────────
+        button_frame = tk.Frame(content_frame, bg='#0D2137')
+        button_frame.grid(row=1, column=0, sticky='ew', pady=(6, 0))
 
         style_cfg = self.current_settings.get('list_views_button_style', self.default_settings['list_views_button_style'])
         ipady = style_cfg.get('ipady', 5)
@@ -16812,12 +17122,12 @@ class KassenprotokollApp:
             (None, None, None),
             ('Taxi_Overlay', 'Info', self._toggle_taxi_overlay)
         ]
-        
+
         for key, text, cmd in button_defs:
             if key is None:
-                ttk.Separator(button_frame, orient='vertical').pack(side="left", fill='y', padx=8, pady=4)
+                tk.Frame(button_frame, bg='#1B6CA8', width=2).pack(side="left", fill='y', padx=6, pady=4)
                 continue
-            
+
             btn = ttk.Button(button_frame, command=cmd)
             self._configure_taxibestellung_button(btn, key, text)
             btn.pack(side="left", padx=2, ipady=ipady, pady=pady)
@@ -16831,39 +17141,47 @@ class KassenprotokollApp:
         for widget in parent_frame.winfo_children():
             widget.destroy()
 
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
 
-        # Header-Bereich
-        header_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header_frame.grid(row=0, column=0, sticky="ew")
-        header_content = ttk.Frame(header_frame, style='AppBackground.TFrame')
-        header_content.pack(padx=20, fill='x')
-        
-        header_content.columnconfigure(1, weight=1)
+        # ── Modern palette ───────────────────────────────────────────────────
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
 
-        home_button = self._create_home_button(header_content)
+        # ── Solid dark bar with home button + overlay button ──────────────────
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        action_bar.columnconfigure(1, weight=1)
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
-            ipady = self.current_settings.get('home_button_config', {}).get('ipady', 2)
-            home_button.grid(row=0, column=0, sticky='w', padx=0, pady=10, ipady=ipady)
-        
-        ttk.Label(header_content, text="Shuttle Service", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=10)
-
-       
-       # NEU: Button zum Öffnen/Schließen des Overlays
-        overlay_button = ttk.Button(header_content, text="👁️ Info-Fenster", command=self._toggle_shuttle_overlay)
-        overlay_button.grid(row=0, column=2, sticky='e', padx=10)
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+        overlay_button = ttk.Button(action_bar, text="👁️ Info-Fenster", command=self._toggle_shuttle_overlay)
+        overlay_button.grid(row=0, column=2, sticky='e', padx=10, pady=4)
         ToolTip(overlay_button, "Zeigt ein immer sichtbares Fenster mit den heutigen Shuttle-Fahrten an oder schließt es.")
-       
-       # vvvvv HIER BEGINNT DIE ÄNDERUNG vvvvv
-        # Der Tooltip wird jetzt in der Konfigurationsmethode gesetzt.
-        # Rufen Sie die neue Methode auf, um den Button zu gestalten.
         self._configure_shuttle_overlay_button(overlay_button)
-        # ^^^^^ HIER ENDET DIE ÄNDERUNG ^^^^^
-       
-       # Content mit den Auswahl-Kacheln
+
+        # ── Gradient hero canvas ─────────────────────────────────────────────
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Shuttle Service",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
+        # ── Content mit den Auswahl-Kacheln ──────────────────────────────────
         content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=20)
-        content_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=10)
+        content_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=10)
         
         content_frame.grid_rowconfigure(0, weight=1)
         content_frame.grid_columnconfigure((0, 2), weight=1) 
@@ -17825,28 +18143,84 @@ class KassenprotokollApp:
             base_font_family = "Segoe UI"
         kuerzel_font = tkFont.Font(family=base_font_family, size=14)
 
-        # --- UI-Layout (Header, Aktionen, Split-Frame) ---
-        header_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame')
-        header_frame.pack(fill='x', pady=5)
-        header_frame.columnconfigure(1, weight=1)
-        home_button = self._create_home_button(header_frame)
-        if home_button: home_button.grid(row=0, column=0, sticky='w', padx=10)
-        ttk.Label(header_frame, text=title, font=("Segoe UI", 16, "bold")).grid(row=0, column=1, sticky='w', padx=10)
-        right_info_frame = ttk.Frame(header_frame, style='AppBackground.TFrame')
-        right_info_frame.grid(row=0, column=2, sticky='e', padx=(5, 15), pady=2)
-        ttk.Label(right_info_frame, textvariable=self.time_display_var, style='TLabel').pack(side='right', anchor='e', pady=2)
-        ttk.Label(right_info_frame, textvariable=self.date_display_var, style='TLabel').pack(side='right', anchor='e', padx=(0,10), pady=2)
+        # ── Modern palette ─────────────────────────────────────────────────────
+        _C_BAR  = '#0D2137'
+        _C_H1   = '#0D2137'
+        _C_H2   = '#1B6CA8'
+        _HDR_H  = 55
+        _SEC_H  = 34   # section column header height
 
-        action_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame')
-        action_frame.pack(fill='x', pady=(5, 10))
+        # ── Solid dark bar with home button ───────────────────────────────────
+        action_bar_top = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar_top.pack(fill='x')
+        home_button = self._create_home_button(action_bar_top, bar_color=_C_BAR)
+        if home_button:
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.pack(side='left', padx=8, pady=4, ipady=ipady_hb)
+
+        # ── Gradient hero canvas: title + date/time ───────────────────────────
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.pack(fill='x')
+
+        time_lbl = tk.Label(hero_c, textvariable=self.time_display_var,
+                            font=("Segoe UI", 11), bg='#1B6CA8', fg='#D0E8FF', padx=6)
+        date_lbl = tk.Label(hero_c, textvariable=self.date_display_var,
+                            font=("Segoe UI", 11), bg='#1B6CA8', fg='white', padx=6)
+
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _mid = _HDR_H // 2
+            _c.create_text(ww // 2, _mid, text=title,
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+            _tlw = time_lbl.winfo_reqwidth() or 80
+            _dlw = date_lbl.winfo_reqwidth() or 140
+            _c.create_window(ww - 10, _mid, window=time_lbl, anchor='e')
+            _c.create_window(ww - 10 - _tlw - 6, _mid, window=date_lbl, anchor='e')
+
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
+        # ── Action buttons bar (dark) ─────────────────────────────────────────
+        action_frame = tk.Frame(parent_frame, bg=_C_BAR)
+        action_frame.pack(fill='x', pady=(2, 4))
         action_frame.columnconfigure((0, 1, 2, 3, 4), weight=1)
 
-        main_split_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame')
-        main_split_frame.pack(fill='both', expand=True, padx=15, pady=(0, 8))
-        main_split_frame.columnconfigure(0, weight=1); main_split_frame.columnconfigure(1, weight=1); main_split_frame.rowconfigure(1, weight=1)
+        # ── Main split frame ──────────────────────────────────────────────────
+        main_split_frame = tk.Frame(parent_frame, bg='#EEF2F7')
+        main_split_frame.pack(fill='both', expand=True, padx=10, pady=(0, 6))
+        main_split_frame.columnconfigure(0, weight=1)
+        main_split_frame.columnconfigure(1, weight=1)
+        main_split_frame.rowconfigure(1, weight=1)
 
-        ttk.Label(main_split_frame, text="Alle Aufgaben", font=("Segoe UI", 14, "bold")).grid(row=0, column=0, sticky='w', padx=10, pady=(5, 2))
-        ttk.Label(main_split_frame, text="Meine offenen Aufgaben", font=("Segoe UI", 14, "bold")).grid(row=0, column=1, sticky='w', padx=10, pady=(5, 2))
+        # Gradient section header helper
+        def _make_sec_hdr(parent, col, label_text):
+            hdr = tk.Canvas(parent, height=_SEC_H, highlightthickness=0, bd=0)
+            hdr.grid(row=0, column=col, sticky='ew', padx=(0 if col == 0 else 5, 5 if col == 0 else 0))
+            def _draw(ev=None, _c=hdr, _t=label_text):
+                if not _c.winfo_exists(): return
+                _c.delete('all')
+                ww = _c.winfo_width() or 400
+                for _i in range(_SEC_H):
+                    _p = _i / max(_SEC_H - 1, 1)
+                    _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                    _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                    _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                    _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+                _c.create_text(12, _SEC_H // 2, text=_t,
+                               font=("Segoe UI", 12, "bold"), fill='white', anchor='w')
+            hdr.bind('<Configure>', _draw)
+            hdr.after(10, _draw)
+
+        _make_sec_hdr(main_split_frame, 0, "Alle Aufgaben")
+        _make_sec_hdr(main_split_frame, 1, "Meine offenen Aufgaben")
 
         left_container = ttk.Frame(main_split_frame); left_container.grid(row=1, column=0, sticky='nsew', padx=(10, 5)); left_container.rowconfigure(0, weight=1); left_container.columnconfigure(0, weight=1)
         left_canvas = tk.Canvas(left_container, borderwidth=0, highlightthickness=0)
@@ -18447,148 +18821,245 @@ class KassenprotokollApp:
             self.ta_sum_labels = []
         self.ta_sum_labels.clear()
 
+        # ── Modern palette ────────────────────────────────────────────────────
+        _BG      = '#EEF2F7'   # page background
+        _CARD    = '#FFFFFF'   # card surface
+        _SHAD    = '#B8CCE0'   # card shadow
+        _GH1     = '#0D2137'   # gradient header dark
+        _GH2     = '#1B6CA8'   # gradient header light
+        _GHH     = 34          # header height px
+        _BG_A    = '#FFFFFF'   # even row bg
+        _BG_B    = '#F0F7FF'   # odd row bg
+        _BG_SUM  = '#E8F5E9'   # sum row bg (light green)
+        _ACC_IN  = '#1565C0'   # blue  – input rows
+        _ACC_SU  = '#2E7D32'   # green – sum rows
+        _SEP     = '#D0DFF0'   # 1px separator
+        _FG      = '#1A2733'   # main text
+        _ROW_PAD = 5
+
         parent_frame.columnconfigure(0, weight=1)
         parent_frame.columnconfigure(1, weight=1)
         parent_frame.rowconfigure(0, weight=0)
         parent_frame.rowconfigure(1, weight=1)
 
-        # Farben und Hintergrund für tk.Label holen, um Konsistenz zu wahren
-        try:
-            parent_bg = self.style.lookup('TLabelframe', 'background')
-        except tk.TclError:
-            parent_bg = self.default_settings['label_bg']
-        default_fg = self.current_settings.get('number_elements_fg_color', '#000000')
+        # ── Helper: white card with gradient header ───────────────────────────
+        def _make_card(parent, grid_row, grid_col, title, rowspan=1, pady=(0, 8)):
+            shd = tk.Frame(parent, bg=_SHAD)
+            shd.grid(row=grid_row, column=grid_col, rowspan=rowspan,
+                     sticky='nsew', padx=6, pady=pady)
+            shd.columnconfigure(0, weight=1)
+            card = tk.Frame(shd, bg=_CARD)
+            card.pack(fill='both', expand=True, padx=2, pady=2)
+            card.columnconfigure(0, weight=1)
+            hdr = tk.Canvas(card, height=_GHH, highlightthickness=0, bd=0)
+            hdr.grid(row=0, column=0, sticky='ew')
+            def _draw(ev=None, _c=hdr, _t=title):
+                if not _c.winfo_exists(): return
+                _c.delete('all')
+                ww = _c.winfo_width() or 500
+                for _i in range(_GHH):
+                    _p = _i / max(_GHH - 1, 1)
+                    _r2 = int(int(_GH1[1:3], 16) + (int(_GH2[1:3], 16) - int(_GH1[1:3], 16)) * _p)
+                    _g2 = int(int(_GH1[3:5], 16) + (int(_GH2[3:5], 16) - int(_GH1[3:5], 16)) * _p)
+                    _b2 = int(int(_GH1[5:7], 16) + (int(_GH2[5:7], 16) - int(_GH1[5:7], 16)) * _p)
+                    _c.create_line(0, _i, ww, _i, fill=f'#{_r2:02x}{_g2:02x}{_b2:02x}')
+                _c.create_text(12, _GHH // 2, text=_t,
+                               font=("Segoe UI", 11, "bold"), fill='white', anchor='w')
+            hdr.bind('<Configure>', _draw)
+            hdr.after(10, _draw)
+            tbl = tk.Frame(card, bg=_BG_A)
+            tbl.grid(row=1, column=0, sticky='nsew')
+            tbl.columnconfigure(0, weight=0, minsize=5)
+            tbl.columnconfigure(1, weight=2)
+            tbl.columnconfigure(2, weight=3)
+            card.rowconfigure(1, weight=1)
+            return card, tbl
 
-        # --- Linke Spalte ---
-        left_column_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame')
-        left_column_frame.grid(row=0, column=0, rowspan=2, padx=(0, 10), pady=5, sticky='nsew')
-        
-        # Einnahmen FO
-        einnahmen_fo_frame = ttk.LabelFrame(left_column_frame, text="Einnahmen FO", style='TLabelframe')
-        einnahmen_fo_frame.pack(fill='x', expand=False, padx=5, pady=5)
-        einnahmen_fo_frame.columnconfigure(1, weight=1)
+        # ── Helper: add a labeled row to a 3-col table ────────────────────────
+        _row_ctr = {}
+        def _add_row(tbl, label_text, widget, is_sum=False):
+            tid = id(tbl)
+            idx = _row_ctr.get(tid, 0)
+            _row_ctr[tid] = idx + 1
+            row_bg = _BG_SUM if is_sum else (_BG_A if idx % 2 == 0 else _BG_B)
+            acc    = _ACC_SU if is_sum else _ACC_IN
+            lbl_fnt = ("Segoe UI", 11, "bold") if is_sum else ("Segoe UI", 11)
+            tk.Frame(tbl, bg=acc, width=5).grid(row=idx*2, column=0, sticky='ns')
+            tk.Label(tbl, text=label_text, bg=row_bg, fg=_FG,
+                     font=lbl_fnt, anchor='w').grid(
+                row=idx*2, column=1, padx=(10, 6), pady=_ROW_PAD, sticky='ew')
+            if isinstance(widget, tk.Label):
+                widget.configure(bg=row_bg)
+            widget.grid(row=idx*2, column=2, padx=(4, 10), pady=_ROW_PAD, sticky='ew')
+            tk.Frame(tbl, bg=_SEP, height=1).grid(
+                row=idx*2+1, column=0, columnspan=3, sticky='ew')
 
-        fo_labels = ["FO Frühdienst:", "FO Spätdienst:", "FO Nachtdienst:", "FO TIP:", "Summe:"]
-        fo_vars = [self.ta_einnahmen_fo_frueh_var, self.ta_einnahmen_fo_spaet_var,
-                   self.ta_einnahmen_fo_nacht_var, self.ta_einnahmen_fo_tip_var,
-                   self.ta_einnahmen_fo_summe_var]
+        # ── LEFT COLUMN ───────────────────────────────────────────────────────
+        left_col = tk.Frame(parent_frame, bg=_BG)
+        left_col.grid(row=0, column=0, rowspan=2, sticky='nsew', padx=(4, 2), pady=4)
+        left_col.columnconfigure(0, weight=1)
 
-        for i, label_text in enumerate(fo_labels):
-            ttk.Label(einnahmen_fo_frame, text=label_text, style='TLabel').grid(row=i, column=0, padx=5, pady=3, sticky='w')
-            if "Summe" in label_text:
-                sum_label = tk.Label(einnahmen_fo_frame, textvariable=fo_vars[i], font=self.ta_sum_font,
-                                     anchor='e', bg=parent_bg, fg=default_fg, padx=5)
-                sum_label.grid(row=i, column=1, padx=5, pady=3, sticky='ew')
-                self.ta_sum_labels.append(sum_label)
+        # ── Einnahmen FO ──────────────────────────────────────────────────────
+        card_fo, tbl_fo = _make_card(left_col, 0, 0, "Einnahmen FO", pady=(0, 6))
+        fo_inp_labels = ["FO Frühdienst:", "FO Spätdienst:", "FO Nachtdienst:", "FO TIP:"]
+        fo_inp_vars   = [self.ta_einnahmen_fo_frueh_var, self.ta_einnahmen_fo_spaet_var,
+                         self.ta_einnahmen_fo_nacht_var, self.ta_einnahmen_fo_tip_var]
+        for lbl_t, var in zip(fo_inp_labels, fo_inp_vars):
+            entry = ttk.Entry(tbl_fo, textvariable=var, justify='right',
+                              style='TA.NumberInput.TEntry')
+            entry.configure(font=self.ta_entry_font)
+            _add_row(tbl_fo, lbl_t, entry)
+            self._add_widget_to_list(entry, 'entry', is_main_input=True)
+            if lbl_t == "FO TIP:":
+                entry.bind('<FocusOut>', lambda e, v=var: self._validate_and_format_tip_field(e, v, "FO TIP"))
+                entry.bind('<Return>',   lambda e, v=var: self._validate_and_format_tip_field(e, v, "FO TIP"))
             else:
-                entry = ttk.Entry(einnahmen_fo_frame, textvariable=fo_vars[i], justify='right', style='TA.NumberInput.TEntry')
-                entry.configure(font=self.ta_entry_font)
-                entry.grid(row=i, column=1, padx=5, pady=3, sticky='ew')
-                self._add_widget_to_list(entry, 'entry', is_main_input=True)
-                if label_text == "FO TIP:":
-                    entry.bind('<FocusOut>', lambda e, v=fo_vars[i]: self._validate_and_format_tip_field(e, v, "FO TIP"))
-                    entry.bind('<Return>', lambda e, v=fo_vars[i]: self._validate_and_format_tip_field(e, v, "FO TIP"))
-                else:
-                    entry.bind('<FocusOut>', lambda e, v=fo_vars[i]: (self._format_on_focus_out(e, v), self._update_tagesabrechnung_calculations(show_feedback=False)))
-                    entry.bind('<Return>', lambda e, v=fo_vars[i]: (self._format_on_focus_out(e, v), self._update_tagesabrechnung_calculations(show_feedback=False)))
+                entry.bind('<FocusOut>', lambda e, v=var: (self._format_on_focus_out(e, v), self._update_tagesabrechnung_calculations(show_feedback=False)))
+                entry.bind('<Return>',   lambda e, v=var: (self._format_on_focus_out(e, v), self._update_tagesabrechnung_calculations(show_feedback=False)))
+        sum_lbl_fo = tk.Label(tbl_fo, textvariable=self.ta_einnahmen_fo_summe_var,
+                              font=self.ta_sum_font, anchor='e', fg=_FG)
+        _add_row(tbl_fo, "Summe:", sum_lbl_fo, is_sum=True)
+        self.ta_sum_labels.append(sum_lbl_fo)
 
-        # Einnahmen Bock's/Bar
-        einnahmen_bar_frame = ttk.LabelFrame(left_column_frame, text="Einnahmen Bock's/Bar", style='TLabelframe')
-        einnahmen_bar_frame.pack(fill='x', expand=False, padx=5, pady=10)
-        einnahmen_bar_frame.columnconfigure(1, weight=1)
-
-        bar_labels = ["Bock's/Bar:", "TIP Bock's/BAR:", "Summe:"]
-        bar_vars = [self.ta_einnahmen_bar_haupt_var, self.ta_einnahmen_bar_tip_var,
-                    self.ta_einnahmen_bar_summe_var]
-
-        for i, label_text in enumerate(bar_labels):
-            ttk.Label(einnahmen_bar_frame, text=label_text, style='TLabel').grid(row=i, column=0, padx=5, pady=3, sticky='w')
-            if "Summe" in label_text:
-                sum_label_bar = tk.Label(einnahmen_bar_frame, textvariable=bar_vars[i], font=self.ta_sum_font,
-                                         anchor='e', bg=parent_bg, fg=default_fg, padx=5)
-                sum_label_bar.grid(row=i, column=1, padx=5, pady=3, sticky='ew')
-                self.ta_sum_labels.append(sum_label_bar)
+        # ── Einnahmen Bock's/Bar ──────────────────────────────────────────────
+        card_bar, tbl_bar = _make_card(left_col, 1, 0, "Einnahmen Bock's/Bar", pady=(0, 6))
+        bar_inp_labels = ["Bock's/Bar:", "TIP Bock's/BAR:"]
+        bar_inp_vars   = [self.ta_einnahmen_bar_haupt_var, self.ta_einnahmen_bar_tip_var]
+        for lbl_t, var in zip(bar_inp_labels, bar_inp_vars):
+            entry = ttk.Entry(tbl_bar, textvariable=var, justify='right',
+                              style='TA.NumberInput.TEntry')
+            entry.configure(font=self.ta_entry_font)
+            _add_row(tbl_bar, lbl_t, entry)
+            self._add_widget_to_list(entry, 'entry', is_main_input=True)
+            if lbl_t == "TIP Bock's/BAR:":
+                entry.bind('<FocusOut>', lambda e, v=var: self._validate_and_format_tip_field(e, v, "TIP Bock's/BAR"))
+                entry.bind('<Return>',   lambda e, v=var: self._validate_and_format_tip_field(e, v, "TIP Bock's/BAR"))
             else:
-                entry = ttk.Entry(einnahmen_bar_frame, textvariable=bar_vars[i], justify='right', style='TA.NumberInput.TEntry')
-                entry.configure(font=self.ta_entry_font)
-                entry.grid(row=i, column=1, padx=5, pady=3, sticky='ew')
-                self._add_widget_to_list(entry, 'entry', is_main_input=True)
-                if label_text == "TIP Bock's/BAR:":
-                    entry.bind('<FocusOut>', lambda e, v=bar_vars[i]: self._validate_and_format_tip_field(e, v, "TIP Bock's/BAR"))
-                    entry.bind('<Return>', lambda e, v=bar_vars[i]: self._validate_and_format_tip_field(e, v, "TIP Bock's/BAR"))
-                else:
-                    entry.bind('<FocusOut>', lambda e, v=bar_vars[i]: (self._format_on_focus_out(e, v), self._update_tagesabrechnung_calculations(show_feedback=False)))
-                    entry.bind('<Return>', lambda e, v=bar_vars[i]: (self._format_on_focus_out(e, v), self._update_tagesabrechnung_calculations(show_feedback=False)))
+                entry.bind('<FocusOut>', lambda e, v=var: (self._format_on_focus_out(e, v), self._update_tagesabrechnung_calculations(show_feedback=False)))
+                entry.bind('<Return>',   lambda e, v=var: (self._format_on_focus_out(e, v), self._update_tagesabrechnung_calculations(show_feedback=False)))
+        sum_lbl_bar = tk.Label(tbl_bar, textvariable=self.ta_einnahmen_bar_summe_var,
+                               font=self.ta_sum_font, anchor='e', fg=_FG)
+        _add_row(tbl_bar, "Summe:", sum_lbl_bar, is_sum=True)
+        self.ta_sum_labels.append(sum_lbl_bar)
 
-        # Tagesabrechnung Summary
-        summary_frame = ttk.LabelFrame(left_column_frame, text="Tagesabrechnung", style='TLabelframe')
-        summary_frame.pack(fill='x', expand=False, padx=5, pady=10)
-        summary_frame.columnconfigure(1, weight=1)
+        # ── Tagesabrechnung Summary ───────────────────────────────────────────
+        card_sum, tbl_sum = _make_card(left_col, 2, 0, "Tagesabrechnung", pady=(0, 6))
+        summary_rows = [
+            ("Einnahmen FO:",         self.ta_summary_einnahmen_fo_var,       False),
+            ("Einnahmen Bock's/BAR:", self.ta_summary_einnahmen_bar_var,      False),
+            ("Summe Einnahmen:",      self.ta_summary_summe_einnahmen_var,    True),
+            ("Summe Ausgaben:",       self.ta_summary_summe_ausgaben_var,     True),
+            ("Summe Bareinnahmen:",   self.ta_summary_summe_bareinnahmen_var, True),
+        ]
+        for lbl_t, var, is_s in summary_rows:
+            fnt = self.ta_sum_font if is_s else self.ta_entry_font
+            disp = tk.Label(tbl_sum, textvariable=var, font=fnt, anchor='e', fg=_FG)
+            _add_row(tbl_sum, lbl_t, disp, is_sum=is_s)
+            self.ta_sum_labels.append(disp)
 
-        summary_labels = ["Einnamen FO:", "Einnamen Bock's/BAR:", "Summe Einnahmen:", "Summe Ausgaben:", "Summe Bareinnahmen:"]
-        summary_vars = [self.ta_summary_einnahmen_fo_var, self.ta_summary_einnahmen_bar_var,
-                        self.ta_summary_summe_einnahmen_var, self.ta_summary_summe_ausgaben_var,
-                        self.ta_summary_summe_bareinnahmen_var]
-        
-        for i, label_text in enumerate(summary_labels):
-            is_bold = "Summe" in label_text
-            label_style = 'Bold.TLabel' if is_bold else 'TLabel'
-            font_to_use = self.ta_sum_font if is_bold else self.ta_entry_font
-            
-            ttk.Label(summary_frame, text=label_text, style=label_style).grid(row=i, column=0, padx=5, pady=3, sticky='w')
-            display_label = tk.Label(summary_frame, textvariable=summary_vars[i], font=font_to_use,
-                                     anchor='e', bg=parent_bg, fg=default_fg, padx=5)
-            display_label.grid(row=i, column=1, padx=5, pady=3, sticky='ew')
-            self.ta_sum_labels.append(display_label)
+        # ── RIGHT COLUMN ──────────────────────────────────────────────────────
+        right_col = tk.Frame(parent_frame, bg=_BG)
+        right_col.grid(row=0, column=1, rowspan=2, sticky='nsew', padx=(2, 4), pady=4)
+        right_col.columnconfigure(0, weight=1)
 
-        # --- Rechte Spalte ---
-        right_column_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame')
-        right_column_frame.grid(row=0, column=1, rowspan=2, padx=(10, 0), pady=5, sticky='nsew')
-        right_column_frame.rowconfigure(0, weight=0)
-        right_column_frame.rowconfigure(1, weight=0)
-        right_column_frame.rowconfigure(2, weight=1)
-        right_column_frame.columnconfigure(0, weight=1)
-        
-        # Ausgaben
-        ausgaben_frame = ttk.LabelFrame(right_column_frame, text="Ausgaben", style='TLabelframe')
-        ausgaben_frame.grid(row=0, column=0, sticky='new')
-        ausgaben_frame.columnconfigure(0, weight=2)
-        ausgaben_frame.columnconfigure(1, weight=3)
-        ausgaben_frame.columnconfigure(2, weight=1)
+        # ── Ausgaben (special 3-data-column table) ────────────────────────────
+        shd_a = tk.Frame(right_col, bg=_SHAD)
+        shd_a.grid(row=0, column=0, sticky='nsew', padx=6, pady=(0, 8))
+        shd_a.columnconfigure(0, weight=1)
+        card_a = tk.Frame(shd_a, bg=_CARD)
+        card_a.pack(fill='both', expand=True, padx=2, pady=2)
+        card_a.columnconfigure(0, weight=1)
 
-        ausgaben_headers = ["Mitarbeiter", "Wofür", "Betrag"]
-        for col, header in enumerate(ausgaben_headers):
-            ttk.Label(ausgaben_frame, text=header, style='SectionHeader.TLabel').grid(row=0, column=col, padx=5, pady=3, sticky='w')
+        hdr_a = tk.Canvas(card_a, height=_GHH, highlightthickness=0, bd=0)
+        hdr_a.grid(row=0, column=0, sticky='ew')
+        def _draw_a(ev=None, _c=hdr_a):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 500
+            for _i in range(_GHH):
+                _p = _i / max(_GHH - 1, 1)
+                _r2 = int(int(_GH1[1:3], 16) + (int(_GH2[1:3], 16) - int(_GH1[1:3], 16)) * _p)
+                _g2 = int(int(_GH1[3:5], 16) + (int(_GH2[3:5], 16) - int(_GH1[3:5], 16)) * _p)
+                _b2 = int(int(_GH1[5:7], 16) + (int(_GH2[5:7], 16) - int(_GH1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r2:02x}{_g2:02x}{_b2:02x}')
+            _mid = _GHH // 2
+            _c.create_text(12, _mid, text="Ausgaben",
+                           font=("Segoe UI", 11, "bold"), fill='white', anchor='w')
+            _c.create_text(int(ww * 0.30), _mid, text="Mitarbeiter",
+                           font=("Segoe UI", 9), fill='#90CAF9', anchor='w')
+            _c.create_text(int(ww * 0.58), _mid, text="Wofür",
+                           font=("Segoe UI", 9), fill='#90CAF9', anchor='w')
+            _c.create_text(ww - 10, _mid, text="Betrag",
+                           font=("Segoe UI", 9), fill='#90CAF9', anchor='e')
+        hdr_a.bind('<Configure>', _draw_a)
+        hdr_a.after(10, _draw_a)
+
+        tbl_a = tk.Frame(card_a, bg=_BG_A)
+        tbl_a.grid(row=1, column=0, sticky='nsew')
+        tbl_a.columnconfigure(0, weight=0, minsize=5)
+        tbl_a.columnconfigure(1, weight=2)
+        tbl_a.columnconfigure(2, weight=3)
+        tbl_a.columnconfigure(3, weight=1, minsize=80)
+        card_a.rowconfigure(1, weight=1)
 
         for i, row_vars in enumerate(self.ta_ausgaben_rows):
-            row_idx = i + 1
-            entry_ma = ttk.Entry(ausgaben_frame, textvariable=row_vars["mitarbeiter"], style='TEntry')
+            row_bg = _BG_A if i % 2 == 0 else _BG_B
+            tk.Frame(tbl_a, bg=_ACC_IN, width=5).grid(row=i*2, column=0, sticky='ns')
+            entry_ma = ttk.Entry(tbl_a, textvariable=row_vars["mitarbeiter"], style='TEntry')
             entry_ma.configure(font=self.ta_entry_font)
-            entry_ma.grid(row=row_idx, column=0, padx=5, pady=2, sticky='ew')
-            entry_wofuer = ttk.Entry(ausgaben_frame, textvariable=row_vars["wofuer"], style='TEntry')
+            entry_ma.grid(row=i*2, column=1, padx=(6, 4), pady=_ROW_PAD, sticky='ew')
+            entry_wofuer = ttk.Entry(tbl_a, textvariable=row_vars["wofuer"], style='TEntry')
             entry_wofuer.configure(font=self.ta_entry_font)
-            entry_wofuer.grid(row=row_idx, column=1, padx=5, pady=2, sticky='ew')
-            entry_betrag = ttk.Entry(ausgaben_frame, textvariable=row_vars["betrag"], justify='right', style='TA.NumberInput.TEntry')
+            entry_wofuer.grid(row=i*2, column=2, padx=4, pady=_ROW_PAD, sticky='ew')
+            entry_betrag = ttk.Entry(tbl_a, textvariable=row_vars["betrag"],
+                                     justify='right', style='TA.NumberInput.TEntry')
             entry_betrag.configure(font=self.ta_entry_font)
-            entry_betrag.grid(row=row_idx, column=2, padx=5, pady=2, sticky='ew')
-            
-            self._add_widget_to_list(entry_ma, 'entry', is_main_input=True)
+            entry_betrag.grid(row=i*2, column=3, padx=(4, 10), pady=_ROW_PAD, sticky='ew')
+            tk.Frame(tbl_a, bg=_SEP, height=1).grid(row=i*2+1, column=0, columnspan=4, sticky='ew')
+            self._add_widget_to_list(entry_ma,     'entry', is_main_input=True)
             self._add_widget_to_list(entry_wofuer, 'entry', is_main_input=True)
             self._add_widget_to_list(entry_betrag, 'entry', is_main_input=True)
-            
             entry_betrag.bind('<FocusOut>', lambda e, v=row_vars["betrag"]: self._validate_and_format_ausgabe_field(e, v))
-            entry_betrag.bind('<Return>', lambda e, v=row_vars["betrag"]: self._validate_and_format_ausgabe_field(e, v))      
-        
-        summe_row_idx = len(self.ta_ausgaben_rows) + 1
-        ttk.Label(ausgaben_frame, text="Summe:", style='Bold.TLabel').grid(row=summe_row_idx, column=1, padx=5, pady=5, sticky='e')
-        sum_label_ausgaben = tk.Label(ausgaben_frame, textvariable=self.ta_ausgaben_summe_var, font=self.ta_sum_font,
-                                      anchor='e', bg=parent_bg, fg=default_fg, padx=5)
-        sum_label_ausgaben.grid(row=summe_row_idx, column=2, padx=5, pady=5, sticky='ew')
-        self.ta_sum_labels.append(sum_label_ausgaben)
-        
-        # vvvvv HIER BEGINNT DER KORRIGIERTE BUTTON-BLOCK vvvvv
-        button_frame = ttk.LabelFrame(right_column_frame, text="Aktionen", style='TLabelframe')
-        button_frame.grid(row=1, column=0, sticky='new', pady=(20, 5))
+            entry_betrag.bind('<Return>',   lambda e, v=row_vars["betrag"]: self._validate_and_format_ausgabe_field(e, v))
+
+        # Ausgaben sum row
+        n = len(self.ta_ausgaben_rows)
+        tk.Frame(tbl_a, bg=_ACC_SU, width=5).grid(row=n*2, column=0, sticky='ns')
+        tk.Label(tbl_a, text="Summe Ausgaben:", bg=_BG_SUM, fg=_FG,
+                 font=("Segoe UI", 11, "bold"), anchor='w').grid(
+            row=n*2, column=1, columnspan=2, padx=(10, 6), pady=_ROW_PAD, sticky='ew')
+        sum_lbl_a = tk.Label(tbl_a, textvariable=self.ta_ausgaben_summe_var,
+                             font=self.ta_sum_font, anchor='e', fg=_FG, bg=_BG_SUM)
+        sum_lbl_a.grid(row=n*2, column=3, padx=(4, 10), pady=_ROW_PAD, sticky='ew')
+        self.ta_sum_labels.append(sum_lbl_a)
+
+        # ── Aktionen card ─────────────────────────────────────────────────────
+        shd_btn = tk.Frame(right_col, bg=_SHAD)
+        shd_btn.grid(row=1, column=0, sticky='nsew', padx=6, pady=(0, 8))
+        shd_btn.columnconfigure(0, weight=1)
+        card_btn = tk.Frame(shd_btn, bg=_CARD)
+        card_btn.pack(fill='both', expand=True, padx=2, pady=2)
+        card_btn.columnconfigure(0, weight=1)
+
+        hdr_btn = tk.Canvas(card_btn, height=_GHH, highlightthickness=0, bd=0)
+        hdr_btn.grid(row=0, column=0, sticky='ew')
+        def _draw_btn_hdr(ev=None, _c=hdr_btn):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 500
+            for _i in range(_GHH):
+                _p = _i / max(_GHH - 1, 1)
+                _r2 = int(int(_GH1[1:3], 16) + (int(_GH2[1:3], 16) - int(_GH1[1:3], 16)) * _p)
+                _g2 = int(int(_GH1[3:5], 16) + (int(_GH2[3:5], 16) - int(_GH1[3:5], 16)) * _p)
+                _b2 = int(int(_GH1[5:7], 16) + (int(_GH2[5:7], 16) - int(_GH1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r2:02x}{_g2:02x}{_b2:02x}')
+            _c.create_text(12, _GHH // 2, text="Aktionen",
+                           font=("Segoe UI", 11, "bold"), fill='white', anchor='w')
+        hdr_btn.bind('<Configure>', _draw_btn_hdr)
+        hdr_btn.after(10, _draw_btn_hdr)
+
+        button_frame = tk.Frame(card_btn, bg=_CARD)
+        button_frame.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
         button_frame.columnconfigure((0, 1, 2), weight=1)
         button_frame.rowconfigure((0, 1, 2), weight=1)
 
@@ -18597,23 +19068,21 @@ class KassenprotokollApp:
         button_ipady = style_cfg.get('ipady', 10)
         button_pady = style_cfg.get('pady', 5)
 
-        # Reihe 1
         delete_btn = ttk.Button(button_frame, command=self._clear_tagesabrechnung_fields, style='TButton')
         self._configure_single_ta_button(delete_btn, ta_btn_configs.get('TA_Loeschen', {}))
         delete_btn.grid(row=0, column=0, padx=5, pady=button_pady, ipady=button_ipady, sticky='nsew')
         ToolTip(delete_btn, "Setzt alle Felder der Tagesabrechnung zurück.")
-        
+
         print_btn = ttk.Button(button_frame, command=self._print_tagesabrechnung, style='TButton')
         self._configure_single_ta_button(print_btn, ta_btn_configs.get('TA_Drucken', {}))
         print_btn.grid(row=0, column=1, padx=5, pady=button_pady, ipady=button_ipady, sticky='nsew')
         ToolTip(print_btn, "Speichert die Tagesabrechnung als PDF, um sie anschließend zu drucken.")
-        
+
         save_btn = ttk.Button(button_frame, command=self._save_tagesabrechnung_to_pdf, style='TButton')
         self._configure_single_ta_button(save_btn, ta_btn_configs.get('TA_Speichern', {}))
         save_btn.grid(row=0, column=2, padx=5, pady=button_pady, ipady=button_ipady, sticky='nsew')
         ToolTip(save_btn, "Speichert die Tagesabrechnung als PDF-Datei im Zielordner.")
 
-        # Reihe 2
         email_btn = ttk.Button(button_frame, command=self._email_tagesabrechnung, style='TButton')
         self._configure_single_ta_button(email_btn, ta_btn_configs.get('TA_EMail', {}))
         email_btn.grid(row=1, column=0, padx=5, pady=button_pady, ipady=button_ipady, sticky='nsew')
@@ -18623,14 +19092,12 @@ class KassenprotokollApp:
         self._configure_single_ta_button(refresh_btn, ta_btn_configs.get('TA_Refresh', {}))
         refresh_btn.grid(row=1, column=1, padx=5, pady=button_pady, ipady=button_ipady, sticky='nsew')
         ToolTip(refresh_btn, "Berechnet alle Summen in der Tagesabrechnung neu.")
-        
-        # DER VERLAUF-BUTTON IST JETZT HIER KORREKT EINGEFÜGT
+
         verlauf_btn = ttk.Button(button_frame, command=self._open_tagesabrechnung_history_dialog, style='TButton')
         self._configure_single_ta_button(verlauf_btn, ta_btn_configs.get('TA_Verlauf', {}))
         verlauf_btn.grid(row=1, column=2, padx=5, pady=button_pady, ipady=button_ipady, sticky='nsew')
         ToolTip(verlauf_btn, "Zeigt gespeicherte Versionen der Tagesabrechnung an.")
 
-        # Reihe 3 (Backup-Buttons)
         manual_backup_btn = ttk.Button(button_frame, command=self._perform_manual_backup_tagesabrechnung, style='TButton')
         self._configure_single_ta_button(manual_backup_btn, ta_btn_configs.get('TA_ManualBackup', {}))
         manual_backup_btn.grid(row=2, column=0, padx=5, pady=button_pady, ipady=button_ipady, sticky='nsew')
@@ -18640,7 +19107,6 @@ class KassenprotokollApp:
         self._configure_single_ta_button(manage_backups_btn, ta_btn_configs.get('TA_ManageBackups', {}))
         manage_backups_btn.grid(row=2, column=1, columnspan=2, padx=5, pady=button_pady, ipady=button_ipady, sticky='nsew')
         ToolTip(manage_backups_btn, "Öffnet die Verwaltung zum Wiederherstellen oder Löschen von Backups.")
-        # ^^^^^ HIER ENDET DER KORRIGIERTE BUTTON-BLOCK ^^^^^
 
     
     def _configure_single_ta_button(self, button_widget, config):
@@ -19780,7 +20246,7 @@ class KassenprotokollApp:
         _BG_A   = '#FFFFFF'; _BG_B   = '#F0F6FF'
         _ACC_IN = '#1565C0'   # input rows (blue)
         _ACC_SU = '#1B5E20'   # sum rows (green)
-        _ACC_DI = '#F57C00'   # diff/result rows (amber)
+        _ACC_DI = '#C62828'   # diff/result rows (red)
         _SEP    = '#D0DFF0'
         _FG     = '#0D2137'
 
@@ -19830,9 +20296,13 @@ class KassenprotokollApp:
             if item_style == 'sum_display':
                 acc_col = _ACC_SU; lbl_fg = '#1B5E20'
             elif item_style == 'diff_display_auto':
-                acc_col = _ACC_DI; lbl_fg = '#E65100'
+                acc_col = _ACC_DI; lbl_fg = '#C62828'
             else:
                 acc_col = _ACC_IN; lbl_fg = _FG
+
+            # Highlight key metrics with larger font
+            is_key_metric = kassenabschluss_key in ('SOLL', 'KASSE_TOTAL')
+            row_font = tkFont.Font(size=entry_font_size + 2, weight='bold') if is_key_metric else entry_font
 
             data_row = tr * 2; sep_row = tr * 2 + 1; tr += 1
 
@@ -19845,21 +20315,20 @@ class KassenprotokollApp:
             self._update_single_dashboard_icon_display(icon_key, icon_lbl, icon_cfg, icon_color)
             icon_lbl.grid(row=data_row, column=1, padx=(6, 2), pady=_ROW_PAD, sticky='w')
 
-            # col 2: label text
+            # col 2: label text (larger + bolder for key metrics)
+            lbl_font = ("Segoe UI", 13, "bold") if is_key_metric else ("Segoe UI", 11, "bold")
             tk.Label(items_fr, text=label_text, bg=row_bg, fg=lbl_fg,
-                     font=("Segoe UI", 11, "bold"), anchor='w'
+                     font=lbl_font, anchor='w'
                      ).grid(row=data_row, column=2, padx=(2, 4), pady=_ROW_PAD, sticky='ew')
 
-            # col 3: input entry or display label – both in 3-D raised wrapper
+            # col 3: input entry or display label
             if widget_type == "input":
-                inp_wrap = tk.Frame(items_fr, bg=row_bg, relief='raised', bd=3)
-                inp_wrap.grid(row=data_row, column=3, padx=(4, 8), pady=_ROW_PAD, sticky='ew')
-                entry_widget = ttk.Entry(inp_wrap, textvariable=value_var,
+                entry_widget = ttk.Entry(items_fr, textvariable=value_var,
                                          style='Dashboard.Input.TEntry',
                                          width=self.current_settings.get('dashboard_input_field_width', self.default_settings['dashboard_input_field_width']),
-                                         justify='right', font=entry_font)
-                entry_widget.pack(fill='both', expand=True, padx=1,
-                                  pady=self.current_settings.get('dashboard_input_field_ipady', self.default_settings['dashboard_input_field_ipady']))
+                                         justify='right', font=row_font)
+                entry_widget.grid(row=data_row, column=3, padx=(4, 8), pady=_ROW_PAD, sticky='ew',
+                                  ipady=self.current_settings.get('dashboard_input_field_ipady', self.default_settings['dashboard_input_field_ipady']))
                 is_disabled = ((kassenabschluss_key == "UMSATZ_FRUEH" and active_shift_for_dashboard == "Spätdienst") or
                                (kassenabschluss_key == "UMSATZ_SPAET" and active_shift_for_dashboard == "Frühdienst"))
                 entry_widget.config(state='disabled' if is_disabled else 'normal')
@@ -19874,20 +20343,39 @@ class KassenprotokollApp:
                     d_bg = '#1565C0'; d_fg = '#FFFFFF'
                 else:
                     d_bg = '#E3F2FD'; d_fg = '#0D47A1'
-                disp_wrap = tk.Frame(items_fr, bg=d_bg, relief='raised', bd=3)
-                disp_wrap.grid(row=data_row, column=3, padx=(4, 8), pady=_ROW_PAD, sticky='ew')
-                value_label_widget = tk.Label(disp_wrap, textvariable=value_var,
-                                              anchor='e', font=entry_font,
+                value_label_widget = tk.Label(items_fr, textvariable=value_var,
+                                              anchor='e', font=row_font,
                                               bg=d_bg, fg=d_fg, padx=6)
-                value_label_widget.pack(fill='both', expand=True, padx=1, pady=1)
+                value_label_widget.grid(row=data_row, column=3, padx=(4, 8), pady=_ROW_PAD, sticky='ew')
                 if reco_item_def.get('style') == 'diff_display_auto':
                     value_label_widget._custom_type  = 'dashboard_sum'
                     value_label_widget._card_row_bg  = d_bg  # preserve blue bg in _update_diff_label_colors
-                    value_label_widget._wrapper_frame = disp_wrap
                     self._add_widget_to_list(value_label_widget, 'label', is_diff_label=True)
 
             # separator
             tk.Frame(items_fr, bg=_SEP, height=1).grid(row=sep_row, column=0, columnspan=4, sticky='ew')
+
+        # ── Differenz Bargeld — hardcoded extra row below last item ───────────
+        diff_barg_data_row = tr * 2
+        diff_barg_sep_row  = tr * 2 + 1
+        diff_barg_bg       = _BG_A if tr % 2 == 0 else _BG_B
+        _DIFF_BARG_ACC     = '#C62828'  # red accent bar
+        tk.Frame(items_fr, bg=_DIFF_BARG_ACC, width=5).grid(
+            row=diff_barg_data_row, column=0, sticky='ns')
+        tk.Label(items_fr, text='', bg=diff_barg_bg).grid(
+            row=diff_barg_data_row, column=1, padx=(6, 2), pady=_ROW_PAD, sticky='w')
+        tk.Label(items_fr, text="Differenz Bargeld:", bg=diff_barg_bg, fg='#C62828',
+                 font=("Segoe UI", 13, "bold"), anchor='w'
+                 ).grid(row=diff_barg_data_row, column=2, padx=(2, 4), pady=_ROW_PAD, sticky='ew')
+        diff_barg_lbl = tk.Label(items_fr, textvariable=self.dashboard_bargeld_diff_var,
+                                 anchor='e', font=tkFont.Font(size=entry_font_size + 2, weight='bold'),
+                                 bg='#E3F2FD', fg='#0D47A1', padx=6)
+        diff_barg_lbl.grid(row=diff_barg_data_row, column=3, padx=(4, 8), pady=_ROW_PAD, sticky='ew')
+        diff_barg_lbl._card_row_bg = '#E3F2FD'
+        diff_barg_lbl._custom_type = 'bargeld_diff'
+        self._add_widget_to_list(diff_barg_lbl, 'label', is_diff_label=True)
+        tk.Frame(items_fr, bg=_SEP, height=1).grid(
+            row=diff_barg_sep_row, column=0, columnspan=4, sticky='ew')
 
     def _toggle_kassenabschluss_section(self, target_state=None):
         if target_state is None:
@@ -20048,9 +20536,6 @@ class KassenprotokollApp:
                         amount_label_widget = vars_dict.get('cash_amount_label_widgets', {}).get(denom)
                     if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'Cash.NumberDisplay.TLabel':
                        amount_label_widget.config(style='Cash.NumberDisplay.TLabel')
-                    wrap = vars_dict.get('cash_amount_wrapper_widgets', {}).get(denom)
-                    if wrap and wrap.winfo_exists() and wrap.cget('bg') != '#E3F2FD':
-                        wrap.config(bg='#E3F2FD')
 
             # Clear stamp counts (prices are admin-editable, not cleared here)
             # Reset highlight for stamp qty/price/amount widgets
@@ -20071,9 +20556,6 @@ class KassenprotokollApp:
                 amount_label_widget = vars_dict['stamp_amount_label_widgets'].get(price_key)
                 if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'Stamp.NumberDisplay.TLabel':
                     amount_label_widget.config(style='Stamp.NumberDisplay.TLabel')
-                wrap = vars_dict.get('stamp_amount_wrapper_widgets', {}).get(price_key)
-                if wrap and wrap.winfo_exists() and wrap.cget('bg') != '#E0F2F1':
-                    wrap.config(bg='#E0F2F1')
 
             # Clear card data
             for card_key in vars_dict.get('card_type_keys', []):
@@ -22273,11 +22755,6 @@ class KassenprotokollApp:
 
         if 'cash_amount_label_widgets' not in vars_dict:
             vars_dict['cash_amount_label_widgets'] = {}
-        if 'cash_amount_wrapper_widgets' not in vars_dict:
-            vars_dict['cash_amount_wrapper_widgets'] = {}
-        # Colors kept in sync with Cash.NumberDisplay / Cash.Highlighted styles
-        _W_BG_ZERO = '#E3F2FD'   # wrapper bg – zero state
-        _W_BG_FILL = '#1565C0'   # wrapper bg – non-zero state
 
         _ROW_PAD_Y = 7
 
@@ -22302,15 +22779,13 @@ class KassenprotokollApp:
             tk.Frame(tbl, bg=acc_col, width=5).grid(
                 row=tbl_row, column=0, sticky='ns', padx=0, pady=0)
 
-            # col 2 – denomination label: 3-D raised wrapper + tk.Label inside
-            denom_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
-            denom_wrap.grid(row=tbl_row, column=2, padx=(10, 8),
-                            pady=_ROW_PAD_Y, sticky='ew')
+            # col 2 – denomination label
             denom_label = tk.Label(
-                denom_wrap, text=lbl_denom_text,
+                tbl, text=lbl_denom_text,
                 bg=row_bg, fg=row_fg,
                 font=("Segoe UI", 11, "bold"), anchor='w')
-            denom_label.pack(fill='both', expand=True, padx=4, pady=1)
+            denom_label.grid(row=tbl_row, column=2, padx=(10, 8),
+                             pady=_ROW_PAD_Y, sticky='ew')
             self._add_widget_to_list(denom_label, 'label')
 
             # 1 px separator between rows
@@ -22324,12 +22799,10 @@ class KassenprotokollApp:
                 continue
 
             if is_note:
-                # col 1 – qty input: 3-D raised wrapper
+                # col 1 – qty input
                 qty_var = vars_dict['cash_counts'][denom_val]
-                qty_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
-                qty_wrap.grid(row=tbl_row, column=1, padx=8, pady=_ROW_PAD_Y, sticky='ew')
                 if use_combobox:
-                    qty_widget = ttk.Combobox(qty_wrap, textvariable=qty_var,
+                    qty_widget = ttk.Combobox(tbl, textvariable=qty_var,
                                               values=combobox_values, width=5, justify='right',
                                               style='NumberInput.TCombobox', state='readonly')
                     qty_widget.bind('<<ComboboxSelected>>',
@@ -22337,45 +22810,40 @@ class KassenprotokollApp:
                                         self._update_all_calculations(called_by_button=False),
                                         self._update_input_field_highlight(w, sv, is_count_field=True)))
                 else:
-                    qty_widget = ttk.Entry(qty_wrap, textvariable=qty_var, width=6,
+                    qty_widget = ttk.Entry(tbl, textvariable=qty_var, width=6,
                                            justify='right', style='NumberInput.TEntry')
                     qty_widget.bind('<FocusOut>',
                                     lambda e, v=qty_var: (
                                         self._format_on_focus_out(e, v, is_count=True),
                                         self._update_all_calculations(called_by_button=False)))
-                qty_widget.pack(fill='both', expand=True, padx=1, pady=1)
+                qty_widget.grid(row=tbl_row, column=1, padx=8, pady=_ROW_PAD_Y, sticky='ew')
                 self._add_widget_to_list(qty_widget,
                                          'combobox' if use_combobox else 'entry',
                                          is_main_input=True)
 
-                # col 3 – calculated amount: 3-D raised wrapper + ttk.Label inside
-                amt_wrap = tk.Frame(tbl, bg=_W_BG_ZERO, relief='raised', bd=3)
-                amt_wrap.grid(row=tbl_row, column=3, padx=(4, 12),
-                              pady=_ROW_PAD_Y, sticky='ew')
+                # col 3 – calculated amount label
                 amount_label = ttk.Label(
-                    amt_wrap,
+                    tbl,
                     textvariable=vars_dict['cash_amounts_display'][denom_val],
                     anchor='e', style='Cash.NumberDisplay.TLabel',
                     font=("Segoe UI", 11, "bold"))
-                amount_label.pack(fill='both', expand=True, padx=2, pady=1)
+                amount_label.grid(row=tbl_row, column=3, padx=(4, 12),
+                                  pady=_ROW_PAD_Y, sticky='ew')
                 self._add_widget_to_list(amount_label, 'label')
-                vars_dict['cash_amount_label_widgets'][denom_val]  = amount_label
-                vars_dict['cash_amount_wrapper_widgets'][denom_val] = amt_wrap
+                vars_dict['cash_amount_label_widgets'][denom_val] = amount_label
 
             else:
                 # col 1 – invisible spacer (keeps accent bar visible)
                 tk.Frame(tbl, bg=row_bg).grid(row=tbl_row, column=1, sticky='ew')
 
-                # col 3 – direct amount entry for small coins (3-D raised wrapper)
-                coin_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
-                coin_wrap.grid(row=tbl_row, column=3, padx=(4, 12),
-                               pady=_ROW_PAD_Y, sticky='ew')
+                # col 3 – direct amount entry for small coins
                 entry_betrag = ttk.Entry(
-                    coin_wrap,
+                    tbl,
                     textvariable=vars_dict['cash_amounts_display'][denom_val],
                     justify='right', style='NumberInput.TEntry',
                     font=self.ta_entry_font)
-                entry_betrag.pack(fill='both', expand=True, padx=1, pady=1)
+                entry_betrag.grid(row=tbl_row, column=3, padx=(4, 12),
+                                  pady=_ROW_PAD_Y, sticky='ew')
                 entry_betrag.bind(
                     '<FocusOut>',
                     lambda e, v=vars_dict['cash_amounts_display'][denom_val]: (
@@ -22468,12 +22936,8 @@ class KassenprotokollApp:
                     if amount_label_widget and amount_label_widget.winfo_exists():
                         is_zero = current_amount_val.is_zero()
                         target_style  = 'Cash.NumberDisplay.TLabel' if is_zero else 'Cash.Highlighted.NumberDisplay.TLabel'
-                        wrapper_color = '#E3F2FD' if is_zero else '#1565C0'
                         if amount_label_widget.cget('style') != target_style:
                             amount_label_widget.config(style=target_style)
-                        wrap = vars_dict.get('cash_amount_wrapper_widgets', {}).get(denom_val)
-                        if wrap and wrap.winfo_exists() and wrap.cget('bg') != wrapper_color:
-                            wrap.config(bg=wrapper_color)
 
             except Exception as e: # Catch any error during parsing/calculation for this denomination
                 print(f"Error calculating cash for denomination {denom_val}: {e}")
@@ -22489,9 +22953,6 @@ class KassenprotokollApp:
                     amount_label_widget = vars_dict.get('cash_amount_label_widgets', {}).get(denom_val)
                     if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'Cash.NumberDisplay.TLabel':
                         amount_label_widget.config(style='Cash.NumberDisplay.TLabel')
-                    wrap = vars_dict.get('cash_amount_wrapper_widgets', {}).get(denom_val)
-                    if wrap and wrap.winfo_exists() and wrap.cget('bg') != '#E3F2FD':
-                        wrap.config(bg='#E3F2FD')
 
             # Add the current amount (or 0 on error) to the total sum
             total_sum += current_amount_val # current_amount_val is Decimal('0.00') on error
@@ -22568,11 +23029,8 @@ class KassenprotokollApp:
         combobox_values = [str(i) for i in range(combobox_max_val + 1)]
 
         if 'stamp_amount_label_widgets' not in vars_dict: vars_dict['stamp_amount_label_widgets'] = {}
-        if 'stamp_amount_wrapper_widgets' not in vars_dict: vars_dict['stamp_amount_wrapper_widgets'] = {}
         if 'stamp_qty_widgets' not in vars_dict: vars_dict['stamp_qty_widgets'] = {}
         if 'stamp_price_entry_widgets' not in vars_dict: vars_dict['stamp_price_entry_widgets'] = {}
-        _SW_BG_ZERO = '#E0F2F1'   # wrapper bg – zero state (matches Stamp.NumberDisplay bg)
-        _SW_BG_FILL = '#00796B'   # wrapper bg – non-zero state (matches Stamp.Highlighted bg)
 
         stamp_definitions_active = vars_dict.get('stamp_definitions', [])
         state_for_price_field = 'normal' if self.is_admin_mode else 'disabled'
@@ -22599,11 +23057,9 @@ class KassenprotokollApp:
             # col 0 – accent bar
             tk.Frame(tbl, bg=_ACC, width=5).grid(row=tbl_row, column=0, sticky='ns')
 
-            # col 1 – qty input: 3-D raised wrapper
-            qty_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
-            qty_wrap.grid(row=tbl_row, column=1, padx=8, pady=_ROW_PAD, sticky='ew')
+            # col 1 – qty input
             if use_combobox:
-                qty_widget = ttk.Combobox(qty_wrap, textvariable=qty_var,
+                qty_widget = ttk.Combobox(tbl, textvariable=qty_var,
                                           values=combobox_values, width=6, justify='right',
                                           style='NumberInput.TCombobox', state='readonly',
                                           font=_VAL_FONT)
@@ -22612,32 +23068,28 @@ class KassenprotokollApp:
                                     self._format_on_focus_out(e, sv, is_count=True),
                                     self._update_all_calculations(called_by_button=False)))
             else:
-                qty_widget = ttk.Entry(qty_wrap, textvariable=qty_var, width=6, justify='right',
+                qty_widget = ttk.Entry(tbl, textvariable=qty_var, width=6, justify='right',
                                        style='NumberInput.TEntry', font=_VAL_FONT)
                 qty_widget.bind('<FocusOut>',
                                 lambda e, sv=qty_var: (
                                     self._format_on_focus_out(e, sv, is_count=True),
                                     self._update_all_calculations(called_by_button=False)))
-            qty_widget.pack(fill='both', expand=True, padx=1, pady=1)
+            qty_widget.grid(row=tbl_row, column=1, padx=8, pady=_ROW_PAD, sticky='ew')
             self._add_widget_to_list(qty_widget, 'combobox' if use_combobox else 'entry', is_main_input=True)
             vars_dict['stamp_qty_widgets'][price_key_float] = qty_widget
 
-            # col 2 – label name: 3-D raised wrapper
-            lbl_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
-            lbl_wrap.grid(row=tbl_row, column=2, padx=(8, 4), pady=_ROW_PAD, sticky='ew')
-            lbl_w = tk.Label(lbl_wrap, text=f"{lbl_text}:", bg=row_bg, fg=_FG,
+            # col 2 – label name
+            lbl_w = tk.Label(tbl, text=f"{lbl_text}:", bg=row_bg, fg=_FG,
                              font=_LBL_FONT, anchor='w')
-            lbl_w.pack(fill='both', expand=True, padx=4, pady=1)
+            lbl_w.grid(row=tbl_row, column=2, padx=(8, 4), pady=_ROW_PAD, sticky='ew')
             self._add_widget_to_list(lbl_w, 'label')
 
-            # col 3 – price entry: 3-D raised wrapper
-            price_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
-            price_wrap.grid(row=tbl_row, column=3, padx=6, pady=_ROW_PAD, sticky='ew')
-            entry_price = ttk.Entry(price_wrap,
+            # col 3 – price entry
+            entry_price = ttk.Entry(tbl,
                                     textvariable=vars_dict['stamp_price_input'][price_key_float],
                                     width=8, justify='right', style='NumberInput.TEntry',
                                     font=_VAL_FONT, state=state_for_price_field)
-            entry_price.pack(fill='both', expand=True, padx=1, pady=1)
+            entry_price.grid(row=tbl_row, column=3, padx=6, pady=_ROW_PAD, sticky='ew')
             entry_price.bind('<FocusOut>',
                              lambda e, v_str=vars_dict['stamp_price_input'][price_key_float],
                              v_dbl=vars_dict['stamp_price_value'][price_key_float]: (
@@ -22648,17 +23100,14 @@ class KassenprotokollApp:
             self._add_widget_to_list(entry_price, 'entry', is_main_input=True, is_admin_editable=True)
             vars_dict['stamp_price_entry_widgets'][price_key_float] = entry_price
 
-            # col 4 – calculated amount: 3-D raised wrapper + ttk.Label inside
-            stamp_amt_wrap = tk.Frame(tbl, bg=_SW_BG_ZERO, relief='raised', bd=3)
-            stamp_amt_wrap.grid(row=tbl_row, column=4, padx=(4, 10), pady=_ROW_PAD, sticky='ew')
+            # col 4 – calculated amount label
             stamp_amount_label = ttk.Label(
-                stamp_amt_wrap, textvariable=vars_dict['stamp_amounts_display'][price_key_float],
+                tbl, textvariable=vars_dict['stamp_amounts_display'][price_key_float],
                 anchor='e', style='Stamp.NumberDisplay.TLabel',
                 font=("Segoe UI", 11, "bold"))
-            stamp_amount_label.pack(fill='both', expand=True, padx=2, pady=1)
+            stamp_amount_label.grid(row=tbl_row, column=4, padx=(4, 10), pady=_ROW_PAD, sticky='ew')
             self._add_widget_to_list(stamp_amount_label, 'label')
-            vars_dict['stamp_amount_label_widgets'][price_key_float]  = stamp_amount_label
-            vars_dict['stamp_amount_wrapper_widgets'][price_key_float] = stamp_amt_wrap
+            vars_dict['stamp_amount_label_widgets'][price_key_float] = stamp_amount_label
 
             # separator line
             tk.Frame(tbl, bg=_SEP_CLR, height=1).grid(
@@ -22736,12 +23185,8 @@ class KassenprotokollApp:
                 if amount_label_widget and amount_label_widget.winfo_exists():
                     is_zero = current_amount_val.is_zero()
                     target_style = 'Stamp.NumberDisplay.TLabel' if is_zero else 'Stamp.Highlighted.NumberDisplay.TLabel'
-                    wrapper_color = '#E0F2F1' if is_zero else '#00796B'
                     if amount_label_widget.cget('style') != target_style:
                         amount_label_widget.config(style=target_style)
-                    wrap = vars_dict.get('stamp_amount_wrapper_widgets', {}).get(price_key_float)
-                    if wrap and wrap.winfo_exists() and wrap.cget('bg') != wrapper_color:
-                        wrap.config(bg=wrapper_color)
 
             except Exception as e:
                 print(f"Error calculating stamp amount for price key {price_key_float}: {e}")
@@ -22754,9 +23199,6 @@ class KassenprotokollApp:
                 amount_label_widget = vars_dict.get('stamp_amount_label_widgets', {}).get(price_key_float)
                 if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'Stamp.NumberDisplay.TLabel':
                     amount_label_widget.config(style='Stamp.NumberDisplay.TLabel')
-                wrap = vars_dict.get('stamp_amount_wrapper_widgets', {}).get(price_key_float)
-                if wrap and wrap.winfo_exists() and wrap.cget('bg') != '#E0F2F1':
-                    wrap.config(bg='#E0F2F1')
             
             total_sum += current_amount_val 
         
@@ -22842,58 +23284,47 @@ class KassenprotokollApp:
         # ── Shift-specific top rows ───────────────────────────────────────────
         if shift_name == "Frühdienst":
             if 'manual_total_input' in card_data and isinstance(card_data['manual_total_input'], tk.StringVar):
-                mt_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
-                entry_mt = ttk.Entry(mt_wrap, textvariable=card_data['manual_total_input'],
+                entry_mt = ttk.Entry(tbl, textvariable=card_data['manual_total_input'],
                                      width=12, justify='right', style='NumberInput.TEntry',
                                      font=("Segoe UI", 12))
-                entry_mt.pack(fill='both', expand=True, padx=1, pady=1)
                 entry_mt.bind('<FocusOut>', lambda e, v=card_data['manual_total_input']: (
                     self._format_on_focus_out(e, v),
                     self._update_all_calculations(called_by_button=False)))
                 entry_mt.bind('<Return>', lambda e, v=card_data['manual_total_input']: (
                     self._format_on_focus_out(e, v),
                     self._update_all_calculations(called_by_button=False)))
-                row_bg = _add_row(f"{card_label}:", mt_wrap)
-                mt_wrap.config(bg=row_bg)
+                _add_row(f"{card_label}:", entry_mt)
                 self._add_widget_to_list(entry_mt, 'entry', is_main_input=True)
             else:
                 print(f"Warning: Frühdienst card data missing 'manual_total_input' for key '{card_key}'.")
 
         elif shift_name == "Spätdienst":
             if 'fruehdienst_sum_input' in card_data and isinstance(card_data['fruehdienst_sum_input'], tk.StringVar):
-                fd_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
-                entry_fd = ttk.Entry(fd_wrap, textvariable=card_data['fruehdienst_sum_input'],
+                entry_fd = ttk.Entry(tbl, textvariable=card_data['fruehdienst_sum_input'],
                                      width=12, justify='right', style='NumberInput.TEntry',
                                      state='readonly', font=("Segoe UI", 12))
-                entry_fd.pack(fill='both', expand=True, padx=1, pady=1)
-                row_bg = _add_row(f"{card_label} Frühdienst:", fd_wrap)
-                fd_wrap.config(bg=row_bg)
+                _add_row(f"{card_label} Frühdienst:", entry_fd)
                 self._add_widget_to_list(entry_fd, 'entry', is_main_input=False)
             else:
                 print(f"Warning: Spätdienst card data missing 'fruehdienst_sum_input' for key '{card_key}'.")
 
             if 'spaetdienst_sum_input' in card_data and isinstance(card_data['spaetdienst_sum_input'], tk.StringVar):
-                sd_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
-                entry_sd = ttk.Entry(sd_wrap, textvariable=card_data['spaetdienst_sum_input'],
+                entry_sd = ttk.Entry(tbl, textvariable=card_data['spaetdienst_sum_input'],
                                      width=12, justify='right', style='NumberInput.TEntry',
                                      font=("Segoe UI", 12))
-                entry_sd.pack(fill='both', expand=True, padx=1, pady=1)
                 entry_sd.bind('<FocusOut>', lambda e, v=card_data['spaetdienst_sum_input']: (
                     self._format_on_focus_out(e, v),
                     self._update_all_calculations(called_by_button=False)))
-                row_bg = _add_row(f"{card_label} Spätdienst:", sd_wrap)
-                sd_wrap.config(bg=row_bg)
+                _add_row(f"{card_label} Spätdienst:", entry_sd)
                 self._add_widget_to_list(entry_sd, 'entry', is_main_input=True)
             else:
                 print(f"Warning: Spätdienst card data missing 'spaetdienst_sum_input' for key '{card_key}'.")
 
             if 'combined_sum_display' in card_data and isinstance(card_data['combined_sum_display'], tk.StringVar):
-                comb_wrap = tk.Frame(tbl, bg='#E3F2FD', relief='raised', bd=3)
-                comb_lbl = ttk.Label(comb_wrap, textvariable=card_data['combined_sum_display'],
+                comb_lbl = ttk.Label(tbl, textvariable=card_data['combined_sum_display'],
                                      style='Cash.NumberDisplay.TLabel', anchor='e',
                                      font=("Segoe UI", 12, "bold"))
-                comb_lbl.pack(fill='both', expand=True, padx=2, pady=1)
-                _add_row("Summe (FD+SD):", comb_wrap, acc=_ACC_SUM, lbl_fg='#1B5E20')
+                _add_row("Summe (FD+SD):", comb_lbl, acc=_ACC_SUM, lbl_fg='#1B5E20')
                 self._add_widget_to_list(comb_lbl, 'label')
             else:
                 print(f"Warning: Spätdienst card data missing 'combined_sum_display' for key '{card_key}'.")
@@ -22903,46 +23334,35 @@ class KassenprotokollApp:
         for i in range(1, num_reception_fields + 1):
             field_name = f'reception{i}'
             if field_name in card_data and isinstance(card_data[field_name], tk.StringVar):
-                rec_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
-                entry_rec = ttk.Entry(rec_wrap, textvariable=card_data[field_name],
+                entry_rec = ttk.Entry(tbl, textvariable=card_data[field_name],
                                       width=12, justify='right', style='NumberInput.TEntry',
                                       font=("Segoe UI", 12))
-                entry_rec.pack(fill='both', expand=True, padx=1, pady=1)
                 entry_rec.bind('<FocusOut>', lambda e, v=card_data[field_name]: (
                     self._format_on_focus_out(e, v),
                     self._update_all_calculations(called_by_button=False)))
-                row_bg = _add_row(f"Rezeption {i}:", rec_wrap)
-                rec_wrap.config(bg=row_bg)
+                _add_row(f"Rezeption {i}:", entry_rec)
                 self._add_widget_to_list(entry_rec, 'entry', is_main_input=True)
             else:
                 print(f"Warning: Card data missing reception field '{field_name}' for key '{card_key}'.")
 
-        # ── Abgebucht — 3-D raised wrapper + styled display label ───────────
+        # ── Abgebucht — styled display label ─────────────────────────────────
         if 'actual_debit_input' in card_data and isinstance(card_data['actual_debit_input'], tk.StringVar):
-            debit_wrap = tk.Frame(tbl, bg='#E3F2FD', relief='raised', bd=3)
-            debit_lbl = ttk.Label(debit_wrap, textvariable=card_data['actual_debit_input'],
+            debit_lbl = ttk.Label(tbl, textvariable=card_data['actual_debit_input'],
                                   style='Cash.NumberDisplay.TLabel', anchor='e',
                                   font=("Segoe UI", 12, "bold"))
-            debit_lbl.pack(fill='both', expand=True, padx=2, pady=1)
-            _add_row("Abgebucht (Summe Rezeptions.):", debit_wrap,
-                     acc=_ACC_SUM, lbl_fg='#1B5E20')
+            _add_row("Abgebucht (Summe Rezeptions.):", debit_lbl, acc=_ACC_SUM, lbl_fg='#1B5E20')
             self._add_widget_to_list(debit_lbl, 'label')
         else:
             print(f"Warning: Card data missing 'actual_debit_input' for key '{card_key}'.")
 
-        # ── Differenz — 3-D raised wrapper + tk.Label (colors via _update_diff_label_colors)
+        # ── Differenz — tk.Label (colors via _update_diff_label_colors) ──────
         if 'difference_display' in card_data and isinstance(card_data['difference_display'], tk.StringVar):
-            diff_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
-            diff_label = tk.Label(diff_wrap, textvariable=card_data['difference_display'],
+            diff_label = tk.Label(tbl, textvariable=card_data['difference_display'],
                                   anchor='e', font=self.ta_sum_font)
-            diff_label.pack(fill='both', expand=True, padx=2, pady=1)
-            row_bg = _add_row("Differenz:", diff_wrap, acc=_ACC_DIF)
-            # Sync wrapper and label bg to actual row bg; store for _update_diff_label_colors
-            diff_wrap.config(bg=row_bg)
-            diff_label._card_row_bg   = row_bg
-            diff_label._wrapper_frame = diff_wrap
-            diff_label._custom_type   = "card_difference"
-            diff_label._card_type     = card_key
+            row_bg = _add_row("Differenz:", diff_label, acc=_ACC_DIF)
+            diff_label._card_row_bg  = row_bg
+            diff_label._custom_type  = "card_difference"
+            diff_label._card_type    = card_key
             card_data['diff_label_widget'] = diff_label
             self._add_widget_to_list(diff_label, 'label', is_diff_label=True)
         else:
@@ -23257,7 +23677,20 @@ class KassenprotokollApp:
             if not self.is_loading_data:
                 self._initiate_debounced_save()
 
-            self._update_diff_label_colors() 
+            # ── Differenz Bargeld: gezähltes Bargeld − Kasse Total ────────────
+            if hasattr(self, 'dashboard_bargeld_diff_var'):
+                try:
+                    active_shift = self._get_current_active_shift_name_internal()
+                    active_vars  = self.fruehdienst_vars if active_shift == "Frühdienst" else self.spaetdienst_vars
+                    cash_sum_val = decimal.Decimal(str(active_vars.get('cash_sum', tk.DoubleVar()).get()))
+                    kasse_total_str = self.kassenabschluss_wert_vars.get(active_shift, {}).get('KASSE_TOTAL', tk.StringVar(value='0')).get()
+                    kasse_total_val = self._parse_input_string(kasse_total_str) or decimal.Decimal('0.00')
+                    diff_barg = cash_sum_val - kasse_total_val
+                    self.dashboard_bargeld_diff_var.set(self._format_decimal_for_display(diff_barg))
+                except Exception:
+                    pass
+
+            self._update_diff_label_colors()
             self._update_dashboard_display()
 
         except Exception as e:
@@ -23297,12 +23730,15 @@ class KassenprotokollApp:
                 elif val < 0:
                     target_fg = red_fg    # Regel 2: NEGATIVE SUMME -> ROT
                 else: # Positive Werte
-                    # Spezielle Regel für Kartendifferenzen beibehalten
-                    is_card_diff = hasattr(label, '_custom_type') and label._custom_type == "card_difference"
-                    if is_card_diff and card_diff_red_on_any_nonzero:
+                    custom_type = getattr(label, '_custom_type', '')
+                    is_card_diff = custom_type == "card_difference"
+                    is_bargeld_diff = custom_type == "bargeld_diff"
+                    if is_bargeld_diff:
+                        target_fg = red_fg   # Abweichung nach oben = rot
+                    elif is_card_diff and card_diff_red_on_any_nonzero:
                         target_fg = red_fg
                     else:
-                        target_fg = default_fg # Positive Werte in Standardfarbe
+                        target_fg = default_fg
 
                 # Farbe anwenden (funktioniert für tk.Label)
                 if label.cget('foreground') != target_fg:
@@ -23312,23 +23748,16 @@ class KassenprotokollApp:
                 actual_bg = getattr(label, '_card_row_bg', default_bg)
                 if label.cget('background') != actual_bg:
                     label.config(background=actual_bg)
-                wrap = getattr(label, '_wrapper_frame', None)
-                if wrap and wrap.winfo_exists() and wrap.cget('bg') != actual_bg:
-                    wrap.config(bg=actual_bg)
 
             except Exception as e:
                 print(f"Error updating diff label color for variable '{var_str_name}': {e}")
                 if label.winfo_exists():
                     try:
-                        # Bei einem Fehler auf Standardfarben zurücksetzen
                         if label.cget('foreground') != default_fg:
                             label.config(foreground=default_fg)
                         actual_bg = getattr(label, '_card_row_bg', default_bg)
                         if label.cget('background') != actual_bg:
                             label.config(background=actual_bg)
-                        wrap = getattr(label, '_wrapper_frame', None)
-                        if wrap and wrap.winfo_exists() and wrap.cget('bg') != actual_bg:
-                            wrap.config(bg=actual_bg)
                     except tk.TclError:
                         pass
     def _format_on_focus_out(self, event, string_var, is_count=False):
@@ -27940,18 +28369,35 @@ class KassenprotokollApp:
     def _create_adressbuch_page(self, parent_frame):
         """Erstellt die Benutzeroberfläche für das Adressbuch mit Tabs."""
         for widget in parent_frame.winfo_children(): widget.destroy()
-        parent_frame.grid_rowconfigure(2, weight=1); parent_frame.grid_columnconfigure(0, weight=1)
+        parent_frame.grid_rowconfigure(3, weight=1); parent_frame.grid_columnconfigure(0, weight=1)
 
-        # --- Header ---
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew'); header.columnconfigure(1, weight=1)
-        home_button = self._create_home_button(header)
-        if home_button: home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Adressbuch & Telefonnummern", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
+        if home_button:
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Adressbuch & Telefonnummern",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
         # --- Suche ---
         search_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 5))
-        search_frame.grid(row=1, column=0, sticky='ew'); search_frame.columnconfigure(1, weight=1)
+        search_frame.grid(row=2, column=0, sticky='ew'); search_frame.columnconfigure(1, weight=1)
         
         try:
             base_font_family = tkFont.Font(font=self.style.lookup('TLabel', 'font')).actual('family')
@@ -27969,7 +28415,7 @@ class KassenprotokollApp:
 
         # --- Notebook (Tabs) ---
         notebook_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 8))
-        notebook_frame.grid(row=2, column=0, sticky='nsew')
+        notebook_frame.grid(row=3, column=0, sticky='nsew')
         notebook_frame.columnconfigure(0, weight=1); notebook_frame.rowconfigure(0, weight=1)
         
         self.adressbuch_notebook = ttk.Notebook(notebook_frame)
@@ -27988,7 +28434,9 @@ class KassenprotokollApp:
         heading_font = tkFont.Font(family=base_font_family, size=14, weight="bold")
         
         self.style.configure("Adressbuch.Treeview", rowheight=40, font=row_font)
-        self.style.configure("Adressbuch.Treeview.Heading", font=heading_font, padding=(5, 5))
+        self.style.configure("Adressbuch.Treeview.Heading", font=heading_font, padding=(5, 5),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map("Adressbuch.Treeview.Heading", background=[('active', '#0D2137')])
 
         # --- Tab 1 Inhalt: Mitarbeiter Treeview ---
         tab_mitarbeiter.columnconfigure(0, weight=1); tab_mitarbeiter.rowconfigure(0, weight=1)
@@ -28087,16 +28535,34 @@ class KassenprotokollApp:
     def _create_urlaubsantraege_page(self, parent_frame):
         """Erstellt die Verwaltungsseite für Urlaubsanträge."""
         for widget in parent_frame.winfo_children(): widget.destroy()
-        parent_frame.grid_rowconfigure(1, weight=1); parent_frame.grid_columnconfigure(0, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1); parent_frame.grid_columnconfigure(0, weight=1)
 
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew'); header.columnconfigure(1, weight=1)
-        home_button = self._create_home_button(header)
-        if home_button: home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Urlaubsanträge Verwalten", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
+        if home_button:
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Urlaubsanträge Verwalten",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
 
         tree_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 8))
-        tree_frame.grid(row=1, column=0, sticky='nsew'); tree_frame.columnconfigure(0, weight=1); tree_frame.rowconfigure(0, weight=1)
+        tree_frame.grid(row=2, column=0, sticky='nsew'); tree_frame.columnconfigure(0, weight=1); tree_frame.rowconfigure(0, weight=1)
         
         # vvvvv HIER BEGINNT DIE ÄNDERUNG vvvvv
 
@@ -28115,7 +28581,9 @@ class KassenprotokollApp:
         # Den Stil für das Treeview anpassen
         style_name = "Urlaubsantraege.Treeview"
         self.style.configure(style_name, rowheight=40, font=row_font) # Zeilenhöhe und Schriftart festlegen
-        self.style.configure(f"{style_name}.Heading", font=heading_font, padding=(5, 5))
+        self.style.configure(f"{style_name}.Heading", font=heading_font, padding=(5, 5),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map(f"{style_name}.Heading", background=[('active', '#0D2137')])
 
         # 2. Das Treeview-Widget mit dem neuen Stil erstellen
         self.urlaubsantraege_tree = ttk.Treeview(tree_frame, show="headings", style=style_name)
@@ -28148,9 +28616,9 @@ class KassenprotokollApp:
         self._setupTreeViewCellNavigation(self.urlaubsantraege_tree, edit_command_func=self._edit_urlaubsantrag)
         # ^^^^^ ENDE DER KORREKTUR ^^^^^
         
-        button_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 8))
-        button_frame.grid(row=2, column=0, sticky='ew')
-        
+        button_frame = tk.Frame(parent_frame, bg='#0D2137')
+        button_frame.grid(row=3, column=0, sticky='ew')
+
         style_cfg = self.current_settings.get('list_views_button_style', {})
         ipady = style_cfg.get('ipady', 5)
 
@@ -28170,14 +28638,14 @@ class KassenprotokollApp:
 
         for key, default_text, command in button_definitions:
             if key is None:
-                ttk.Separator(button_frame, orient='vertical').pack(side="left", fill='y', padx=10, pady=4)
+                tk.Frame(button_frame, bg='#1B6CA8', width=2).pack(side="left", fill='y', padx=6, pady=4)
                 continue
-            
+
             config = button_configs.get(key, {})
             if config.get('is_active', True):
                 btn = ttk.Button(button_frame, command=command, style='TButton')
                 self._configure_list_tab_button(btn, key, default_text, button_config_source=button_configs)
-                btn.pack(side="left", padx=4, ipady=ipady)
+                btn.pack(side="left", padx=4, ipady=ipady, pady=4)
                 self.urlaubsantraege_buttons[key] = btn
                 
                 
@@ -34419,19 +34887,35 @@ class KassenprotokollApp:
         """Erstellt die UI-Seite zur Verwaltung von Zimmerreservierungen."""
         for widget in parent_frame.winfo_children():
             widget.destroy()
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
 
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
-        home_button = self._create_home_button(header)
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Gespeicherte Zimmerreservierungen", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Gespeicherte Zimmerreservierungen",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
 
         tree_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 8))
-        tree_frame.grid(row=1, column=0, sticky='nsew')
+        tree_frame.grid(row=2, column=0, sticky='nsew')
         tree_frame.columnconfigure(0, weight=1)
         tree_frame.rowconfigure(0, weight=1)
 
@@ -34456,15 +34940,15 @@ class KassenprotokollApp:
         self.zimmerreservierung_tree.bind("<Double-1>", self._edit_zimmerreservierung_entry)
         self._setupTreeViewCellNavigation(self.zimmerreservierung_tree, edit_command_func=self._edit_zimmerreservierung_entry)
         
-        button_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 10))
-        button_frame.grid(row=2, column=0, sticky='ew')
-        
+        button_frame = tk.Frame(parent_frame, bg='#0D2137')
+        button_frame.grid(row=3, column=0, sticky='ew')
+
         style_cfg = self.current_settings.get('list_views_button_style', {})
         ipady = style_cfg.get('ipady', 5)
 
         if not hasattr(self, 'zimmerreservierung_buttons'):
             self.zimmerreservierung_buttons = {}
-        
+
         button_configs = self.current_settings.get('zimmerreservierung_button_configs', {})
         
         # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -34484,12 +34968,12 @@ class KassenprotokollApp:
 
         for key, default_text, command in button_definitions:
             if key is None:
-                ttk.Separator(button_frame, orient='vertical').pack(side="left", fill='y', padx=10, pady=4)
+                tk.Frame(button_frame, bg='#1B6CA8', width=2).pack(side="left", fill='y', padx=6, pady=4)
                 continue
-            
+
             btn = ttk.Button(button_frame, command=command)
             self._configure_list_tab_button(btn, key, default_text, button_config_source=button_configs)
-            btn.pack(side="left", padx=4, ipady=ipady, fill='x', expand=True)
+            btn.pack(side="left", padx=4, ipady=ipady, pady=4, fill='x', expand=True)
             self.zimmerreservierung_buttons[key] = btn
             
             
@@ -35134,16 +35618,34 @@ class KassenprotokollApp:
     def _create_ueberstundenantrag_page(self, parent_frame):
         """Erstellt die UI-Seite zur Verwaltung von Überstundenanträgen."""
         for widget in parent_frame.winfo_children(): widget.destroy()
-        parent_frame.grid_rowconfigure(1, weight=1); parent_frame.grid_columnconfigure(0, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1); parent_frame.grid_columnconfigure(0, weight=1)
 
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew'); header.columnconfigure(1, weight=1)
-        home_button = self._create_home_button(header)
-        if home_button: home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Überstundenanträge Verwalten", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
+        if home_button:
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Überstundenanträge Verwalten",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
 
         tree_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 8))
-        tree_frame.grid(row=1, column=0, sticky='nsew'); tree_frame.columnconfigure(0, weight=1); tree_frame.rowconfigure(0, weight=1)
+        tree_frame.grid(row=2, column=0, sticky='nsew'); tree_frame.columnconfigure(0, weight=1); tree_frame.rowconfigure(0, weight=1)
 
         self.ueberstundenantrag_tree = ttk.Treeview(tree_frame, show="headings", style="Urlaubsantraege.Treeview")
         self.ueberstundenantrag_tree['columns'] = ("name", "abteilung", "erster_tag", "letzter_tag", "gesamtzahl")
@@ -35158,8 +35660,8 @@ class KassenprotokollApp:
         self.ueberstundenantrag_tree.bind("<Double-1>", self._edit_ueberstundenantrag)
         self._setupTreeViewCellNavigation(self.ueberstundenantrag_tree, edit_command_func=self._edit_ueberstundenantrag)
         
-        button_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 8))
-        button_frame.grid(row=2, column=0, sticky='ew')
+        button_frame = tk.Frame(parent_frame, bg='#0D2137')
+        button_frame.grid(row=3, column=0, sticky='ew')
         style_cfg = self.current_settings.get('list_views_button_style', {}); ipady = style_cfg.get('ipady', 5)
 
         button_configs = self.current_settings.get('ueberstundenantrag_button_configs', {})
@@ -35175,11 +35677,11 @@ class KassenprotokollApp:
 
         for key, text, cmd in button_defs:
             if key is None:
-                ttk.Separator(button_frame, orient='vertical').pack(side="left", fill='y', padx=10, pady=4)
+                tk.Frame(button_frame, bg='#1B6CA8', width=2).pack(side="left", fill='y', padx=6, pady=4)
                 continue
             btn = ttk.Button(button_frame, command=cmd)
             self._configure_list_tab_button(btn, key, text, button_config_source=button_configs)
-            btn.pack(side="left", padx=4, ipady=ipady, fill='x', expand=True)
+            btn.pack(side="left", padx=4, ipady=ipady, pady=4, fill='x', expand=True)
             
         self._load_and_display_ueberstundenantraege()
 
@@ -35531,24 +36033,43 @@ class KassenprotokollApp:
         for widget in parent_frame.winfo_children():
             widget.destroy()
 
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
 
-        # 1. Kopfzeile (Header)
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
-        
-        home_button = self._create_home_button(header)
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        
-        ttk.Label(header, text="Anrufliste", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        self._add_time_display_to_header(header, 2)
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+        _time_lbl = tk.Label(hero_c, textvariable=self.time_display_var,
+                             font=("Segoe UI", 11), bg='#1B6CA8', fg='#D0E8FF', padx=6)
+        _date_lbl = tk.Label(hero_c, textvariable=self.date_display_var,
+                             font=("Segoe UI", 11), bg='#1B6CA8', fg='white', padx=6)
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Anrufliste",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+            _tlw = _time_lbl.winfo_reqwidth() or 80
+            _c.create_window(ww - 10, _HDR_H // 2, window=_time_lbl, anchor='e')
+            _c.create_window(ww - 10 - _tlw - 6, _HDR_H // 2, window=_date_lbl, anchor='e')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
 
         # 2. Hauptinhaltsbereich (Content)
         content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 8))
-        content_frame.grid(row=1, column=0, sticky='nsew')
+        content_frame.grid(row=2, column=0, sticky='nsew')
         content_frame.columnconfigure(0, weight=1)
         content_frame.rowconfigure(0, weight=1)
         
@@ -35559,7 +36080,9 @@ class KassenprotokollApp:
         tree_frame.columnconfigure(0, weight=1)
         
         self.style.configure("Anrufliste.Treeview", rowheight=30, font=("Segoe UI", 12))
-        self.style.configure("Anrufliste.Treeview.Heading", font=("Segoe UI", 14, "bold"))
+        self.style.configure("Anrufliste.Treeview.Heading", font=("Segoe UI", 14, "bold"),
+                             background='#1B6CA8', foreground='white', relief='flat')
+        self.style.map("Anrufliste.Treeview.Heading", background=[('active', '#0D2137')])
         
         self.anrufliste_tree_widget = ttk.Treeview(tree_frame, show="headings", style="Anrufliste.Treeview")
         self.anrufliste_tree_widget['columns'] = ("angenommen_von", "datum", "uhrzeit", "anrufer", "firma", "telefonnummer", "fuer_abteilung", "nachricht", "rueckruf_info")
@@ -35589,7 +36112,7 @@ class KassenprotokollApp:
 
         
         # 4. Button-Leiste
-        button_frame_bottom = ttk.Frame(content_frame, style='AppBackground.TFrame', padding=(0, 10, 0, 0))
+        button_frame_bottom = tk.Frame(content_frame, bg='#0D2137')
         button_frame_bottom.grid(row=1, column=0, sticky="ew")
 
         # vvvvv HIER BEGINNT DIE ANPASSUNG vvvvv
@@ -35611,10 +36134,9 @@ class KassenprotokollApp:
 
         for key, text, cmd in btn_defs:
             if key is None:
-                ttk.Separator(button_frame_bottom, orient='vertical').pack(side='left', fill='y', padx=8, pady=4)
+                tk.Frame(button_frame_bottom, bg='#1B6CA8', width=2).pack(side='left', fill='y', padx=6, pady=4)
                 continue
             btn = ttk.Button(button_frame_bottom, command=cmd)
-            # Die generische Funktion wendet die korrekten Stile an
             self._configure_list_tab_button(btn, key, text, button_config_source=button_configs)
             btn.pack(side="left", padx=2, ipady=ipady, pady=pady, fill='x', expand=True)
         # ^^^^^ HIER ENDET DIE ANPASSUNG ^^^^^
@@ -35623,19 +36145,42 @@ class KassenprotokollApp:
         """Erstellt die UI für die Spickzettel-Seite und registriert die Instanz."""
         for widget in parent_frame.winfo_children():
             widget.destroy()
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
-        header.columnconfigure(2, weight=0)
-        home_button = self._create_home_button(header)
+
+        _C_BAR = '#0D2137'; _C_H1 = '#0D2137'; _C_H2 = '#1B6CA8'; _HDR_H = 55
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        ttk.Label(header, text="Spickzettel", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        self._add_time_display_to_header(header, 2)
+            ipady_hb = self.current_settings.get('home_button_config', {}).get('ipady', 2)
+            home_button.grid(row=0, column=0, sticky='w', padx=8, pady=4, ipady=ipady_hb)
+        hero_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hero_c.grid(row=1, column=0, sticky='ew')
+        _time_lbl = tk.Label(hero_c, textvariable=self.time_display_var,
+                             font=("Segoe UI", 11), bg='#1B6CA8', fg='#D0E8FF', padx=6)
+        _date_lbl = tk.Label(hero_c, textvariable=self.date_display_var,
+                             font=("Segoe UI", 11), bg='#1B6CA8', fg='white', padx=6)
+        def _draw_hero(ev=None, _c=hero_c):
+            if not _c.winfo_exists(): return
+            _c.delete('all')
+            ww = _c.winfo_width() or 900
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_C_H1[1:3], 16) + (int(_C_H2[1:3], 16) - int(_C_H1[1:3], 16)) * _p)
+                _g = int(int(_C_H1[3:5], 16) + (int(_C_H2[3:5], 16) - int(_C_H1[3:5], 16)) * _p)
+                _b = int(int(_C_H1[5:7], 16) + (int(_C_H2[5:7], 16) - int(_C_H1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _c.create_text(ww // 2, _HDR_H // 2, text="Spickzettel",
+                           font=("Segoe UI", 18, "bold"), fill='white', anchor='center')
+            _tlw = _time_lbl.winfo_reqwidth() or 80
+            _c.create_window(ww - 10, _HDR_H // 2, window=_time_lbl, anchor='e')
+            _c.create_window(ww - 10 - _tlw - 6, _HDR_H // 2, window=_date_lbl, anchor='e')
+        hero_c.bind('<Configure>', _draw_hero)
+        hero_c.after(20, _draw_hero)
+
         content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame')
-        content_frame.grid(row=1, column=0, sticky='nsew')
+        content_frame.grid(row=2, column=0, sticky='nsew')
         # Die Instanz wird erstellt UND registriert
         self.spickzettel_app_instance = SpickzettelApp(content_frame, app_ref=self)
         self.sub_app_instances.append(self.spickzettel_app_instance)
