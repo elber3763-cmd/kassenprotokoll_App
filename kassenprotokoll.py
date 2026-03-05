@@ -5243,8 +5243,8 @@ class MinibarEntryDialog(tk.Toplevel):
 
         # HIER IST DIE ANPASSUNG: LÄDT DIE GRÖSSEN AUS DEN EINSTELLUNGEN
         size_settings = self.parent_app.current_settings.get('configurable_sizes', {})
-        minibar_config = size_settings.get('minibarliste', {'font_size': 14, 'entry_width': 25})
-        font_size = minibar_config.get('font_size', 14)
+        minibar_config = size_settings.get('minibarliste', {'font_size': 16, 'entry_width': 25})
+        font_size = minibar_config.get('font_size', 16)
         
         try:
             base_font_family = tkFont.Font(font=self.parent_app.style.lookup('TLabel', 'font')).actual('family')
@@ -8547,6 +8547,31 @@ class MODRundgangApp:
 
         BG = self.app.style.lookup('AppBackground.TFrame', 'background')
 
+        # ── ICON CONFIGS (hero, name-label, date-label) ────────────────────────
+        _btn_cfgs_all = {**self.app.default_settings.get('mod_rundgang_button_configs', {}),
+                         **self.app.current_settings.get('mod_rundgang_button_configs', {})}
+        if not hasattr(self.app, 'mod_rundgang_button_images'):
+            self.app.mod_rundgang_button_images = {}
+
+        def _load_icon_photo(key, default_sym, size=(28, 28)):
+            """Returns (PhotoImage, None) if image configured, else (None, symbol_str)."""
+            cfg = _btn_cfgs_all.get(key, {'type': 'symbol', 'value': default_sym})
+            if cfg.get('type') == 'image':
+                path = cfg.get('value', '')
+                if path and os.path.exists(path) and pil_available:
+                    try:
+                        img = Image.open(path).resize(size, Image.Resampling.LANCZOS)
+                        photo = ImageTk.PhotoImage(img)
+                        self.app.mod_rundgang_button_images[key] = photo
+                        return photo, None
+                    except Exception:
+                        pass
+            return None, cfg.get('value', default_sym)
+
+        _hero_ph, _hero_sym = _load_icon_photo('MOD_HeroIcon', '🏨', (36, 36))
+        _name_ph, _name_sym = _load_icon_photo('MOD_NameIcon', '👤', (22, 22))
+        _date_ph, _date_sym = _load_icon_photo('MOD_DateIcon', '📅', (22, 22))
+
         SECTION_COLORS = [
             '#1565C0', '#2E7D32', '#4527A0', '#E65100',
             '#00695C', '#AD1457', '#37474F', '#6A1B9A',
@@ -8612,6 +8637,9 @@ class MODRundgangApp:
         hero = tk.Canvas(self.parent_frame, height=88, highlightthickness=0, bg=C_HDR1)
         hero.pack(fill='x')
 
+        _hero_title_font = tkFont.Font(family="Segoe UI", size=20, weight="bold")
+        _hero_title_w = _hero_title_font.measure("MOD-Rundgang Protokoll")
+
         def _draw_hero(event=None):
             hero.delete('bg')
             hero.delete('static')
@@ -8623,9 +8651,22 @@ class MODRundgangApp:
                 hero.create_line(0, i, ww, i,
                                  fill=_hex_lerp(C_HDR1, C_HDR2, i / max(hh - 1, 1)),
                                  tags='bg')
-            hero.create_text(ww // 2, 33, text="🏨   MOD-Rundgang Protokoll",
-                             font=("Segoe UI", 20, "bold"), fill='white',
-                             anchor='center', tags='static')
+            if _hero_ph:
+                # Center icon + title as a group around ww//2
+                _icon_w = 36
+                _gap    = 10
+                _total  = _icon_w + _gap + _hero_title_w
+                _gx     = ww // 2 - _total // 2
+                hero.create_image(_gx + _icon_w // 2, 33, image=_hero_ph,
+                                  anchor='center', tags='static')
+                hero.create_text(_gx + _icon_w + _gap + _hero_title_w // 2, 33,
+                                 text="MOD-Rundgang Protokoll",
+                                 font=_hero_title_font, fill='white',
+                                 anchor='center', tags='static')
+            else:
+                hero.create_text(ww // 2, 33, text="MOD-Rundgang Protokoll",
+                                 font=_hero_title_font, fill='white',
+                                 anchor='center', tags='static')
             today_str = datetime.datetime.now().strftime("%A, %d. %B %Y")
             hero.create_text(ww // 2, 61, text=today_str,
                              font=("Segoe UI", 10), fill='#BDD5EA',
@@ -8655,30 +8696,58 @@ class MODRundgangApp:
 
         _mod_tick()
 
-        # ── INPUT / PROGRESS (ttk widgets – reliable layout) ───────────────────
-        top_fields = ttk.Frame(self.parent_frame, style='Card.TFrame', padding=15)
+        # ── INPUT / PROGRESS (modern flat tk widgets) ──────────────────────────
+        top_fields = tk.Frame(self.parent_frame, bg='#FFFFFF',
+                              highlightthickness=1, highlightbackground='#CBD5E0')
         top_fields.pack(fill='x', padx=20, pady=5)
+        _inner = tk.Frame(top_fields, bg='#FFFFFF')
+        _inner.pack(fill='x', padx=15, pady=10)
 
-        ttk.Label(top_fields, text="👤  Name / MOD:",
-                  font=("Segoe UI", 12, "bold")).pack(side='left', padx=5)
+        def _modern_entry(parent, textvariable, width):
+            e = tk.Entry(parent, textvariable=textvariable, width=width,
+                         font=("Segoe UI", 12),
+                         relief='solid', bd=1,
+                         highlightthickness=2,
+                         highlightcolor='#2980B9',
+                         highlightbackground='#CBD5E0',
+                         bg='#F7FAFC', fg='#1A202C',
+                         insertbackground='#2980B9')
+            return e
+
+        _name_lf = tk.Frame(_inner, bg='#FFFFFF')
+        _name_lf.pack(side='left', padx=5)
+        if _name_ph:
+            tk.Label(_name_lf, image=_name_ph, bg='#FFFFFF').pack(side='left', padx=(0, 4))
+            tk.Label(_name_lf, text="Name / MOD:", font=("Segoe UI", 12, "bold"),
+                     bg='#FFFFFF', fg='#2D3748').pack(side='left')
+        else:
+            tk.Label(_name_lf, text=f"{_name_sym}  Name / MOD:", font=("Segoe UI", 12, "bold"),
+                     bg='#FFFFFF', fg='#2D3748').pack(side='left')
         self.mod_name_var = tk.StringVar()
-        ttk.Entry(top_fields, textvariable=self.mod_name_var, width=28,
-                  font=("Segoe UI", 12)).pack(side='left', padx=5)
+        _modern_entry(_inner, self.mod_name_var, 28).pack(side='left', padx=5)
 
-        ttk.Label(top_fields, text="📅  Datum:",
-                  font=("Segoe UI", 12, "bold")).pack(side='left', padx=(20, 5))
+        _date_lf = tk.Frame(_inner, bg='#FFFFFF')
+        _date_lf.pack(side='left', padx=(20, 5))
+        if _date_ph:
+            tk.Label(_date_lf, image=_date_ph, bg='#FFFFFF').pack(side='left', padx=(0, 4))
+            tk.Label(_date_lf, text="Datum:", font=("Segoe UI", 12, "bold"),
+                     bg='#FFFFFF', fg='#2D3748').pack(side='left')
+        else:
+            tk.Label(_date_lf, text=f"{_date_sym}  Datum:", font=("Segoe UI", 12, "bold"),
+                     bg='#FFFFFF', fg='#2D3748').pack(side='left')
         self.date_var = tk.StringVar(value=datetime.date.today().strftime("%d.%m.%Y"))
-        ttk.Entry(top_fields, textvariable=self.date_var, width=14,
-                  font=("Segoe UI", 12)).pack(side='left', padx=5)
+        _modern_entry(_inner, self.date_var, 14).pack(side='left', padx=5)
 
         self.progress_var = tk.DoubleVar(value=0)
-        self._mod_prog_canvas = tk.Canvas(top_fields, height=20, width=200,
+        self._mod_prog_canvas = tk.Canvas(_inner, height=20, width=200,
                                           highlightthickness=1,
                                           highlightbackground='#CFD8DC',
                                           bg='#ECEFF1')
         self._mod_prog_canvas.pack(side='right', padx=(0, 5))
         self._mod_prog_clr = (C_PG1, C_PG2)
-        self.progress_lbl = ttk.Label(top_fields, text="0%")
+        self.progress_lbl = tk.Label(_inner, text="0%",
+                                     font=("Segoe UI", 11, "bold"),
+                                     bg='#FFFFFF', fg='#2D3748')
         self.progress_lbl.pack(side='right', padx=5)
 
         # ── SCROLL AREA (EXACT original proven mechanism) ──────────────────────
@@ -8778,7 +8847,7 @@ class MODRundgangApp:
 
             title_lbl = tk.Label(hdr, text=f"◆  {sec_def['title']}",
                                  bg=hdr_dark, fg='white',
-                                 font=("Segoe UI", 10, "bold"),
+                                 font=("Segoe UI", 13, "bold"),
                                  anchor='w', padx=14)
             title_lbl.pack(fill='both', expand=True)
             _bind_card_hover(hdr, title_lbl, hdr_dark, _lighten(hdr_dark, 20))
@@ -8786,15 +8855,15 @@ class MODRundgangApp:
             tasks = []
             for t_idx, t_text in enumerate(sec_def['tasks']):
                 if t_idx > 0:
-                    tk.Frame(body, bg='#E8EDF1', height=1).pack(fill='x', padx=4)
+                    tk.Frame(body, bg='#BFC8D0', height=1).pack(fill='x', padx=4)
 
                 v, c_v = tk.BooleanVar(), tk.StringVar()
                 row = tk.Frame(body, bg='#FFFFFF', pady=4)
                 row.pack(fill='x')
 
                 is_warn = "!!!" in t_text or "ACHTUNG" in t_text
-                fg = C_WARN if is_warn else '#263238'
-                fn = ("Segoe UI", 10, "bold") if is_warn else ("Segoe UI", 10)
+                fg = C_WARN if is_warn else '#0D1117'
+                fn = ("Segoe UI Semibold", 13, "bold") if is_warn else ("Segoe UI Semibold", 12, "bold")
 
                 # 3-D canvas checkbox
                 cb_c = tk.Canvas(row, width=CB_SIZE, height=CB_SIZE,
@@ -8807,7 +8876,14 @@ class MODRundgangApp:
                                anchor='w', justify='left')
                 lbl.pack(side='left', padx=(0, 5), fill='x', expand=True)
 
-                cmt_btn = ttk.Button(row, text="💬", width=3)
+                cmt_btn = tk.Button(row, text="💬", width=3,
+                                    bg='#EDF2F7', fg='#4A5568',
+                                    activebackground='#DBEAFE',
+                                    activeforeground='#1565C0',
+                                    relief='solid', bd=1,
+                                    highlightthickness=0,
+                                    cursor='hand2',
+                                    font=("Segoe UI", 10))
                 cmt_btn.pack(side='right', padx=5)
 
                 t_obj = {
@@ -13573,10 +13649,13 @@ class KassenprotokollApp:
             },
 
             'mod_rundgang_button_configs': {
-                'MOD_Save':  {'type': 'symbol', 'value': '💾 Speichern',       'is_active': True},
-                'MOD_Email': {'type': 'symbol', 'value': '📧 E-Mail senden',   'is_active': True},
-                'MOD_Reset': {'type': 'symbol', 'value': '🗑️ Zurücksetzen',   'is_active': True},
-                'MOD_PDF':   {'type': 'symbol', 'value': '📄 PDF exportieren', 'is_active': True},
+                'MOD_Save':     {'type': 'symbol', 'value': '💾 Speichern',       'is_active': True},
+                'MOD_Email':    {'type': 'symbol', 'value': '📧 E-Mail senden',   'is_active': True},
+                'MOD_Reset':    {'type': 'symbol', 'value': '🗑️ Zurücksetzen',   'is_active': True},
+                'MOD_PDF':      {'type': 'symbol', 'value': '📄 PDF exportieren', 'is_active': True},
+                'MOD_HeroIcon': {'type': 'symbol', 'value': '🏨',                 'is_active': True},
+                'MOD_NameIcon': {'type': 'symbol', 'value': '👤',                 'is_active': True},
+                'MOD_DateIcon': {'type': 'symbol', 'value': '📅',                 'is_active': True},
             },
 
             'mod_rundgang_colors': {
@@ -13665,6 +13744,9 @@ class KassenprotokollApp:
             
             
               # vvvvv HIER DEN NEUEN BLOCK EINFÜGEN vvvvv
+            'kassenprotokoll_button_configs': {
+                'KP_HeroIcon': {'type': 'symbol', 'value': '💰', 'is_active': True},
+            },
             'namensliste_button_configs': {
                 'Namensliste_Add': {'type': 'symbol', 'value': '➕ Neuer Eintrag', 'is_active': True},
                 'Namensliste_BulkAdd': {'type': 'symbol', 'value': '📋 Liste einfügen', 'is_active': True},
@@ -13675,8 +13757,11 @@ class KassenprotokollApp:
                 'Namensliste_History': {'type': 'symbol', 'value': '🕰️ Verlauf', 'is_active': True},
                 'Namensliste_SavePDF': {'type': 'symbol', 'value': '📄 Als PDF speichern', 'is_active': True},
                  # vvvvv HIER DEN NEUEN BUTTON HINZUFÜGEN vvvvv
-                'Namensliste_Print': {'type': 'symbol', 'value': '🖨️ Drucken', 'is_active': True}
+                'Namensliste_Print': {'type': 'symbol', 'value': '🖨️ Drucken', 'is_active': True},
                 # ^^^^^ ENDE DER ANPASSUNG ^^^^^
+                'NL_FirmIcon':  {'type': 'symbol', 'value': '🏢', 'is_active': True},
+                'NL_InfoIcon':  {'type': 'symbol', 'value': 'ℹ️', 'is_active': True},
+                'NL_DateIcon':  {'type': 'symbol', 'value': '📅', 'is_active': True},
             },
             # ^^^^^ HIER ENDET DER NEUE BLOCK ^^^^^
             
@@ -13966,7 +14051,7 @@ class KassenprotokollApp:
                 'weckrufliste': {'font_size': 11, 'entry_width': 30},
                 'taxibestellung': {'font_size': 11, 'entry_width': 30},
                 'shuttle_service': {'font_size': 14, 'entry_width': 30},
-                'minibarliste': {'font_size': 11, 'entry_width': 25},
+                'minibarliste': {'font_size': 16, 'entry_width': 25},
                 'trinkgeldliste': {'font_size': 11, 'entry_width': 20},
                 'tagesabrechnung': {'entry_font_size': 14, 'sum_font_size': 14},
                 'dialog_buttons': {'font_size': 12}
@@ -15423,56 +15508,164 @@ class KassenprotokollApp:
         for widget in parent_frame.winfo_children():
             widget.destroy()
         
-        parent_frame.grid_rowconfigure(1, weight=1)
+        parent_frame.grid_rowconfigure(2, weight=1)
         parent_frame.grid_columnconfigure(0, weight=1)
 
-        kp_header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        kp_header.grid(row=0, column=0, sticky='ew')
-        kp_header.columnconfigure(0, weight=0)
-        kp_header.columnconfigure(1, weight=1)
-        kp_header.columnconfigure(2, weight=0)
+        # --- Modern dark action bar ---
+        _C_BAR = '#1A2E3B'
+        _C_H1  = '#0D2137'
+        _C_H2  = '#1B6CA8'
 
-        home_button = self._create_home_button(kp_header)
+        action_bar = tk.Frame(parent_frame, bg=_C_BAR)
+        action_bar.grid(row=0, column=0, sticky='ew')
+        action_bar.columnconfigure(1, weight=1)
+
+        home_button = self._create_home_button(action_bar, bar_color=_C_BAR)
         if home_button:
             ipady = self.current_settings.get('home_button_config', {}).get('ipady', 2)
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10, ipady=ipady)
-        
-        ttk.Label(kp_header, text="Kassenprotokoll", font=("Segoe UI", 20, "bold"), style='TLabel').grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        self._add_time_display_to_header(kp_header, 2)
-        
-        main_split_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame')
-        main_split_frame.grid(row=1, column=0, sticky='nsew', padx=15, pady=(0, 8))
-    
+            home_button.grid(row=0, column=0, sticky='w', padx=12, pady=8, ipady=ipady)
+
+        _time_fr = tk.Frame(action_bar, bg=_C_BAR)
+        _time_fr.grid(row=0, column=2, sticky='e', padx=12, pady=8)
+        tk.Label(_time_fr, textvariable=self.date_display_var, bg=_C_BAR, fg='#90CAF9',
+                 font=("Segoe UI", 11)).pack(side='left', padx=(0, 8))
+        tk.Label(_time_fr, textvariable=self.time_display_var, bg=_C_BAR, fg='white',
+                 font=("Segoe UI", 11, "bold")).pack(side='left')
+
+        # --- Load configurable hero icon ---
+        _kp_cfgs = {**self.default_settings.get('kassenprotokoll_button_configs', {}),
+                    **self.current_settings.get('kassenprotokoll_button_configs', {})}
+        _kp_hero_ph = None
+
+        def _kp_load_icon_photo(cfg):
+            if not cfg.get('is_active', True):
+                return None
+            if cfg.get('type') == 'image':
+                _p = cfg.get('value', '')
+                if _p and os.path.exists(_p) and pil_available:
+                    try:
+                        from PIL import Image as _Img, ImageTk as _ITk
+                        _im = _Img.open(_p).resize((32, 32), _Img.Resampling.LANCZOS)
+                        _ph = _ITk.PhotoImage(_im)
+                        self._image_refs = getattr(self, '_image_refs', [])
+                        self._image_refs.append(_ph)
+                        return _ph
+                    except Exception:
+                        pass
+            return None
+
+        _kp_hero_ph = _kp_load_icon_photo(_kp_cfgs.get('KP_HeroIcon', {}))
+        _kp_hero_symbol = _kp_cfgs.get('KP_HeroIcon', {}).get('value', '💰') \
+            if _kp_cfgs.get('KP_HeroIcon', {}).get('type', 'symbol') == 'symbol' else '💰'
+
+        # --- Gradient hero canvas ---
+        _kp_hero = tk.Canvas(parent_frame, height=72, highlightthickness=0, bd=0)
+        _kp_hero.grid(row=1, column=0, sticky='ew')
+
+        _kp_hero_title_font = tkFont.Font(family="Segoe UI", size=22, weight="bold")
+        _kp_title_w = _kp_hero_title_font.measure("Kassenprotokoll")
+
+        def _draw_kp_hero(event=None):
+            if not _kp_hero.winfo_exists():
+                return
+            _kp_hero.delete('all')
+            ww = _kp_hero.winfo_width() or 900
+            for _i in range(72):
+                _t = _i / 71
+                _r = int(0x0D + (0x1B - 0x0D) * _t)
+                _g = int(0x21 + (0x6C - 0x21) * _t)
+                _b = int(0x37 + (0xA8 - 0x37) * _t)
+                _kp_hero.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            if _kp_hero_ph:
+                _icon_w, _gap = 32, 10
+                _total = _icon_w + _gap + _kp_title_w
+                _gx = ww // 2 - _total // 2
+                _kp_hero.create_image(_gx + _icon_w // 2, 36, image=_kp_hero_ph,
+                                      anchor='center', tags='static')
+                _kp_hero.create_text(_gx + _icon_w + _gap + _kp_title_w // 2, 36,
+                                     text="Kassenprotokoll",
+                                     font=("Segoe UI", 22, "bold"), fill='white',
+                                     anchor='center', tags='static')
+            else:
+                _sym = _kp_hero_symbol
+                _kp_hero.create_text(ww // 2, 36,
+                                     text=f"{_sym}  Kassenprotokoll",
+                                     font=("Segoe UI", 22, "bold"), fill='white',
+                                     anchor='center', tags='static')
+
+        _kp_hero.bind('<Configure>', _draw_kp_hero)
+        _kp_hero.after(50, _draw_kp_hero)
+
+        # === Modern light palette ===
+        _BG   = '#EEF2F7'   # cool light blue-gray page bg
+        _CARD = '#FFFFFF'   # pure white card surface
+        _SHAD = '#B8CCE0'   # card shadow (3-px stacked frame)
+        _GH1  = '#0D2137'   # gradient header start  (matches hero)
+        _GH2  = '#1B6CA8'   # gradient header end    (matches hero)
+        _GHH  = 34          # gradient header height px
+
+        # ── Helper: build white card with gradient header ────────────────────
+        def _kp_make_card(parent, row, title, pady_val=(0, 10)):
+            _shd = tk.Frame(parent, bg=_SHAD)
+            _shd.grid(row=row, column=0, sticky='ew', padx=6, pady=pady_val)
+            _card = tk.Frame(_shd, bg=_CARD)
+            _card.pack(fill='both', expand=True, padx=2, pady=2)
+            _card.columnconfigure(0, weight=1)
+            _hdr_c = tk.Canvas(_card, height=_GHH, highlightthickness=0, bd=0)
+            _hdr_c.grid(row=0, column=0, sticky='ew')
+            def _redraw_kp(event=None, _c=_hdr_c, _t=title):
+                if not _c.winfo_exists(): return
+                _c.delete('static')
+                ww = _c.winfo_width() or 700
+                for _i in range(_GHH):
+                    _pct = _i / max(_GHH - 1, 1)
+                    _rv = int(int(_GH1[1:3], 16) + (int(_GH2[1:3], 16) - int(_GH1[1:3], 16)) * _pct)
+                    _gv = int(int(_GH1[3:5], 16) + (int(_GH2[3:5], 16) - int(_GH1[3:5], 16)) * _pct)
+                    _bv = int(int(_GH1[5:7], 16) + (int(_GH2[5:7], 16) - int(_GH1[5:7], 16)) * _pct)
+                    _c.create_line(0, _i, ww, _i, fill=f'#{_rv:02x}{_gv:02x}{_bv:02x}', tags='static')
+                _c.create_text(12, _GHH // 2, text=_t,
+                               font=("Segoe UI", 11, "bold"), fill='white',
+                               anchor='w', tags='static')
+            _hdr_c.bind('<Configure>', _redraw_kp)
+            _hdr_c.after(10, _redraw_kp)
+            _content = tk.Frame(_card, bg=_CARD)
+            _content.grid(row=1, column=0, sticky='nsew')
+            _content.columnconfigure(0, weight=1)
+            return _card, _hdr_c, _content
+
+        main_split_frame = tk.Frame(parent_frame, bg=_BG)
+        main_split_frame.grid(row=2, column=0, sticky='nsew', padx=0, pady=(4, 0))
+
         main_split_frame.columnconfigure(0, weight=1)
         main_split_frame.columnconfigure(1, weight=1)
         main_split_frame.rowconfigure(0, weight=1)
 
-        self.main_content_frame = ttk.Frame(main_split_frame, style='AppBackground.TFrame')
-        self.main_content_frame.grid(row=0, column=1, sticky='nsew', padx=(5, 0))
+        self.main_content_frame = tk.Frame(main_split_frame, bg=_BG)
+        self.main_content_frame.grid(row=0, column=1, sticky='nsew', padx=(4, 8), pady=8)
 
         self.notebook = ttk.Notebook(self.main_content_frame)
         self.notebook.pack(side='left', expand=True, fill='both', padx=(0,))
-    
-        self.fruehdienst_frame = ttk.Frame(self.notebook, style='AppBackground.TFrame', padding=(8, 8))
-        self.spaetdienst_frame = ttk.Frame(self.notebook, style='AppBackground.TFrame', padding=(8, 8))
-    
+
+        self.fruehdienst_frame = ttk.Frame(self.notebook, style='AppBackground.TFrame', padding=(4, 4))
+        self.spaetdienst_frame = ttk.Frame(self.notebook, style='AppBackground.TFrame', padding=(4, 4))
+
         self.notebook.add(self.fruehdienst_frame, text="Frühdienst")
         self.notebook.add(self.spaetdienst_frame, text="Spätdienst")
         self.notebook.bind("<<NotebookTabChanged>>", self._on_notebook_tab_changed)
 
-        left_column_container = ttk.Frame(main_split_frame, style='AppBackground.TFrame')
-        left_column_container.grid(row=0, column=0, sticky='nsew', padx=(0, 5))
+        left_column_container = tk.Frame(main_split_frame, bg=_BG)
+        left_column_container.grid(row=0, column=0, sticky='nsew', padx=(8, 4), pady=8)
         left_column_container.rowconfigure(0, weight=1)
         left_column_container.columnconfigure(0, weight=1)
 
-        left_canvas = tk.Canvas(left_column_container, borderwidth=0, highlightthickness=0)
+        left_canvas = tk.Canvas(left_column_container, borderwidth=0, highlightthickness=0, bg=_BG)
         left_scrollbar = ttk.Scrollbar(left_column_container, orient="vertical", command=left_canvas.yview)
         left_canvas.configure(yscrollcommand=left_scrollbar.set)
-        
+
         left_canvas.grid(row=0, column=0, sticky='nsew')
         left_scrollbar.grid(row=0, column=1, sticky='ns')
 
-        left_scrollable_content = ttk.Frame(left_canvas, style='AppBackground.TFrame')
+        left_scrollable_content = tk.Frame(left_canvas, bg=_BG)
         canvas_window_id = left_canvas.create_window((0, 0), window=left_scrollable_content, anchor="nw")
 
         # --- KORREKTUR START ---
@@ -15503,14 +15696,14 @@ class KassenprotokollApp:
                 elif event.delta < 0: left_canvas.yview_scroll(1, "units")
 
         left_scrollable_content.columnconfigure(0, weight=1)
-    
-        kassenabschluss_container = ttk.Frame(left_scrollable_content)
-        kassenabschluss_container.grid(row=0, column=0, sticky='new', pady=(0, 5))
-    
-        app_main_bg_color = self.current_settings.get('label_bg', self.default_settings['label_bg'])
-        self.dashboard_area_container = tk.Frame(kassenabschluss_container, bg=app_main_bg_color)
-        self.dashboard_area_container.pack(fill='both', expand=True)
-    
+
+        # ── Card 1: Kassenabschluss ──────────────────────────────────────────
+        _, _, kassenabschluss_container = _kp_make_card(
+            left_scrollable_content, row=0, title="💼  Kassenabschluss", pady_val=(8, 10))
+
+        self.dashboard_area_container = tk.Frame(kassenabschluss_container, bg=_CARD)
+        self.dashboard_area_container.pack(fill='both', expand=True, padx=4, pady=4)
+
         self.dashboard_border_tk_frame = tk.Frame(self.dashboard_area_container,
                                                 relief=self.current_settings.get('dashboard_relief', self.default_settings['dashboard_relief']),
                                                 borderwidth=self.current_settings.get('dashboard_border_width', self.default_settings['dashboard_border_width']),
@@ -15519,23 +15712,13 @@ class KassenprotokollApp:
         self.dashboard_frame = ttk.Frame(self.dashboard_border_tk_frame, style='Dashboard.TFrame', padding=(4, 4))
         self.dashboard_frame.pack(fill='both', expand=True, padx=1, pady=1)
         self.dashboard_shift_text_var = tk.StringVar(value="Aktuelle Schicht: N/A")
-        
+
         self._create_dashboard_widgets(self.dashboard_frame)
-    
-        stamps_section_overall_frame = ttk.Frame(left_scrollable_content, style='AppBackground.TFrame')
-        stamps_section_overall_frame.grid(row=1, column=0, sticky='new', pady=(5, 0))
-        stamps_section_overall_frame.columnconfigure(0, weight=1)
-    
-        stamps_header_subframe = ttk.Frame(stamps_section_overall_frame, style='AppBackground.TFrame')
-        stamps_header_subframe.grid(row=0, column=0, sticky='ew')
-        stamps_header_subframe.columnconfigure(0, weight=1)
-        
-        stamps_title_label = ttk.Label(stamps_header_subframe)
-        self._apply_and_style_section_header(stamps_title_label, 'stamps_section', "Briefmarkenbestand")
-        stamps_title_label.grid(row=0, column=0, sticky='w', padx=(2,0))
-       
-        stamps_content_labelframe = ttk.Frame(stamps_section_overall_frame, style='AppBackground.TFrame', relief='groove', borderwidth=1)
-        stamps_content_labelframe.grid(row=1, column=0, sticky='new', padx=0, pady=(1,0))
+
+        # ── Card 2: Briefmarkenbestand ───────────────────────────────────────
+        _, _, stamps_content_labelframe = _kp_make_card(
+            left_scrollable_content, row=1, title="📮  Briefmarkenbestand", pady_val=(0, 8))
+        stamps_content_labelframe.columnconfigure(0, weight=1)
         self._create_stamps_section(stamps_content_labelframe, self.fruehdienst_vars, self.spaetdienst_vars, "Frühdienst")
     
         self.bind_mousewheel_recursively(left_scrollable_content, _on_left_mousewheel)
@@ -19562,120 +19745,149 @@ class KassenprotokollApp:
         schicht_text_label.grid(row=0, column=1, padx=(0, 5), pady=0, sticky='ew')
         current_row_idx += 1
 
-        self.kassenabschluss_header_frame = ttk.Frame(parent_frame, style='Dashboard.TFrame')
-        self.kassenabschluss_header_frame.grid(row=current_row_idx, column=0, sticky='ew', pady=(5, 0))
-        self.kassenabschluss_header_frame.columnconfigure(0, weight=1)
-        self.kassenabschluss_header_frame.columnconfigure(1, weight=0)
-        kassenabschluss_title_label = ttk.Label(self.kassenabschluss_header_frame,
-                                                text="Kassenabschluss",
-                                                style='Dashboard.SectionHeader.TLabel',
-                                                anchor='center')
-        kassenabschluss_title_label.grid(row=0, column=0, sticky='ew')
-        toggle_button_text = "▲" if self.kassenabschluss_expanded else "▼"
-        self.kassenabschluss_toggle_button = ttk.Button(self.kassenabschluss_header_frame,
-                                                         text=toggle_button_text,
-                                                         command=lambda: self._toggle_kassenabschluss_section(target_state=None),
-                                                         width=3, style='TButton')
-        self.kassenabschluss_toggle_button.grid(row=0, column=1, sticky='e', padx=(2,5))
+        # ── Kassenabschluss header: gradient canvas + embedded toggle ─────────
+        _KH_GH1 = '#0D2137'; _KH_GH2 = '#1B6CA8'; _KH_H = 38
+        kh_canvas = tk.Canvas(parent_frame, height=_KH_H, highlightthickness=0, bd=0)
+        kh_canvas.grid(row=current_row_idx, column=0, sticky='ew', pady=(5, 0))
+        kh_toggle = tk.Button(kh_canvas,
+                              text="▲" if self.kassenabschluss_expanded else "▼",
+                              command=lambda: self._toggle_kassenabschluss_section(target_state=None),
+                              bg='#1565C0', fg='white', activebackground='#1976D2',
+                              activeforeground='white', relief='flat', bd=0,
+                              font=("Segoe UI", 10, "bold"), width=2, cursor='hand2')
+        self.kassenabschluss_toggle_button = kh_toggle
+        self.kassenabschluss_header_frame  = kh_canvas
+
+        def _draw_kh(ev=None, _c=kh_canvas):
+            if not _c.winfo_exists(): return
+            _c.delete('bg')
+            ww = _c.winfo_width() or 400
+            for _i in range(_KH_H):
+                _p = _i / max(_KH_H - 1, 1)
+                _r2 = int(int(_KH_GH1[1:3],16)+(int(_KH_GH2[1:3],16)-int(_KH_GH1[1:3],16))*_p)
+                _g2 = int(int(_KH_GH1[3:5],16)+(int(_KH_GH2[3:5],16)-int(_KH_GH1[3:5],16))*_p)
+                _b2 = int(int(_KH_GH1[5:7],16)+(int(_KH_GH2[5:7],16)-int(_KH_GH1[5:7],16))*_p)
+                _c.create_line(0,_i,ww,_i,fill=f'#{_r2:02x}{_g2:02x}{_b2:02x}',tags='bg')
+            _c.create_text(12, _KH_H//2, text="Kassenabschluss",
+                           font=("Segoe UI", 13, "bold"), fill='white', anchor='w', tags='bg')
+            _c.delete('tbtn')
+            _c.create_window(ww-4, _KH_H//2, window=kh_toggle, anchor='e', tags='tbtn')
+        kh_canvas.bind('<Configure>', _draw_kh)
+        kh_canvas.after(20, _draw_kh)
         current_row_idx += 1
-        
-        self.kassenabschluss_items_frame = ttk.Frame(parent_frame, style='Dashboard.TFrame')
+
+        # ── Items frame — light palette, per-row accent bars ──────────────────
+        _BG_A   = '#FFFFFF'; _BG_B   = '#F0F6FF'
+        _ACC_IN = '#1565C0'   # input rows (blue)
+        _ACC_SU = '#1B5E20'   # sum rows (green)
+        _ACC_DI = '#F57C00'   # diff/result rows (amber)
+        _SEP    = '#D0DFF0'
+        _FG     = '#0D2137'
+
+        items_fr = tk.Frame(parent_frame, bg=_BG_A)
+        self.kassenabschluss_items_frame = items_fr
         all_reco_defs = self.current_settings.get('kassenabschluss_zeilen_definitionen', [])
-        dashboard_items_ordered = sorted([d for d in all_reco_defs if d.get('key') in self.all_dashboard_item_keys and d.get('aktiv', True)], key=lambda x: x.get('reihenfolge', 999))
+        dashboard_items_ordered = sorted(
+            [d for d in all_reco_defs if d.get('key') in self.all_dashboard_item_keys and d.get('aktiv', True)],
+            key=lambda x: x.get('reihenfolge', 999))
 
         if self.kassenabschluss_expanded:
-            self.kassenabschluss_items_frame.grid(row=current_row_idx, column=0, sticky='ew', pady=(0,2))
-        
-        self.kassenabschluss_items_frame.columnconfigure(0, weight=0)
-        self.kassenabschluss_items_frame.columnconfigure(1, weight=0)
-        self.kassenabschluss_items_frame.columnconfigure(2, weight=1)
+            items_fr.grid(row=current_row_idx, column=0, sticky='ew', pady=(0, 2))
+
+        items_fr.columnconfigure(0, weight=0, minsize=5)   # accent bar
+        items_fr.columnconfigure(1, weight=0, minsize=28)  # icon
+        items_fr.columnconfigure(2, weight=2)              # label
+        items_fr.columnconfigure(3, weight=3)              # value
 
         if hasattr(self, 'dashboard_data_item_icon_widget_refs'):
             self.dashboard_data_item_icon_widget_refs.clear()
         else:
             self.dashboard_data_item_icon_widget_refs = {}
-            
+
         entry_font_size = self.current_settings.get('dashboard_input_field_font_size', 20)
         entry_font = tkFont.Font(size=entry_font_size)
+        _ROW_PAD = 5
+        tr = 0  # visual row counter
 
-        for i, reco_item_def in enumerate(dashboard_items_ordered):
+        for reco_item_def in dashboard_items_ordered:
             kassenabschluss_key = reco_item_def['key']
-            
-            
-            
-                        # vvvvvvvvvvvvvvvvvvvvvvvv HIER IST DIE ZWEITE ANPASSUNG vvvvvvvvvvvvvvvvvvvvvvvv
-            # Überspringt die Erstellung der UI-Elemente für 'Umsatz Spät' und 'Umsatz Total',
-            # wenn die Frühschicht-Ansicht aktiv ist.
+
             if active_shift_for_dashboard == "Frühdienst" and kassenabschluss_key in ('UMSATZ_SPAET', 'UMSATZ_TOTAL'):
                 continue
-            # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-            
-            
-            
-            if kassenabschluss_key not in self.dashboard_item_configs: continue
+            if kassenabschluss_key not in self.dashboard_item_configs:
+                continue
 
             item_config_from_map = self.dashboard_item_configs[kassenabschluss_key]
-            label_text = reco_item_def.get('label', kassenabschluss_key)
-            value_var = item_config_from_map["var"]
-            icon_lookup_key = item_config_from_map["icon_key"]
+            label_text  = reco_item_def.get('label', kassenabschluss_key)
+            value_var   = item_config_from_map["var"]
+            icon_key    = item_config_from_map["icon_key"]
             widget_type = item_config_from_map["widget_type"]
-            item_icon_config_detail = current_icon_configs.get(icon_lookup_key, {"type": "char", "value": FALLBACK_DASHBOARD_ICON_CHAR})
-            icon_color_to_use = self.icon_colors.get(icon_lookup_key, self.current_settings.get('dashboard_content_fg', self.default_settings['dashboard_content_fg']))
+            item_style  = reco_item_def.get('style', 'normal_input')
+            icon_cfg    = current_icon_configs.get(icon_key, {"type": "char", "value": FALLBACK_DASHBOARD_ICON_CHAR})
+            icon_color  = self.icon_colors.get(icon_key, _FG)
 
-            icon_label_widget = ttk.Label(self.kassenabschluss_items_frame, style='Dashboard.Bold.TLabel', anchor='w')
-            self.dashboard_data_item_icon_widget_refs[icon_lookup_key] = icon_label_widget
-            
-            self._update_single_dashboard_icon_display(icon_lookup_key, icon_label_widget, item_icon_config_detail, icon_color_to_use)
+            row_bg  = _BG_A if tr % 2 == 0 else _BG_B
+            if item_style == 'sum_display':
+                acc_col = _ACC_SU; lbl_fg = '#1B5E20'
+            elif item_style == 'diff_display_auto':
+                acc_col = _ACC_DI; lbl_fg = '#E65100'
+            else:
+                acc_col = _ACC_IN; lbl_fg = _FG
 
-            icon_label_widget.grid(row=i, column=0, padx=(5, 0), pady=(1,0), sticky='w')
+            data_row = tr * 2; sep_row = tr * 2 + 1; tr += 1
 
-            text_label_widget = ttk.Label(self.kassenabschluss_items_frame, text=label_text, style='Dashboard.Bold.TLabel', anchor='w')
-            text_label_widget.grid(row=i, column=1, padx=(2, 3), pady=(1,0), sticky='w')
+            # col 0: accent bar
+            tk.Frame(items_fr, bg=acc_col, width=5).grid(row=data_row, column=0, sticky='ns')
 
+            # col 1: icon (tk.Label so bg matches row)
+            icon_lbl = tk.Label(items_fr, bg=row_bg, anchor='w')
+            self.dashboard_data_item_icon_widget_refs[icon_key] = icon_lbl
+            self._update_single_dashboard_icon_display(icon_key, icon_lbl, icon_cfg, icon_color)
+            icon_lbl.grid(row=data_row, column=1, padx=(6, 2), pady=_ROW_PAD, sticky='w')
+
+            # col 2: label text
+            tk.Label(items_fr, text=label_text, bg=row_bg, fg=lbl_fg,
+                     font=("Segoe UI", 11, "bold"), anchor='w'
+                     ).grid(row=data_row, column=2, padx=(2, 4), pady=_ROW_PAD, sticky='ew')
+
+            # col 3: input entry or display label – both in 3-D raised wrapper
             if widget_type == "input":
-                entry_widget = ttk.Entry(self.kassenabschluss_items_frame,
-                                         textvariable=value_var,
+                inp_wrap = tk.Frame(items_fr, bg=row_bg, relief='raised', bd=3)
+                inp_wrap.grid(row=data_row, column=3, padx=(4, 8), pady=_ROW_PAD, sticky='ew')
+                entry_widget = ttk.Entry(inp_wrap, textvariable=value_var,
                                          style='Dashboard.Input.TEntry',
-                                          width=self.current_settings.get('dashboard_input_field_width', self.default_settings['dashboard_input_field_width']),
-                                         justify='right',
-                                         font=entry_font)
-                
-                entry_widget.grid(row=i, column=2, padx=(3, 5), pady=(1,0), sticky='ew',
-                                  ipady=self.current_settings.get('dashboard_input_field_ipady', self.default_settings['dashboard_input_field_ipady']))
-
-                # vvvvvvvvvvvvvvvvvvvvvvvv HIER IST DIE KORREKTUR vvvvvvvvvvvvvvvvvvvvvvvv
-                is_disabled = False
-                if kassenabschluss_key == "UMSATZ_FRUEH" and active_shift_for_dashboard == "Spätdienst":
-                    is_disabled = True
-                if kassenabschluss_key == "UMSATZ_SPAET" and active_shift_for_dashboard == "Frühdienst":
-                    is_disabled = True
-                
+                                         width=self.current_settings.get('dashboard_input_field_width', self.default_settings['dashboard_input_field_width']),
+                                         justify='right', font=entry_font)
+                entry_widget.pack(fill='both', expand=True, padx=1,
+                                  pady=self.current_settings.get('dashboard_input_field_ipady', self.default_settings['dashboard_input_field_ipady']))
+                is_disabled = ((kassenabschluss_key == "UMSATZ_FRUEH" and active_shift_for_dashboard == "Spätdienst") or
+                               (kassenabschluss_key == "UMSATZ_SPAET" and active_shift_for_dashboard == "Frühdienst"))
                 entry_widget.config(state='disabled' if is_disabled else 'normal')
-                # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                
                 self._add_widget_to_list(entry_widget, 'entry', is_main_input=True)
-                
                 self.dashboard_input_entry_widget_refs[kassenabschluss_key] = entry_widget
                 self._update_dashboard_input_field_highlight(entry_widget, value_var)
-                entry_widget.bind("<FocusOut>", lambda e, k_bind=kassenabschluss_key, v_bind=value_var: self._handle_dashboard_input_change(k_bind, v_bind))
-                entry_widget.bind("<Return>", lambda e, k_bind=kassenabschluss_key, v_bind=value_var: self._handle_dashboard_input_change(k_bind, v_bind))
+                entry_widget.bind("<FocusOut>", lambda e, k=kassenabschluss_key, v=value_var: self._handle_dashboard_input_change(k, v))
+                entry_widget.bind("<Return>",   lambda e, k=kassenabschluss_key, v=value_var: self._handle_dashboard_input_change(k, v))
+
             elif widget_type == "display":
-                value_wrapper_frame = tk.Frame(self.kassenabschluss_items_frame,
-                                               relief='sunken', borderwidth=1,
-                                               bg=self.current_settings.get('dashboard_content_bg', self.default_settings['dashboard_content_bg']))
-                value_wrapper_frame.grid(row=i, column=2, padx=(3, 5), pady=(1,0), sticky='ew',
-                                         ipady=self.current_settings.get('dashboard_input_field_ipady', self.default_settings['dashboard_input_field_ipady']))
-
-                value_label_widget = tk.Label(value_wrapper_frame, textvariable=value_var, 
-                                              anchor='e', font=self.ta_sum_font,
-                                              bg=self.current_settings.get('dashboard_content_bg', self.default_settings['dashboard_content_bg']),
-                                              fg=self.current_settings.get('dashboard_content_fg', self.default_settings['dashboard_content_fg']))
-                value_label_widget.pack(fill='x', expand=True, padx=1, pady=1)
-
+                if item_style == 'sum_display':
+                    d_bg = '#1565C0'; d_fg = '#FFFFFF'
+                else:
+                    d_bg = '#E3F2FD'; d_fg = '#0D47A1'
+                disp_wrap = tk.Frame(items_fr, bg=d_bg, relief='raised', bd=3)
+                disp_wrap.grid(row=data_row, column=3, padx=(4, 8), pady=_ROW_PAD, sticky='ew')
+                value_label_widget = tk.Label(disp_wrap, textvariable=value_var,
+                                              anchor='e', font=entry_font,
+                                              bg=d_bg, fg=d_fg, padx=6)
+                value_label_widget.pack(fill='both', expand=True, padx=1, pady=1)
                 if reco_item_def.get('style') == 'diff_display_auto':
-                    value_label_widget._custom_type = 'dashboard_sum'
+                    value_label_widget._custom_type  = 'dashboard_sum'
+                    value_label_widget._card_row_bg  = d_bg  # preserve blue bg in _update_diff_label_colors
+                    value_label_widget._wrapper_frame = disp_wrap
                     self._add_widget_to_list(value_label_widget, 'label', is_diff_label=True)
+
+            # separator
+            tk.Frame(items_fr, bg=_SEP, height=1).grid(row=sep_row, column=0, columnspan=4, sticky='ew')
 
     def _toggle_kassenabschluss_section(self, target_state=None):
         if target_state is None:
@@ -19834,8 +20046,11 @@ class KassenprotokollApp:
                         vars_dict['cash_amounts_display'][denom].set(zero_euro_display)
                         # Reset highlight for amount labels if they exist
                         amount_label_widget = vars_dict.get('cash_amount_label_widgets', {}).get(denom)
-                    if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'NumberDisplay.TLabel':
-                       amount_label_widget.config(style='NumberDisplay.TLabel')
+                    if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'Cash.NumberDisplay.TLabel':
+                       amount_label_widget.config(style='Cash.NumberDisplay.TLabel')
+                    wrap = vars_dict.get('cash_amount_wrapper_widgets', {}).get(denom)
+                    if wrap and wrap.winfo_exists() and wrap.cget('bg') != '#E3F2FD':
+                        wrap.config(bg='#E3F2FD')
 
             # Clear stamp counts (prices are admin-editable, not cleared here)
             # Reset highlight for stamp qty/price/amount widgets
@@ -19854,9 +20069,12 @@ class KassenprotokollApp:
 
             for price_key in vars_dict.get('stamp_amount_label_widgets', {}).keys():
                 amount_label_widget = vars_dict['stamp_amount_label_widgets'].get(price_key)
-                if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'NumberDisplay.TLabel':
-                    amount_label_widget.config(style='NumberDisplay.TLabel')
-            
+                if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'Stamp.NumberDisplay.TLabel':
+                    amount_label_widget.config(style='Stamp.NumberDisplay.TLabel')
+                wrap = vars_dict.get('stamp_amount_wrapper_widgets', {}).get(price_key)
+                if wrap and wrap.winfo_exists() and wrap.cget('bg') != '#E0F2F1':
+                    wrap.config(bg='#E0F2F1')
+
             # Clear card data
             for card_key in vars_dict.get('card_type_keys', []):
                 if card_key in vars_dict.get('card_data', {}):
@@ -20815,6 +21033,13 @@ class KassenprotokollApp:
         except Exception as e:
             messagebox.showerror("Einstellungen speichern", f"Fehler beim Speichern der Einstellungen in '{self.settings_file}': {e}")
     def _apply_settings_to_styles(self):
+        # Theme aus Einstellungen anwenden (nur native, schnelle Themes)
+        _theme = self.current_settings.get('selected_theme', 'alt')
+        try:
+            self.style.theme_use(_theme)
+        except tk.TclError:
+            self.style.theme_use('alt')
+
         base_font_size_val = self.current_settings.get('general_font_size', self.default_settings['general_font_size'])
         number_font_size_val = self.current_settings.get('number_font_size', self.default_settings['number_font_size'])
         header_font_size_val = self.current_settings.get('overall_header_font_size', self.default_settings['overall_header_font_size'])
@@ -20922,6 +21147,18 @@ class KassenprotokollApp:
         self.style.configure('Highlighted.NumberInput.TEntry', fieldbackground=self.highlight_color)
         self.style.configure('Highlighted.NumberInput.TCombobox', fieldbackground=self.highlight_color)
         self.style.configure('Highlighted.NumberDisplay.TLabel', background=self.highlight_color)
+        # Cash-table-specific amount label styles (colors only; 3-D effect via wrapper tk.Frame)
+        self.style.configure('Cash.NumberDisplay.TLabel',
+                             background='#E3F2FD', foreground='#1565C0',
+                             padding=(4, 2))
+        self.style.configure('Cash.Highlighted.NumberDisplay.TLabel',
+                             background='#1565C0', foreground='#FFFFFF',
+                             padding=(4, 2))
+        # Stamp-table-specific amount label styles (teal palette)
+        self.style.configure('Stamp.NumberDisplay.TLabel',
+                             background='#E0F2F1', foreground='#00695C')
+        self.style.configure('Stamp.Highlighted.NumberDisplay.TLabel',
+                             background='#00796B', foreground='#FFFFFF')
         try:
             dashboard_input_font_tuple_val = self.style.lookup('Dashboard.Input.TEntry', 'font'); dashboard_input_fg_val = self.style.lookup('Dashboard.Input.TEntry', 'foreground'); dashboard_input_insertbg_val = self.style.lookup('Dashboard.Input.TEntry', 'insertbackground'); dashboard_input_selectbg_val = self.style.lookup('Dashboard.Input.TEntry', 'selectbackground'); dashboard_input_selectfg_val = self.style.lookup('Dashboard.Input.TEntry', 'selectforeground')
             self.style.configure('Highlighted.Dashboard.Input.TEntry', font=dashboard_input_font_tuple_val, foreground=dashboard_input_fg_val, fieldbackground=self.highlight_color, insertbackground=dashboard_input_insertbg_val, selectbackground=dashboard_input_selectbg_val, selectforeground=dashboard_input_selectfg_val)
@@ -21605,13 +21842,79 @@ class KassenprotokollApp:
         for widget in parent_notebook_tab_frame.winfo_children():
             widget.destroy()
 
+        # === Modern light palette (same as page body) ===
+        _SW_BG   = '#EEF2F7'
+        _SW_CARD = '#FFFFFF'
+        _SW_SHAD = '#B8CCE0'
+        _SW_GH1  = '#0D2137'
+        _SW_GH2  = '#1B6CA8'
+        _SW_GHH  = 34
+
+        def _sw_draw_hdr(c, title):
+            def _draw(event=None):
+                if not c.winfo_exists(): return
+                c.delete('static')
+                ww = c.winfo_width() or 700
+                for _i in range(_SW_GHH):
+                    _t = _i / max(_SW_GHH - 1, 1)
+                    _r = int(int(_SW_GH1[1:3], 16) + (int(_SW_GH2[1:3], 16) - int(_SW_GH1[1:3], 16)) * _t)
+                    _g = int(int(_SW_GH1[3:5], 16) + (int(_SW_GH2[3:5], 16) - int(_SW_GH1[3:5], 16)) * _t)
+                    _b = int(int(_SW_GH1[5:7], 16) + (int(_SW_GH2[5:7], 16) - int(_SW_GH1[5:7], 16)) * _t)
+                    c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}', tags='static')
+                c.create_text(12, _SW_GHH // 2, text=title,
+                              font=("Segoe UI", 11, "bold"), fill='white',
+                              anchor='w', tags='static')
+            c.bind('<Configure>', _draw)
+            c.after(10, _draw)
+
+        def _sw_make_card(parent, row, title, toggle_cmd, toggle_var_ref, pady_val=(0, 10)):
+            """White card with gradient header + embedded toggle button (single Configure bind)."""
+            _shd = tk.Frame(parent, bg=_SW_SHAD)
+            _shd.grid(row=row, column=0, sticky='ew', padx=6, pady=pady_val)
+            _card = tk.Frame(_shd, bg=_SW_CARD)
+            _card.pack(fill='both', expand=True, padx=2, pady=2)
+            _card.columnconfigure(0, weight=1)
+            # Gradient header canvas
+            _hc = tk.Canvas(_card, height=_SW_GHH, highlightthickness=0, bd=0)
+            _hc.grid(row=0, column=0, sticky='ew')
+            # Toggle button embedded in the canvas
+            _tbtn = tk.Button(_hc, text=toggle_var_ref[0],
+                              command=toggle_cmd,
+                              bg='#1565C0', fg='white',
+                              activebackground='#1976D2', activeforeground='white',
+                              relief='flat', bd=0, font=("Segoe UI", 10, "bold"),
+                              width=2, cursor='hand2')
+            # Single Configure handler: redraw gradient + reposition button
+            def _redraw(event=None, _c=_hc, _t=title, _b=_tbtn):
+                if not _c.winfo_exists(): return
+                _c.delete('static')
+                ww = _c.winfo_width() or 700
+                for _i in range(_SW_GHH):
+                    _pct = _i / max(_SW_GHH - 1, 1)
+                    _rv = int(int(_SW_GH1[1:3], 16) + (int(_SW_GH2[1:3], 16) - int(_SW_GH1[1:3], 16)) * _pct)
+                    _gv = int(int(_SW_GH1[3:5], 16) + (int(_SW_GH2[3:5], 16) - int(_SW_GH1[3:5], 16)) * _pct)
+                    _bv = int(int(_SW_GH1[5:7], 16) + (int(_SW_GH2[5:7], 16) - int(_SW_GH1[5:7], 16)) * _pct)
+                    _c.create_line(0, _i, ww, _i, fill=f'#{_rv:02x}{_gv:02x}{_bv:02x}', tags='static')
+                _c.create_text(12, _SW_GHH // 2, text=_t,
+                               font=("Segoe UI", 11, "bold"), fill='white',
+                               anchor='w', tags='static')
+                _c.delete('tbtn_win')
+                _c.create_window(ww - 4, _SW_GHH // 2, window=_b, anchor='e', tags='tbtn_win')
+            _hc.bind('<Configure>', _redraw)
+            _hc.after(20, _redraw)
+            # Content area (white, inner widgets sit here)
+            _content = tk.Frame(_card, bg=_SW_CARD)
+            _content.grid(row=1, column=0, sticky='nsew')
+            _content.columnconfigure(0, weight=1)
+            return _card, _hc, _content, _tbtn
+
         # Setup scrollable area within the tab
-        canvas = tk.Canvas(parent_notebook_tab_frame, borderwidth=0, highlightthickness=0)
+        canvas = tk.Canvas(parent_notebook_tab_frame, borderwidth=0, highlightthickness=0, bg=_SW_BG)
         vsb = ttk.Scrollbar(parent_notebook_tab_frame, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=vsb.set); vsb.pack(side="right", fill="y"); canvas.pack(side="left", fill="both", expand=True)
         vars_dict['canvas'] = canvas
 
-        scrollable_frame = ttk.Frame(canvas, style='AppBackground.TFrame', padding=(5,5))
+        scrollable_frame = tk.Frame(canvas, bg=_SW_BG)
         vars_dict['scrollable_frame'] = scrollable_frame
         canvas_window_id = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw", tags="scrollable_frame_tag")
 
@@ -21640,15 +21943,15 @@ class KassenprotokollApp:
 
         # Main content container inside the scrollable frame
         scrollable_frame.columnconfigure(0, weight=1); scrollable_frame.rowconfigure(0, weight=1)
-        content_container = ttk.Frame(scrollable_frame, style='AppBackground.TFrame')
+        content_container = tk.Frame(scrollable_frame, bg=_SW_BG)
         content_container.grid(row=0, column=0, padx=0, pady=0, sticky='nsew')
         content_container.columnconfigure(0, weight=1)
 
         current_content_row = 0
 
         # Action frame for shift-specific delete buttons
-        action_frame = ttk.Frame(content_container, style='AppBackground.TFrame')
-        action_frame.grid(row=current_content_row, column=0, sticky='ew', pady=(0, 10))
+        action_frame = tk.Frame(content_container, bg=_SW_BG)
+        action_frame.grid(row=current_content_row, column=0, sticky='ew', padx=6, pady=(6, 4))
         
         delete_button = None
         if shift_name == "Frühdienst":
@@ -21674,82 +21977,54 @@ class KassenprotokollApp:
 
         current_content_row += 1
 
-        # Bargeldzählung Section
-        cash_section_overall_frame = ttk.Frame(content_container, style='AppBackground.TFrame')
-        cash_section_overall_frame.grid(row=current_content_row, column=0, padx=0, pady=(0,6), sticky='new')
-        cash_section_overall_frame.columnconfigure(0, weight=1)
-        
-        bargeld_header_subframe = ttk.Frame(cash_section_overall_frame, style='AppBackground.TFrame')
-        bargeld_header_subframe.grid(row=0, column=0, sticky='ew', pady=(0,1))
-        bargeld_header_subframe.columnconfigure(0, weight=1); bargeld_header_subframe.columnconfigure(1, weight=0)
-        
-        bargeld_title_label = ttk.Label(bargeld_header_subframe)
-        self._apply_and_style_section_header(bargeld_title_label, 'cash_section', "Bargeldzählung")
-        bargeld_title_label.grid(row=0, column=0, sticky='w', padx=(2,0))
-        
+        # ── Card: Bargeldzählung ─────────────────────────────────────────────
         is_bargeld_expanded = vars_dict.get('bargeldzaehlung_expanded_state', True)
-        bargeld_toggle_text = "▲" if is_bargeld_expanded else "▼"
-        bargeld_toggle_button = ttk.Button(bargeld_header_subframe, text=bargeld_toggle_text, command=lambda s=shift_name: self._toggle_bargeldzaehlung_section(s, target_state=None), width=3, style='TButton')
-        bargeld_toggle_button.grid(row=0, column=1, sticky='e', padx=(0,2))
+        _btxt = ["▲" if is_bargeld_expanded else "▼"]
+        _, _bhc, bargeld_content_frame, bargeld_toggle_button = _sw_make_card(
+            content_container, current_content_row,
+            title="💵  Bargeldzählung",
+            toggle_cmd=lambda s=shift_name: self._toggle_bargeldzaehlung_section(s, target_state=None),
+            toggle_var_ref=_btxt)
         vars_dict['bargeldzaehlung_toggle_button'] = bargeld_toggle_button
-        
-        bargeld_content_frame = ttk.Frame(cash_section_overall_frame, style='AppBackground.TFrame', relief='groove', borderwidth=1)
         vars_dict['bargeldzaehlung_content_frame'] = bargeld_content_frame
-        if is_bargeld_expanded: bargeld_content_frame.grid(row=1, column=0, sticky='new', padx=0, pady=(0,0))
-        self._create_cash_section(bargeld_content_frame, vars_dict); current_content_row += 1
-        
-        # Card Sections
+        if not is_bargeld_expanded:
+            bargeld_content_frame.grid_remove()
+        self._create_cash_section(bargeld_content_frame, vars_dict)
+        current_content_row += 1
+
+        # ── Cards: Kartenzahlungen ───────────────────────────────────────────
         for card_key in vars_dict.get('card_type_keys', []):
             if card_key in vars_dict.get('card_data', {}):
                 card_label = vars_dict.get('card_display_info', {}).get(card_key, {}).get('label', card_key)
-                
-                card_overall_frame = ttk.Frame(content_container, style='AppBackground.TFrame')
-                card_overall_frame.grid(row=current_content_row, column=0, padx=0, pady=6, sticky='new')
-                card_overall_frame.columnconfigure(0, weight=1)
-
-                card_header_subframe = ttk.Frame(card_overall_frame, style='AppBackground.TFrame')
-                card_header_subframe.grid(row=0, column=0, sticky='ew', pady=(0,1))
-                card_header_subframe.columnconfigure(0, weight=1); card_header_subframe.columnconfigure(1, weight=0)
-
-                card_title_label = ttk.Label(card_header_subframe)
-                self._apply_and_style_section_header(card_title_label, 'cards_section', f"{card_label} CP")
-                card_title_label.grid(row=0, column=0, sticky='w', padx=(2,0))
-                
                 is_card_expanded = vars_dict['card_expanded_states'].get(card_key, True)
-                card_toggle_text = "▲" if is_card_expanded else "▼"
-                card_toggle_button_widget = ttk.Button(card_header_subframe, text=card_toggle_text, command=lambda s=shift_name, ck=card_key: self._toggle_card_section(s, ck, target_state=None), width=3, style='TButton')
-                card_toggle_button_widget.grid(row=0, column=1, sticky='e', padx=(0,2))
+                _ctxt = ["▲" if is_card_expanded else "▼"]
+                _, _chc, card_content_actual_frame, card_toggle_button_widget = _sw_make_card(
+                    content_container, current_content_row,
+                    title=f"💳  {card_label} CP",
+                    toggle_cmd=lambda s=shift_name, ck=card_key: self._toggle_card_section(s, ck, target_state=None),
+                    toggle_var_ref=_ctxt)
                 vars_dict['card_toggle_buttons'][card_key] = card_toggle_button_widget
-                
-                card_content_actual_frame = ttk.Frame(card_overall_frame, style='AppBackground.TFrame', relief='groove', borderwidth=1)
                 vars_dict['card_content_frames'][card_key] = card_content_actual_frame
-                if is_card_expanded: card_content_actual_frame.grid(row=1, column=0, sticky='new', padx=0, pady=(0,0))
+                if not is_card_expanded:
+                    card_content_actual_frame.grid_remove()
                 self._create_card_section_common(card_content_actual_frame, card_key, vars_dict, shift_name, other_shift_vars_dict)
                 current_content_row += 1
-        
-        # Notizen Section
-        notes_section_overall_frame = ttk.Frame(content_container, style='AppBackground.TFrame')
-        notes_section_overall_frame.grid(row=current_content_row, column=0, padx=0, pady=6, sticky='nsew')
-        notes_section_overall_frame.columnconfigure(0, weight=1); notes_section_overall_frame.rowconfigure(1, weight=1)
-        content_container.rowconfigure(current_content_row, weight=1)
 
-        notes_header_subframe = ttk.Frame(notes_section_overall_frame, style='AppBackground.TFrame')
-        notes_header_subframe.grid(row=0, column=0, sticky='ew', pady=(0,1))
-        notes_header_subframe.columnconfigure(0, weight=1); notes_header_subframe.columnconfigure(1, weight=0)
-        
-        notes_title_label = ttk.Label(notes_header_subframe)
-        self._apply_and_style_section_header(notes_title_label, 'notes_section', f"Notizen {shift_name}")
-        notes_title_label.grid(row=0, column=0, sticky='w', padx=(2,0))
-        
+        # ── Card: Notizen ────────────────────────────────────────────────────
         is_notes_expanded = vars_dict.get('notes_expanded_state', True)
-        notes_toggle_text = "▲" if is_notes_expanded else "▼"
-        notes_toggle_button_widget = ttk.Button(notes_header_subframe, text=notes_toggle_text, command=lambda s=shift_name: self._toggle_notes_section(s, target_state=None), width=3, style='TButton')
-        notes_toggle_button_widget.grid(row=0, column=1, sticky='e', padx=(0,2))
+        _ntxt = ["▲" if is_notes_expanded else "▼"]
+        _, _nhc, notes_content_inner_frame, notes_toggle_button_widget = _sw_make_card(
+            content_container, current_content_row,
+            title=f"📝  Notizen {shift_name}",
+            toggle_cmd=lambda s=shift_name: self._toggle_notes_section(s, target_state=None),
+            toggle_var_ref=_ntxt,
+            pady_val=(0, 8))
         vars_dict['notes_toggle_button'] = notes_toggle_button_widget
-
-        notes_content_inner_frame = ttk.Frame(notes_section_overall_frame, style='AppBackground.TFrame', relief='groove', borderwidth=1)
         vars_dict['notes_content_frame'] = notes_content_inner_frame
         notes_content_inner_frame.columnconfigure(0, weight=1); notes_content_inner_frame.rowconfigure(1, weight=1)
+        content_container.rowconfigure(current_content_row, weight=1)
+        if not is_notes_expanded:
+            notes_content_inner_frame.grid_remove()
         if is_notes_expanded: notes_content_inner_frame.grid(row=1, column=0, sticky='nsew', padx=5, pady=(0,0))
         
         formatting_toolbar_frame = ttk.Frame(notes_content_inner_frame, style='FormattingToolbar.TFrame')
@@ -21931,103 +22206,214 @@ class KassenprotokollApp:
 
     def _create_cash_section(self, parent_frame, vars_dict):
         cash_denominations_values = vars_dict.get('cash_denominations', [])
-        # Sort denominations correctly (e.g., 50 > 20 > ... > 0.05 > 0.02 > 0.01)
         cash_denominations_values.sort(reverse=True)
-        
-        labels = ["Anzahl", "Scheine/Münzen", "Betrag (€)"]; 
-        # Configure column weights for layout
-        parent_frame.columnconfigure(0, weight=1) # Anzahl
-        parent_frame.columnconfigure(1, weight=1) # Label
-        parent_frame.columnconfigure(2, weight=1) # Betrag
 
-        for col, label_text in enumerate(labels):
-            # Adjust sticky for column headers for better centering/alignment over their content
-            sticky_align = 'ew' if col in [0, 2] else 'w' # Anz/Betrag stretch, Label aligns left
+        # ── Eye-catching palette ──────────────────────────────────────────────
+        _HDR_GH1  = '#0D2137'   # gradient header start
+        _HDR_GH2  = '#1B6CA8'   # gradient header end
+        _HDR_H    = 40          # header canvas height
+        _ACC_NOTE  = '#1565C0'   # left accent bar – notes (≥ 5 €)
+        _ACC_COIN  = '#F57C00'   # left accent bar – coins (< 5 €)
+        _BG_A      = '#FFFFFF'   # note even row
+        _BG_B      = '#F0F7FF'   # note odd row
+        _BG_COIN_A = '#FFF8EE'   # coin even row – warm honey tint
+        _BG_COIN_B = '#FFEFD4'   # coin odd row  – deeper amber tint
+        _FG_NOTE   = '#0D2137'   # denomination text – notes
+        _FG_COIN   = '#7B3F00'   # denomination text – coins (warm brown)
+        _SEP_CLR   = '#D0DFF0'   # row separator
+        _SUM_GH1  = '#0D2137'   # sum footer gradient start
+        _SUM_GH2  = '#1565C0'   # sum footer gradient end
+        _SUM_H    = 46          # sum footer canvas height
+        _SUM_FG   = '#FFFFFF'
 
-            lbl = ttk.Label(parent_frame, text=label_text, style='SectionHeader.TLabel'); lbl.grid(row=0, column=col, padx=5, pady=(3, 4), sticky=sticky_align)
-            self._add_widget_to_list(lbl, 'label')
-        
-        use_combobox = self.current_settings.get('use_quantity_combobox', False); combobox_max_val = self.current_settings.get('quantity_combobox_max_value', 100)
-        # Ensure max value is an integer and non-negative
+        parent_frame.columnconfigure(0, weight=1)
+
+        # ── Gradient header canvas ────────────────────────────────────────────
+        hdr_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hdr_c.grid(row=0, column=0, sticky='ew')
+
+        def _draw_hdr(ev=None, _c=hdr_c):
+            if not _c.winfo_exists():
+                return
+            _c.delete('all')
+            ww = _c.winfo_width() or 600
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r = int(int(_HDR_GH1[1:3], 16) + (int(_HDR_GH2[1:3], 16) - int(_HDR_GH1[1:3], 16)) * _p)
+                _g = int(int(_HDR_GH1[3:5], 16) + (int(_HDR_GH2[3:5], 16) - int(_HDR_GH1[3:5], 16)) * _p)
+                _b = int(int(_HDR_GH1[5:7], 16) + (int(_HDR_GH2[5:7], 16) - int(_HDR_GH1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            _mid = _HDR_H // 2
+            _c.create_text(22, _mid, text="Stk.",
+                           font=("Segoe UI", 9, "bold"), fill='#90CAF9', anchor='center')
+            _c.create_text(int(ww * 0.42), _mid, text="Stückelung",
+                           font=("Segoe UI", 10, "bold"), fill='white', anchor='w')
+            _c.create_text(ww - 12, _mid, text="Betrag (€)",
+                           font=("Segoe UI", 10, "bold"), fill='white', anchor='e')
+
+        hdr_c.bind('<Configure>', _draw_hdr)
+        hdr_c.after(20, _draw_hdr)
+
+        # ── Single shared table frame (all rows → perfect column alignment) ──
+        tbl = tk.Frame(parent_frame, bg=_BG_A)
+        tbl.grid(row=1, column=0, sticky='ew')
+        tbl.columnconfigure(0, weight=0, minsize=5)   # col 0: accent bar (4 px)
+        tbl.columnconfigure(1, weight=1, minsize=68)  # col 1: qty input
+        tbl.columnconfigure(2, weight=3)              # col 2: denomination label
+        tbl.columnconfigure(3, weight=2)              # col 3: amount
+
+        use_combobox = self.current_settings.get('use_quantity_combobox', False)
+        combobox_max_val = self.current_settings.get('quantity_combobox_max_value', 100)
         try: combobox_max_val = max(0, int(combobox_max_val))
         except (ValueError, TypeError): combobox_max_val = 100
         combobox_values = [str(i) for i in range(combobox_max_val + 1)]
-        
-        auto_calc_denominations = [d for d in cash_denominations_values if d >= 5.0]; manual_input_denominations = [d for d in cash_denominations_values if d < 5.0]
-        
-        if 'cash_amount_label_widgets' not in vars_dict: vars_dict['cash_amount_label_widgets'] = {}
+
+        auto_calc_denominations    = [d for d in cash_denominations_values if d >= 5.0]
+        manual_input_denominations = [d for d in cash_denominations_values if d < 5.0]
+
+        if 'cash_amount_label_widgets' not in vars_dict:
+            vars_dict['cash_amount_label_widgets'] = {}
+        if 'cash_amount_wrapper_widgets' not in vars_dict:
+            vars_dict['cash_amount_wrapper_widgets'] = {}
+        # Colors kept in sync with Cash.NumberDisplay / Cash.Highlighted styles
+        _W_BG_ZERO = '#E3F2FD'   # wrapper bg – zero state
+        _W_BG_FILL = '#1565C0'   # wrapper bg – non-zero state
+
+        _ROW_PAD_Y = 7
 
         for i, denom_val in enumerate(cash_denominations_values):
-            row_idx = i + 1; denom_dec = decimal.Decimal(str(denom_val)); 
-            # Format denomination label appropriately (€ vs integer value)
-            lbl_denom_text = f"{locale.format_string('%.2f', denom_dec, grouping=False).replace('.', ',')} €" if denom_dec < 1 else f"{int(denom_dec)} €"
-            
-            # Add denomination label to the grid
-            #self._add_widget_to_list(ttk.Label(parent_frame, text=lbl_denom_text, style='TLabel').grid(row=row_idx, column=1, padx=5, pady=2, sticky='w'), 'label')
+            tbl_row = i * 2       # content rows at even indices
+            sep_row = i * 2 + 1   # separator line at odd indices
+            is_note = denom_val >= 5.0
+            if is_note:
+                row_bg = _BG_A if i % 2 == 0 else _BG_B
+                row_fg = _FG_NOTE
+            else:
+                row_bg = _BG_COIN_A if i % 2 == 0 else _BG_COIN_B
+                row_fg = _FG_COIN
+            acc_col  = _ACC_NOTE if is_note else _ACC_COIN
+            denom_dec = decimal.Decimal(str(denom_val))
+            lbl_denom_text = (
+                f"{locale.format_string('%.2f', denom_dec, grouping=False).replace('.', ',')} €"
+                if denom_dec < 1 else f"{int(denom_dec)} €"
+            )
 
-            denom_label = ttk.Label(parent_frame, text=lbl_denom_text, style='TLabel', font=self.ta_entry_font)
-            denom_label.grid(row=row_idx, column=1, padx=5, pady=2, sticky='w')
+            # col 0 – colored accent bar (fills row height)
+            tk.Frame(tbl, bg=acc_col, width=5).grid(
+                row=tbl_row, column=0, sticky='ns', padx=0, pady=0)
+
+            # col 2 – denomination label: 3-D raised wrapper + tk.Label inside
+            denom_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
+            denom_wrap.grid(row=tbl_row, column=2, padx=(10, 8),
+                            pady=_ROW_PAD_Y, sticky='ew')
+            denom_label = tk.Label(
+                denom_wrap, text=lbl_denom_text,
+                bg=row_bg, fg=row_fg,
+                font=("Segoe UI", 11, "bold"), anchor='w')
+            denom_label.pack(fill='both', expand=True, padx=4, pady=1)
             self._add_widget_to_list(denom_label, 'label')
-            
-            # Ensure corresponding variables exist before accessing
-            if denom_val in vars_dict.get('cash_counts', {}) and denom_val in vars_dict.get('cash_amounts_display', {}):
-                
-                if denom_val in auto_calc_denominations: # Scheine und große Münzen: Anzahl wird eingegeben
-                    qty_var = vars_dict['cash_counts'][denom_val]
-                    if use_combobox:
-                        qty_widget = ttk.Combobox(parent_frame, textvariable=qty_var, values=combobox_values, width=5, justify='right', style='NumberInput.TCombobox', state='readonly')
-                        # Bind <<ComboboxSelected>> event to update calculations and highlight
-                        qty_widget.bind('<<ComboboxSelected>>', lambda e, w=qty_widget, sv=qty_var: (self._update_all_calculations(called_by_button=False), self._update_input_field_highlight(w, sv, is_count_field=True)))
-                    else:
-                        qty_widget = ttk.Entry(parent_frame, textvariable=qty_var, width=6, justify='right', style='NumberInput.TEntry')
-                        # Bind <FocusOut> event to format, update calculations, and highlight
-                        qty_widget.bind('<FocusOut>', lambda e, v=qty_var: (self._format_on_focus_out(e, v, is_count=True), self._update_all_calculations(called_by_button=False)))
-                    
-                    # Grid the quantity widget and add to tracking lists
-                    qty_widget.grid(row=row_idx, column=0, padx=5, pady=2, sticky='ew'); self._add_widget_to_list(qty_widget, 'combobox' if use_combobox else 'entry', is_main_input=True)
-                    
-                    # Create and grid the calculated amount label
-                   # amount_label = ttk.Label(parent_frame, textvariable=vars_dict['cash_amounts_display'][denom_val], anchor='e', style='NumberDisplay.TLabel')
-                    
-                    
-                    amount_label = ttk.Label(parent_frame, textvariable=vars_dict['cash_amounts_display'][denom_val], anchor='e', style='NumberDisplay.TLabel', font=self.ta_entry_font)
 
-                    
-                    amount_label.grid(row=row_idx, column=2, padx=5, pady=2, sticky='ew'); self._add_widget_to_list(amount_label, 'label')
-                    vars_dict['cash_amount_label_widgets'][denom_val] = amount_label # Store ref for highlight
-                
-                elif denom_val in manual_input_denominations: # Kleine Münzen: Betrag wird direkt eingegeben
-                    # Add an empty label as a placeholder in the "Anzahl" column
-                    self._add_widget_to_list(ttk.Label(parent_frame, text="", width=6, style='TLabel').grid(row=row_idx, column=0, padx=5, pady=2, sticky='ew'), 'label') 
-                    
-                    # Create and grid the manual amount entry field
-                    #entry_betrag = ttk.Entry(parent_frame, textvariable=vars_dict['cash_amounts_display'][denom_val], width=12, justify='right', style='NumberInput.TEntry')
-                    
-                    entry_betrag = ttk.Entry(parent_frame, textvariable=vars_dict['cash_amounts_display'][denom_val], width=12, justify='right', style='NumberInput.TEntry', font=self.ta_entry_font)
+            # 1 px separator between rows
+            tk.Frame(tbl, bg=_SEP_CLR, height=1).grid(
+                row=sep_row, column=0, columnspan=4, sticky='ew')
 
-                    
-                    entry_betrag.grid(row=row_idx, column=2, padx=5, pady=2, sticky='ew'); 
-                    
-                    # Bind <FocusOut> event to format, update calculations, and highlight
-                    entry_betrag.bind('<FocusOut>', lambda e, v=vars_dict['cash_amounts_display'][denom_val]: (self._format_on_focus_out(e, v), self._update_all_calculations(called_by_button=False)))
-                    
-                    # Add entry to tracking lists
-                    self._add_widget_to_list(entry_betrag, 'entry', is_main_input=True)
-                    # Note: No amount label widget ref needed here as the entry itself holds the display var.
+            if denom_val not in vars_dict.get('cash_counts', {}) or \
+               denom_val not in vars_dict.get('cash_amounts_display', {}):
+                tk.Frame(tbl, bg=row_bg).grid(row=tbl_row, column=1, sticky='ew')
+                tk.Frame(tbl, bg=row_bg).grid(row=tbl_row, column=3, sticky='ew')
+                continue
 
-        # Summe Bargeld
-        sum_row_idx = len(cash_denominations_values) + 1
-        self._add_widget_to_list(ttk.Label(parent_frame, text="Summe:", style='Bold.TLabel').grid(row=sum_row_idx, column=1, padx=5, pady=(5,3), sticky='e'), 'label')
-        # Ensure cash_sum_display variable exists before using it
-        if 'cash_sum_display' in vars_dict: 
-            #self._add_widget_to_list(ttk.Label(parent_frame, textvariable=vars_dict['cash_sum_display'], style='Sum.TLabel', anchor='e').grid(row=sum_row_idx, column=2, padx=5, pady=(5,3), sticky='ew'), 'label')
-        
-            sum_label = ttk.Label(parent_frame, textvariable=vars_dict['cash_sum_display'], style='Sum.TLabel', anchor='e', font=self.ta_sum_font)
-            sum_label.grid(row=sum_row_idx, column=2, padx=5, pady=(5,3), sticky='ew')
+            if is_note:
+                # col 1 – qty input: 3-D raised wrapper
+                qty_var = vars_dict['cash_counts'][denom_val]
+                qty_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
+                qty_wrap.grid(row=tbl_row, column=1, padx=8, pady=_ROW_PAD_Y, sticky='ew')
+                if use_combobox:
+                    qty_widget = ttk.Combobox(qty_wrap, textvariable=qty_var,
+                                              values=combobox_values, width=5, justify='right',
+                                              style='NumberInput.TCombobox', state='readonly')
+                    qty_widget.bind('<<ComboboxSelected>>',
+                                    lambda e, w=qty_widget, sv=qty_var: (
+                                        self._update_all_calculations(called_by_button=False),
+                                        self._update_input_field_highlight(w, sv, is_count_field=True)))
+                else:
+                    qty_widget = ttk.Entry(qty_wrap, textvariable=qty_var, width=6,
+                                           justify='right', style='NumberInput.TEntry')
+                    qty_widget.bind('<FocusOut>',
+                                    lambda e, v=qty_var: (
+                                        self._format_on_focus_out(e, v, is_count=True),
+                                        self._update_all_calculations(called_by_button=False)))
+                qty_widget.pack(fill='both', expand=True, padx=1, pady=1)
+                self._add_widget_to_list(qty_widget,
+                                         'combobox' if use_combobox else 'entry',
+                                         is_main_input=True)
+
+                # col 3 – calculated amount: 3-D raised wrapper + ttk.Label inside
+                amt_wrap = tk.Frame(tbl, bg=_W_BG_ZERO, relief='raised', bd=3)
+                amt_wrap.grid(row=tbl_row, column=3, padx=(4, 12),
+                              pady=_ROW_PAD_Y, sticky='ew')
+                amount_label = ttk.Label(
+                    amt_wrap,
+                    textvariable=vars_dict['cash_amounts_display'][denom_val],
+                    anchor='e', style='Cash.NumberDisplay.TLabel',
+                    font=("Segoe UI", 11, "bold"))
+                amount_label.pack(fill='both', expand=True, padx=2, pady=1)
+                self._add_widget_to_list(amount_label, 'label')
+                vars_dict['cash_amount_label_widgets'][denom_val]  = amount_label
+                vars_dict['cash_amount_wrapper_widgets'][denom_val] = amt_wrap
+
+            else:
+                # col 1 – invisible spacer (keeps accent bar visible)
+                tk.Frame(tbl, bg=row_bg).grid(row=tbl_row, column=1, sticky='ew')
+
+                # col 3 – direct amount entry for small coins (3-D raised wrapper)
+                coin_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
+                coin_wrap.grid(row=tbl_row, column=3, padx=(4, 12),
+                               pady=_ROW_PAD_Y, sticky='ew')
+                entry_betrag = ttk.Entry(
+                    coin_wrap,
+                    textvariable=vars_dict['cash_amounts_display'][denom_val],
+                    justify='right', style='NumberInput.TEntry',
+                    font=self.ta_entry_font)
+                entry_betrag.pack(fill='both', expand=True, padx=1, pady=1)
+                entry_betrag.bind(
+                    '<FocusOut>',
+                    lambda e, v=vars_dict['cash_amounts_display'][denom_val]: (
+                        self._format_on_focus_out(e, v),
+                        self._update_all_calculations(called_by_button=False)))
+                self._add_widget_to_list(entry_betrag, 'entry', is_main_input=True)
+
+        # ── Sum footer (gradient canvas) ──────────────────────────────────────
+        sum_c = tk.Canvas(parent_frame, height=_SUM_H, highlightthickness=0, bd=0)
+        sum_c.grid(row=2, column=0, sticky='ew', pady=(3, 0))
+
+        if 'cash_sum_display' in vars_dict:
+            sum_label = ttk.Label(sum_c, textvariable=vars_dict['cash_sum_display'],
+                                   style='Sum.TLabel', anchor='w', font=self.ta_sum_font)
             self._add_widget_to_list(sum_label, 'label')
-        
-        else: # Fallback if sum variable is missing
-             self._add_widget_to_list(ttk.Label(parent_frame, text="N/A", style='Sum.TLabel', anchor='e').grid(row=sum_row_idx, column=2, padx=5, pady=(5,3), sticky='ew'), 'label')
+        else:
+            sum_label = None
+
+        def _draw_sum(ev=None, _c=sum_c, _sl=sum_label):
+            if not _c.winfo_exists():
+                return
+            _c.delete('bg')
+            ww = _c.winfo_width() or 600
+            for _i in range(_SUM_H):
+                _p = _i / max(_SUM_H - 1, 1)
+                _r = int(int(_SUM_GH1[1:3], 16) + (int(_SUM_GH2[1:3], 16) - int(_SUM_GH1[1:3], 16)) * _p)
+                _g = int(int(_SUM_GH1[3:5], 16) + (int(_SUM_GH2[3:5], 16) - int(_SUM_GH1[3:5], 16)) * _p)
+                _b = int(int(_SUM_GH1[5:7], 16) + (int(_SUM_GH2[5:7], 16) - int(_SUM_GH1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r:02x}{_g:02x}{_b:02x}', tags='bg')
+            _mid = _SUM_H // 2
+            _c.create_text(14, _mid, text="Gesamtsumme:",
+                           font=("Segoe UI", 11, "bold"), fill='white', anchor='w', tags='bg')
+            if _sl is not None:
+                _c.delete('sum_win')
+                _c.create_window(ww - 10, _mid, window=_sl, anchor='e', tags='sum_win')
+
+        sum_c.bind('<Configure>', _draw_sum)
+        sum_c.after(20, _draw_sum)
 
 
     def _update_cash_calculation(self, vars_dict):
@@ -22081,9 +22467,13 @@ class KassenprotokollApp:
                     amount_label_widget = vars_dict.get('cash_amount_label_widgets', {}).get(denom_val)
                     if amount_label_widget and amount_label_widget.winfo_exists():
                         is_zero = current_amount_val.is_zero()
-                        target_style = 'NumberDisplay.TLabel' if is_zero else 'Highlighted.NumberDisplay.TLabel'
+                        target_style  = 'Cash.NumberDisplay.TLabel' if is_zero else 'Cash.Highlighted.NumberDisplay.TLabel'
+                        wrapper_color = '#E3F2FD' if is_zero else '#1565C0'
                         if amount_label_widget.cget('style') != target_style:
                             amount_label_widget.config(style=target_style)
+                        wrap = vars_dict.get('cash_amount_wrapper_widgets', {}).get(denom_val)
+                        if wrap and wrap.winfo_exists() and wrap.cget('bg') != wrapper_color:
+                            wrap.config(bg=wrapper_color)
 
             except Exception as e: # Catch any error during parsing/calculation for this denomination
                 print(f"Error calculating cash for denomination {denom_val}: {e}")
@@ -22097,8 +22487,11 @@ class KassenprotokollApp:
                 # Reset highlight for amount label (denom >= 5.0) on error
                 if denom_val >= 5.0:
                     amount_label_widget = vars_dict.get('cash_amount_label_widgets', {}).get(denom_val)
-                    if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'NumberDisplay.TLabel':
-                        amount_label_widget.config(style='NumberDisplay.TLabel')
+                    if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'Cash.NumberDisplay.TLabel':
+                        amount_label_widget.config(style='Cash.NumberDisplay.TLabel')
+                    wrap = vars_dict.get('cash_amount_wrapper_widgets', {}).get(denom_val)
+                    if wrap and wrap.winfo_exists() and wrap.cget('bg') != '#E3F2FD':
+                        wrap.config(bg='#E3F2FD')
 
             # Add the current amount (or 0 on error) to the total sum
             total_sum += current_amount_val # current_amount_val is Decimal('0.00') on error
@@ -22113,96 +22506,194 @@ class KassenprotokollApp:
 
 
     def _create_stamps_section(self, parent_frame, vars_dict, other_shift_vars_dict, shift_name):
-        labels = ["Anzahl", "Label", "Preis (€)", "Betrag (€)"]
-        parent_frame.columnconfigure(0, weight=1)
-        parent_frame.columnconfigure(1, weight=2)
-        parent_frame.columnconfigure(2, weight=1)
-        parent_frame.columnconfigure(3, weight=1)
+        # ── Eye-catching palette (teal / green theme) ─────────────────────────
+        _HDR_GH1  = '#004D40'   # gradient header start (dark teal)
+        _HDR_GH2  = '#00897B'   # gradient header end   (medium teal)
+        _HDR_H    = 40
+        _BG_A     = '#FFFFFF'
+        _BG_B     = '#F0FBF9'   # very light teal tint
+        _FG       = '#004D40'
+        _ACC      = '#00897B'   # teal accent bar
+        _SEP_CLR  = '#B2DFDB'
+        _SUM_GH1  = '#004D40'
+        _SUM_GH2  = '#00695C'
+        _SUM_H    = 46
+        _ROW_PAD  = 7
+        _LBL_FONT = ("Segoe UI", 11, "bold")
+        _VAL_FONT = ("Segoe UI", 11)
 
-        for col, label_text in enumerate(labels):
-            sticky_align = 'ew' if col in [0, 2, 3] else 'w'
-            lbl = ttk.Label(parent_frame, text=label_text, style='SectionHeader.TLabel')
-            lbl.grid(row=0, column=col, padx=5, pady=(3,4), sticky=sticky_align)
-            self._add_widget_to_list(lbl, 'label')
-        
+        parent_frame.columnconfigure(0, weight=1)
+
+        # ── Gradient header canvas ────────────────────────────────────────────
+        hdr_c = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        hdr_c.grid(row=0, column=0, sticky='ew')
+
+        def _draw_stamp_hdr(ev=None, _c=hdr_c):
+            if not _c.winfo_exists():
+                return
+            _c.delete('all')
+            ww = _c.winfo_width() or 600
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r2 = int(int(_HDR_GH1[1:3], 16) + (int(_HDR_GH2[1:3], 16) - int(_HDR_GH1[1:3], 16)) * _p)
+                _g2 = int(int(_HDR_GH1[3:5], 16) + (int(_HDR_GH2[3:5], 16) - int(_HDR_GH1[3:5], 16)) * _p)
+                _b2 = int(int(_HDR_GH1[5:7], 16) + (int(_HDR_GH2[5:7], 16) - int(_HDR_GH1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r2:02x}{_g2:02x}{_b2:02x}')
+            _mid = _HDR_H // 2
+            _c.create_text(22, _mid, text="Stk.",
+                           font=("Segoe UI", 9, "bold"), fill='#80CBC4', anchor='center')
+            _c.create_text(int(ww * 0.32), _mid, text="Bezeichnung",
+                           font=("Segoe UI", 10, "bold"), fill='white', anchor='w')
+            _c.create_text(int(ww * 0.72), _mid, text="Preis (€)",
+                           font=("Segoe UI", 10, "bold"), fill='#B2EBE4', anchor='center')
+            _c.create_text(ww - 12, _mid, text="Betrag (€)",
+                           font=("Segoe UI", 10, "bold"), fill='white', anchor='e')
+
+        hdr_c.bind('<Configure>', _draw_stamp_hdr)
+        hdr_c.after(20, _draw_stamp_hdr)
+
+        # ── Single shared table frame ─────────────────────────────────────────
+        tbl = tk.Frame(parent_frame, bg=_BG_A)
+        tbl.grid(row=1, column=0, sticky='ew')
+        tbl.columnconfigure(0, weight=0, minsize=5)   # accent bar
+        tbl.columnconfigure(1, weight=1, minsize=70)  # qty
+        tbl.columnconfigure(2, weight=3)              # label name
+        tbl.columnconfigure(3, weight=1, minsize=80)  # price
+        tbl.columnconfigure(4, weight=2)              # amount
+
         use_combobox = self.current_settings.get('use_quantity_combobox', False)
         combobox_max_val = self.current_settings.get('quantity_combobox_max_value', 100)
-        try:
-            combobox_max_val = max(0, int(combobox_max_val))
-        except (ValueError, TypeError):
-            combobox_max_val = 100
+        try: combobox_max_val = max(0, int(combobox_max_val))
+        except (ValueError, TypeError): combobox_max_val = 100
         combobox_values = [str(i) for i in range(combobox_max_val + 1)]
 
         if 'stamp_amount_label_widgets' not in vars_dict: vars_dict['stamp_amount_label_widgets'] = {}
+        if 'stamp_amount_wrapper_widgets' not in vars_dict: vars_dict['stamp_amount_wrapper_widgets'] = {}
         if 'stamp_qty_widgets' not in vars_dict: vars_dict['stamp_qty_widgets'] = {}
         if 'stamp_price_entry_widgets' not in vars_dict: vars_dict['stamp_price_entry_widgets'] = {}
+        _SW_BG_ZERO = '#E0F2F1'   # wrapper bg – zero state (matches Stamp.NumberDisplay bg)
+        _SW_BG_FILL = '#00796B'   # wrapper bg – non-zero state (matches Stamp.Highlighted bg)
 
         stamp_definitions_active = vars_dict.get('stamp_definitions', [])
-        
-        font_family = "Segoe UI" if "Segoe UI" in tkFont.families() else "Arial"
-        stamp_font_size = self.current_settings.get('number_font_size', 11) + 3
-        stamp_font = tkFont.Font(family=font_family, size=stamp_font_size)
+        state_for_price_field = 'normal' if self.is_admin_mode else 'disabled'
 
         for i, stamp_def in enumerate(stamp_definitions_active):
             price_key_float = float(stamp_def.get('price', 0.0))
-            label = stamp_def.get('label', f"{stamp_def.get('price', 0.0):.2f} €")
-            if not isinstance(price_key_float, (int, float)) or price_key_float <= 0: 
+            lbl_text = stamp_def.get('label', f"{stamp_def.get('price', 0.0):.2f} €")
+            if not isinstance(price_key_float, (int, float)) or price_key_float <= 0:
                 print(f"Warning: Invalid stamp definition price: {stamp_def}. Skipping.")
                 continue
-            
-            row_idx = i + 1
 
-            if all(price_key_float in d for d in [vars_dict.get('stamp_counts', {}), vars_dict.get('stamp_price_input', {}), vars_dict.get('stamp_amounts_display', {})]):
-                qty_var = vars_dict['stamp_counts'][price_key_float]
+            tbl_row = i * 2
+            sep_row = i * 2 + 1
+            row_bg = _BG_A if i % 2 == 0 else _BG_B
 
-                if use_combobox:
-                    qty_widget = ttk.Combobox(parent_frame, textvariable=qty_var, values=combobox_values, width=12, justify='right', style='NumberInput.TCombobox', state='readonly', font=stamp_font)
-                    qty_widget.bind('<<ComboboxSelected>>', lambda e, w=qty_widget, sv=qty_var: (self._format_on_focus_out(e, sv, is_count=True), self._update_all_calculations(called_by_button=False)))
-                else:
-                    qty_widget = ttk.Entry(parent_frame, textvariable=qty_var, width=12, justify='right', style='NumberInput.TEntry', font=stamp_font)
-                    qty_widget.bind('<FocusOut>', lambda e, w=qty_widget, source_sv=qty_var: (self._format_on_focus_out(e, source_sv, is_count=True), self._update_all_calculations(called_by_button=False)))
-                
-                qty_widget.grid(row=row_idx, column=0, padx=5, pady=2, sticky='e')
-                self._add_widget_to_list(qty_widget, 'combobox' if use_combobox else 'entry', is_main_input=True)
-                vars_dict['stamp_qty_widgets'][price_key_float] = qty_widget
+            if not all(price_key_float in d for d in [
+                    vars_dict.get('stamp_counts', {}),
+                    vars_dict.get('stamp_price_input', {}),
+                    vars_dict.get('stamp_amounts_display', {})]):
+                continue
 
-                label_widget = ttk.Label(parent_frame, text=f"{label}:", style='TLabel', font=stamp_font)
-                label_widget.grid(row=row_idx, column=1, padx=5, pady=2, sticky='w')
-                self._add_widget_to_list(label_widget, 'label')
+            qty_var = vars_dict['stamp_counts'][price_key_float]
 
-                # HIER BEGINNT DIE ÄNDERUNG
-                # Der Zustand (aktiviert/deaktiviert) wird direkt bei der Erstellung gesetzt.
-                state_for_price_field = 'normal' if self.is_admin_mode else 'disabled'
-                
-                entry_price = ttk.Entry(parent_frame,
-                                        textvariable=vars_dict['stamp_price_input'][price_key_float],
-                                        width=12,
-                                        justify='right',
-                                        style='NumberInput.TEntry',
-                                        font=stamp_font,
-                                        state=state_for_price_field) # <-- ZUSTAND WIRD HIER GESETZT
-                # HIER ENDET DIE ÄNDERUNG
+            # col 0 – accent bar
+            tk.Frame(tbl, bg=_ACC, width=5).grid(row=tbl_row, column=0, sticky='ns')
 
-                entry_price.grid(row=row_idx, column=2, padx=5, pady=2, sticky='e')
-                entry_price.bind('<FocusOut>', lambda e, w=entry_price, v_str=vars_dict['stamp_price_input'][price_key_float], v_dbl=vars_dict['stamp_price_value'][price_key_float]: (self._format_on_focus_out(e, v_str), self._update_doublevar_from_stringvar(v_str, v_dbl), self._update_all_calculations(called_by_button=False)))
-                entry_price._is_stamp_price_entry = True
-                
-                self._add_widget_to_list(entry_price, 'entry', is_main_input=True, is_admin_editable=True)
-                vars_dict['stamp_price_entry_widgets'][price_key_float] = entry_price
+            # col 1 – qty input: 3-D raised wrapper
+            qty_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
+            qty_wrap.grid(row=tbl_row, column=1, padx=8, pady=_ROW_PAD, sticky='ew')
+            if use_combobox:
+                qty_widget = ttk.Combobox(qty_wrap, textvariable=qty_var,
+                                          values=combobox_values, width=6, justify='right',
+                                          style='NumberInput.TCombobox', state='readonly',
+                                          font=_VAL_FONT)
+                qty_widget.bind('<<ComboboxSelected>>',
+                                lambda e, sv=qty_var: (
+                                    self._format_on_focus_out(e, sv, is_count=True),
+                                    self._update_all_calculations(called_by_button=False)))
+            else:
+                qty_widget = ttk.Entry(qty_wrap, textvariable=qty_var, width=6, justify='right',
+                                       style='NumberInput.TEntry', font=_VAL_FONT)
+                qty_widget.bind('<FocusOut>',
+                                lambda e, sv=qty_var: (
+                                    self._format_on_focus_out(e, sv, is_count=True),
+                                    self._update_all_calculations(called_by_button=False)))
+            qty_widget.pack(fill='both', expand=True, padx=1, pady=1)
+            self._add_widget_to_list(qty_widget, 'combobox' if use_combobox else 'entry', is_main_input=True)
+            vars_dict['stamp_qty_widgets'][price_key_float] = qty_widget
 
-                stamp_amount_label = ttk.Label(parent_frame, textvariable=vars_dict['stamp_amounts_display'][price_key_float], anchor='e', style='NumberDisplay.TLabel', font=stamp_font)
-                stamp_amount_label.grid(row=row_idx, column=3, padx=5, pady=2, sticky='ew')
-                self._add_widget_to_list(stamp_amount_label, 'label', is_diff_label=False)
-                vars_dict['stamp_amount_label_widgets'][price_key_float] = stamp_amount_label
+            # col 2 – label name: 3-D raised wrapper
+            lbl_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
+            lbl_wrap.grid(row=tbl_row, column=2, padx=(8, 4), pady=_ROW_PAD, sticky='ew')
+            lbl_w = tk.Label(lbl_wrap, text=f"{lbl_text}:", bg=row_bg, fg=_FG,
+                             font=_LBL_FONT, anchor='w')
+            lbl_w.pack(fill='both', expand=True, padx=4, pady=1)
+            self._add_widget_to_list(lbl_w, 'label')
 
-        sum_row_idx = len(stamp_definitions_active) + 1
-        self._add_widget_to_list(ttk.Label(parent_frame, text="Summe:", style='Bold.TLabel').grid(row=sum_row_idx, column=2, padx=5, pady=(5,3), sticky='e'), 'label')
-        if 'stamp_sum_display' in vars_dict: 
-            sum_label = ttk.Label(parent_frame, textvariable=vars_dict['stamp_sum_display'], style='Sum.TLabel', anchor='e', font=self.ta_sum_font)
-            sum_label.grid(row=sum_row_idx, column=3, padx=5, pady=(5,3), sticky='ew')
+            # col 3 – price entry: 3-D raised wrapper
+            price_wrap = tk.Frame(tbl, bg=row_bg, relief='raised', bd=3)
+            price_wrap.grid(row=tbl_row, column=3, padx=6, pady=_ROW_PAD, sticky='ew')
+            entry_price = ttk.Entry(price_wrap,
+                                    textvariable=vars_dict['stamp_price_input'][price_key_float],
+                                    width=8, justify='right', style='NumberInput.TEntry',
+                                    font=_VAL_FONT, state=state_for_price_field)
+            entry_price.pack(fill='both', expand=True, padx=1, pady=1)
+            entry_price.bind('<FocusOut>',
+                             lambda e, v_str=vars_dict['stamp_price_input'][price_key_float],
+                             v_dbl=vars_dict['stamp_price_value'][price_key_float]: (
+                                 self._format_on_focus_out(e, v_str),
+                                 self._update_doublevar_from_stringvar(v_str, v_dbl),
+                                 self._update_all_calculations(called_by_button=False)))
+            entry_price._is_stamp_price_entry = True
+            self._add_widget_to_list(entry_price, 'entry', is_main_input=True, is_admin_editable=True)
+            vars_dict['stamp_price_entry_widgets'][price_key_float] = entry_price
+
+            # col 4 – calculated amount: 3-D raised wrapper + ttk.Label inside
+            stamp_amt_wrap = tk.Frame(tbl, bg=_SW_BG_ZERO, relief='raised', bd=3)
+            stamp_amt_wrap.grid(row=tbl_row, column=4, padx=(4, 10), pady=_ROW_PAD, sticky='ew')
+            stamp_amount_label = ttk.Label(
+                stamp_amt_wrap, textvariable=vars_dict['stamp_amounts_display'][price_key_float],
+                anchor='e', style='Stamp.NumberDisplay.TLabel',
+                font=("Segoe UI", 11, "bold"))
+            stamp_amount_label.pack(fill='both', expand=True, padx=2, pady=1)
+            self._add_widget_to_list(stamp_amount_label, 'label')
+            vars_dict['stamp_amount_label_widgets'][price_key_float]  = stamp_amount_label
+            vars_dict['stamp_amount_wrapper_widgets'][price_key_float] = stamp_amt_wrap
+
+            # separator line
+            tk.Frame(tbl, bg=_SEP_CLR, height=1).grid(
+                row=sep_row, column=0, columnspan=5, sticky='ew')
+
+        # ── Sum footer (gradient canvas) ──────────────────────────────────────
+        sum_c = tk.Canvas(parent_frame, height=_SUM_H, highlightthickness=0, bd=0)
+        sum_c.grid(row=2, column=0, sticky='ew', pady=(3, 0))
+
+        if 'stamp_sum_display' in vars_dict:
+            sum_label = ttk.Label(sum_c, textvariable=vars_dict['stamp_sum_display'],
+                                   style='Sum.TLabel', anchor='w', font=self.ta_sum_font)
             self._add_widget_to_list(sum_label, 'label')
         else:
-             self._add_widget_to_list(ttk.Label(parent_frame, text="N/A", style='Sum.TLabel', anchor='e').grid(row=sum_row_idx, column=3, padx=5, pady=(5,3), sticky='ew'), 'label')
+            sum_label = None
+
+        def _draw_stamp_sum(ev=None, _c=sum_c, _sl=sum_label):
+            if not _c.winfo_exists():
+                return
+            _c.delete('bg')
+            ww = _c.winfo_width() or 600
+            for _i in range(_SUM_H):
+                _p = _i / max(_SUM_H - 1, 1)
+                _r2 = int(int(_SUM_GH1[1:3], 16) + (int(_SUM_GH2[1:3], 16) - int(_SUM_GH1[1:3], 16)) * _p)
+                _g2 = int(int(_SUM_GH1[3:5], 16) + (int(_SUM_GH2[3:5], 16) - int(_SUM_GH1[3:5], 16)) * _p)
+                _b2 = int(int(_SUM_GH1[5:7], 16) + (int(_SUM_GH2[5:7], 16) - int(_SUM_GH1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r2:02x}{_g2:02x}{_b2:02x}', tags='bg')
+            _c.create_text(14, _SUM_H // 2, text="Gesamtsumme:",
+                           font=("Segoe UI", 11, "bold"), fill='white', anchor='w', tags='bg')
+            if _sl is not None:
+                _c.delete('sum_win')
+                _c.create_window(ww - 10, _SUM_H // 2, window=_sl, anchor='e', tags='sum_win')
+
+        sum_c.bind('<Configure>', _draw_stamp_sum)
+        sum_c.after(20, _draw_stamp_sum)
     
     def _update_stamps_calculation(self, vars_dict):
         total_sum = decimal.Decimal('0.00')
@@ -22244,21 +22735,28 @@ class KassenprotokollApp:
                 amount_label_widget = vars_dict.get('stamp_amount_label_widgets', {}).get(price_key_float)
                 if amount_label_widget and amount_label_widget.winfo_exists():
                     is_zero = current_amount_val.is_zero()
-                    target_style = 'NumberDisplay.TLabel' if is_zero else 'Highlighted.NumberDisplay.TLabel'
+                    target_style = 'Stamp.NumberDisplay.TLabel' if is_zero else 'Stamp.Highlighted.NumberDisplay.TLabel'
+                    wrapper_color = '#E0F2F1' if is_zero else '#00796B'
                     if amount_label_widget.cget('style') != target_style:
                         amount_label_widget.config(style=target_style)
+                    wrap = vars_dict.get('stamp_amount_wrapper_widgets', {}).get(price_key_float)
+                    if wrap and wrap.winfo_exists() and wrap.cget('bg') != wrapper_color:
+                        wrap.config(bg=wrapper_color)
 
             except Exception as e:
                 print(f"Error calculating stamp amount for price key {price_key_float}: {e}")
-                if vars_dict.get('stamp_amounts', {}).get(price_key_float, tk.DoubleVar(value=-1)).get() != 0.0: 
+                if vars_dict.get('stamp_amounts', {}).get(price_key_float, tk.DoubleVar(value=-1)).get() != 0.0:
                     vars_dict['stamp_amounts'][price_key_float].set(0.0)
                 formatted_zero = self._format_decimal_for_display(decimal.Decimal('0.00'))
                 if vars_dict.get('stamp_amounts_display', {}).get(price_key_float, tk.StringVar(value="err")).get() != formatted_zero:
                      vars_dict['stamp_amounts_display'][price_key_float].set(formatted_zero)
-                
+
                 amount_label_widget = vars_dict.get('stamp_amount_label_widgets', {}).get(price_key_float)
-                if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'NumberDisplay.TLabel':
-                    amount_label_widget.config(style='NumberDisplay.TLabel')
+                if amount_label_widget and amount_label_widget.winfo_exists() and amount_label_widget.cget('style') != 'Stamp.NumberDisplay.TLabel':
+                    amount_label_widget.config(style='Stamp.NumberDisplay.TLabel')
+                wrap = vars_dict.get('stamp_amount_wrapper_widgets', {}).get(price_key_float)
+                if wrap and wrap.winfo_exists() and wrap.cget('bg') != '#E0F2F1':
+                    wrap.config(bg='#E0F2F1')
             
             total_sum += current_amount_val 
         
@@ -22272,116 +22770,183 @@ class KassenprotokollApp:
 
     def _create_card_section_common(self, parent_frame, card_key, vars_dict, shift_name, other_shift_vars_dict):
         """Creates the common card payment section widgets for a specific card type."""
-        if card_key not in vars_dict.get('card_data', {}): 
+        if card_key not in vars_dict.get('card_data', {}):
             print(f"Warning: Card data for key '{card_key}' not found in vars_dict.")
-            return # Card data not initialized
-        
-        card_data = vars_dict['card_data'][card_key]
-        card_label = vars_dict.get('card_display_info', {}).get(card_key, {}).get('label', card_key) # Get label from display info
+            return
 
-        current_row = 0; 
-        # Configure column weights
-        parent_frame.columnconfigure(0, weight=1); # Label column
-        parent_frame.columnconfigure(1, weight=2); # Value column (wider for numbers)
+        card_data  = vars_dict['card_data'][card_key]
+        card_label = vars_dict.get('card_display_info', {}).get(card_key, {}).get('label', card_key)
 
-        # Header "Betrag (€)"
-        self._add_widget_to_list(ttk.Label(parent_frame, text="Betrag (€)", style='SectionHeader.TLabel').grid(row=current_row, column=1, padx=5, pady=(3,4), sticky='ew'),'label'); current_row += 1
+        # ── Eye-catching palette (mirrors cash section) ───────────────────────
+        _HDR_GH1 = '#0D2137'
+        _HDR_GH2 = '#1B6CA8'
+        _HDR_H   = 38
+        _BG_A    = '#FFFFFF'
+        _BG_B    = '#F0F7FF'
+        _FG      = '#0D2137'
+        _ACC_IN  = '#1565C0'   # blue accent — input rows
+        _ACC_SUM = '#1B5E20'   # green accent — sum rows
+        _ACC_DIF = '#F57C00'   # amber accent — difference row
+        _SEP_CLR = '#D0DFF0'
+        _ROW_PAD = 8
 
+        parent_frame.columnconfigure(0, weight=1)
+
+        # ── Gradient header canvas ────────────────────────────────────────────
+        _hc = tk.Canvas(parent_frame, height=_HDR_H, highlightthickness=0, bd=0)
+        _hc.grid(row=0, column=0, sticky='ew')
+
+        def _draw_card_hdr(ev=None, _c=_hc):
+            if not _c.winfo_exists():
+                return
+            _c.delete('all')
+            ww = _c.winfo_width() or 600
+            for _i in range(_HDR_H):
+                _p = _i / max(_HDR_H - 1, 1)
+                _r2 = int(int(_HDR_GH1[1:3], 16) + (int(_HDR_GH2[1:3], 16) - int(_HDR_GH1[1:3], 16)) * _p)
+                _g2 = int(int(_HDR_GH1[3:5], 16) + (int(_HDR_GH2[3:5], 16) - int(_HDR_GH1[3:5], 16)) * _p)
+                _b2 = int(int(_HDR_GH1[5:7], 16) + (int(_HDR_GH2[5:7], 16) - int(_HDR_GH1[5:7], 16)) * _p)
+                _c.create_line(0, _i, ww, _i, fill=f'#{_r2:02x}{_g2:02x}{_b2:02x}')
+            _c.create_text(ww - 12, _HDR_H // 2, text="Betrag (€)",
+                           font=("Segoe UI", 11, "bold"), fill='white', anchor='e')
+
+        _hc.bind('<Configure>', _draw_card_hdr)
+        _hc.after(20, _draw_card_hdr)
+
+        # ── Single shared table frame ─────────────────────────────────────────
+        tbl = tk.Frame(parent_frame, bg=_BG_A)
+        tbl.grid(row=1, column=0, sticky='ew')
+        tbl.columnconfigure(0, weight=0, minsize=5)  # accent bar
+        tbl.columnconfigure(1, weight=2)              # label
+        tbl.columnconfigure(2, weight=3)              # value
+
+        _tr  = [0]   # table grid row (content=even, separator=odd)
+        _ri  = [0]   # row index for alternating bg
+
+        def _add_row(lbl_text, value_widget, acc=_ACC_IN, lbl_font=None, lbl_fg=None):
+            """Place one data row: accent bar | label | value_widget + separator."""
+            bg = _BG_A if _ri[0] % 2 == 0 else _BG_B
+            r  = _tr[0]
+            tk.Frame(tbl, bg=acc, width=5).grid(row=r, column=0, sticky='ns')
+            tk.Label(tbl, text=lbl_text, bg=bg, fg=lbl_fg or _FG,
+                     font=lbl_font or ("Segoe UI", 12, "bold"), anchor='w'
+                     ).grid(row=r, column=1, padx=(8, 4), pady=_ROW_PAD, sticky='ew')
+            if value_widget is not None:
+                value_widget.grid(row=r, column=2, padx=(4, 10), pady=_ROW_PAD, sticky='ew')
+            tk.Frame(tbl, bg=_SEP_CLR, height=1).grid(
+                row=r + 1, column=0, columnspan=3, sticky='ew')
+            _tr[0] += 2
+            _ri[0] += 1
+            return bg   # returned so diff_label can store it
+
+        # ── Shift-specific top rows ───────────────────────────────────────────
         if shift_name == "Frühdienst":
             if 'manual_total_input' in card_data and isinstance(card_data['manual_total_input'], tk.StringVar):
-                 self._add_widget_to_list(ttk.Label(parent_frame, text=f"{card_label}:", style='Bold.TLabel').grid(row=current_row, column=0, padx=5, pady=2, sticky='w'), 'label')
-                 entry_manual_total = ttk.Entry(parent_frame, textvariable=card_data['manual_total_input'], width=12, justify='right', style='NumberInput.TEntry')
-                 entry_manual_total.grid(row=current_row, column=1, padx=5, pady=2, sticky='ew')
-                 
-                 # vvvvvvvvvvvvvvvvvvvvvvvv HIER IST DIE KORREKTUR vvvvvvvvvvvvvvvvvvvvvvvv
-                 # Die alte on_fd_manual_focus_out Funktion und das spezielle Binding werden entfernt.
-                 # Ein Standard-Binding sorgt nur noch für die korrekte Formatierung und Neuberechnung.
-                 entry_manual_total.bind('<FocusOut>', lambda e, v=card_data['manual_total_input']: (self._format_on_focus_out(e, v), self._update_all_calculations(called_by_button=False)))
-                 entry_manual_total.bind('<Return>', lambda e, v=card_data['manual_total_input']: (self._format_on_focus_out(e, v), self._update_all_calculations(called_by_button=False)))
-                 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                 
-                 self._add_widget_to_list(entry_manual_total, 'entry', is_main_input=True); current_row += 1
+                mt_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
+                entry_mt = ttk.Entry(mt_wrap, textvariable=card_data['manual_total_input'],
+                                     width=12, justify='right', style='NumberInput.TEntry',
+                                     font=("Segoe UI", 12))
+                entry_mt.pack(fill='both', expand=True, padx=1, pady=1)
+                entry_mt.bind('<FocusOut>', lambda e, v=card_data['manual_total_input']: (
+                    self._format_on_focus_out(e, v),
+                    self._update_all_calculations(called_by_button=False)))
+                entry_mt.bind('<Return>', lambda e, v=card_data['manual_total_input']: (
+                    self._format_on_focus_out(e, v),
+                    self._update_all_calculations(called_by_button=False)))
+                row_bg = _add_row(f"{card_label}:", mt_wrap)
+                mt_wrap.config(bg=row_bg)
+                self._add_widget_to_list(entry_mt, 'entry', is_main_input=True)
             else:
-                 print(f"Warning: Frühdienst card data missing 'manual_total_input' for key '{card_key}'.")
+                print(f"Warning: Frühdienst card data missing 'manual_total_input' for key '{card_key}'.")
 
         elif shift_name == "Spätdienst":
-            # Frühdienst Summe (Read-only, propagated from FD manual total)
             if 'fruehdienst_sum_input' in card_data and isinstance(card_data['fruehdienst_sum_input'], tk.StringVar):
-                 self._add_widget_to_list(ttk.Label(parent_frame, text=f"{card_label} Frühdienst:", style='Bold.TLabel').grid(row=current_row, column=0, padx=5, pady=2, sticky='w'), 'label')
-                 # This is a display field showing the propagated value from FD. Use Entry with state='readonly' to match UI look.
-                 entry_fd_sum_sd = ttk.Entry(parent_frame, textvariable=card_data['fruehdienst_sum_input'], width=12, justify='right', style='NumberInput.TEntry', state='readonly')
-                 entry_fd_sum_sd.grid(row=current_row, column=1, padx=5, pady=2, sticky='ew')
-                 # Not added to navigable_entries as it's readonly
-                 self._add_widget_to_list(entry_fd_sum_sd, 'entry', is_main_input=False); current_row += 1
+                fd_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
+                entry_fd = ttk.Entry(fd_wrap, textvariable=card_data['fruehdienst_sum_input'],
+                                     width=12, justify='right', style='NumberInput.TEntry',
+                                     state='readonly', font=("Segoe UI", 12))
+                entry_fd.pack(fill='both', expand=True, padx=1, pady=1)
+                row_bg = _add_row(f"{card_label} Frühdienst:", fd_wrap)
+                fd_wrap.config(bg=row_bg)
+                self._add_widget_to_list(entry_fd, 'entry', is_main_input=False)
             else:
-                 print(f"Warning: Spätdienst card data missing 'fruehdienst_sum_input' for key '{card_key}'.")
+                print(f"Warning: Spätdienst card data missing 'fruehdienst_sum_input' for key '{card_key}'.")
 
-            # Spätdienst Summe (Editable input for SD)
             if 'spaetdienst_sum_input' in card_data and isinstance(card_data['spaetdienst_sum_input'], tk.StringVar):
-                 self._add_widget_to_list(ttk.Label(parent_frame, text=f"{card_label} Spätdienst:", style='Bold.TLabel').grid(row=current_row, column=0, padx=5, pady=2, sticky='w'), 'label')
-                 entry_sd_sum_sd = ttk.Entry(parent_frame, textvariable=card_data['spaetdienst_sum_input'], width=12, justify='right', style='NumberInput.TEntry')
-                 entry_sd_sum_sd.grid(row=current_row, column=1, padx=5, pady=2, sticky='ew')
-                 # Bind focus out for Spätdienst input
-                 entry_sd_sum_sd.bind('<FocusOut>', lambda e, v=card_data['spaetdienst_sum_input']: (self._format_on_focus_out(e, v), self._update_all_calculations(called_by_button=False)))
-                 # Add to tracking lists (is_main_input=True for tab navigation)
-                 self._add_widget_to_list(entry_sd_sum_sd, 'entry', is_main_input=True); current_row += 1
+                sd_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
+                entry_sd = ttk.Entry(sd_wrap, textvariable=card_data['spaetdienst_sum_input'],
+                                     width=12, justify='right', style='NumberInput.TEntry',
+                                     font=("Segoe UI", 12))
+                entry_sd.pack(fill='both', expand=True, padx=1, pady=1)
+                entry_sd.bind('<FocusOut>', lambda e, v=card_data['spaetdienst_sum_input']: (
+                    self._format_on_focus_out(e, v),
+                    self._update_all_calculations(called_by_button=False)))
+                row_bg = _add_row(f"{card_label} Spätdienst:", sd_wrap)
+                sd_wrap.config(bg=row_bg)
+                self._add_widget_to_list(entry_sd, 'entry', is_main_input=True)
             else:
-                 print(f"Warning: Spätdienst card data missing 'spaetdienst_sum_input' for key '{card_key}'.")
+                print(f"Warning: Spätdienst card data missing 'spaetdienst_sum_input' for key '{card_key}'.")
 
-            if 'combined_sum_display' in card_data and isinstance(card_data['combined_sum_display'], tk.StringVar): 
-                self._add_widget_to_list(ttk.Label(parent_frame, text="Summe (FD+SD):", style='Bold.TLabel').grid(row=current_row, column=0, padx=5, pady=(5,3), sticky='w'), 'label')
-                # HIER DIE FONT-OPTION HINZUFÜGEN
-                sum_label = ttk.Label(parent_frame, textvariable=card_data['combined_sum_display'], style='Sum.TLabel', anchor='e', font=self.ta_sum_font)
-                sum_label.grid(row=current_row, column=1, padx=5, pady=(5,3), sticky='ew')
-                self._add_widget_to_list(sum_label, 'label'); current_row +=1
+            if 'combined_sum_display' in card_data and isinstance(card_data['combined_sum_display'], tk.StringVar):
+                comb_wrap = tk.Frame(tbl, bg='#E3F2FD', relief='raised', bd=3)
+                comb_lbl = ttk.Label(comb_wrap, textvariable=card_data['combined_sum_display'],
+                                     style='Cash.NumberDisplay.TLabel', anchor='e',
+                                     font=("Segoe UI", 12, "bold"))
+                comb_lbl.pack(fill='both', expand=True, padx=2, pady=1)
+                _add_row("Summe (FD+SD):", comb_wrap, acc=_ACC_SUM, lbl_fg='#1B5E20')
+                self._add_widget_to_list(comb_lbl, 'label')
             else:
-                  print(f"Warning: Spätdienst card data missing 'combined_sum_display' for key '{card_key}'.")
-                  
-             # Rezeption fields (common for both shifts)
+                print(f"Warning: Spätdienst card data missing 'combined_sum_display' for key '{card_key}'.")
+
+        # ── Rezeption fields (both shifts) ────────────────────────────────────
         num_reception_fields = self.current_settings.get('reception_fields_count', 3)
         for i in range(1, num_reception_fields + 1):
             field_name = f'reception{i}'
             if field_name in card_data and isinstance(card_data[field_name], tk.StringVar):
-                self._add_widget_to_list(ttk.Label(parent_frame, text=f"Rezeption {i}:", style='TLabel').grid(row=current_row, column=0, padx=5, pady=2, sticky='w'), 'label')
-                entry = ttk.Entry(parent_frame, textvariable=card_data[field_name], width=12, justify='right', style='NumberInput.TEntry')
-                entry.grid(row=current_row, column=1, padx=5, pady=2, sticky='ew'); 
-                # Bind focus out for reception fields
-                entry.bind('<FocusOut>', lambda e, v=card_data[field_name]: (self._format_on_focus_out(e, v), self._update_all_calculations(called_by_button=False)))
-                # Add to tracking lists (is_main_input=True for tab navigation)
-                self._add_widget_to_list(entry, 'entry', is_main_input=True); current_row += 1
+                rec_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
+                entry_rec = ttk.Entry(rec_wrap, textvariable=card_data[field_name],
+                                      width=12, justify='right', style='NumberInput.TEntry',
+                                      font=("Segoe UI", 12))
+                entry_rec.pack(fill='both', expand=True, padx=1, pady=1)
+                entry_rec.bind('<FocusOut>', lambda e, v=card_data[field_name]: (
+                    self._format_on_focus_out(e, v),
+                    self._update_all_calculations(called_by_button=False)))
+                row_bg = _add_row(f"Rezeption {i}:", rec_wrap)
+                rec_wrap.config(bg=row_bg)
+                self._add_widget_to_list(entry_rec, 'entry', is_main_input=True)
             else:
-                 print(f"Warning: Card data missing reception field '{field_name}' for key '{card_key}'.")
-        
-        # Abgebucht (Summe Rezeptionen) - Display only, calculated
-        if 'actual_debit_input' in card_data and isinstance(card_data['actual_debit_input'], tk.StringVar):
-            self._add_widget_to_list(ttk.Label(parent_frame, text="Abgebucht (Summe Rezeptionen):", style='Bold.TLabel').grid(row=current_row, column=0, padx=5, pady=(4,2), sticky='w'), 'label')
-            # This is a calculated display, use Entry with state='readonly' to match UI look and allow selection/copying
-            actual_debit_entry = ttk.Entry(parent_frame, textvariable=card_data['actual_debit_input'], width=12, justify='right', style='NumberInput.TEntry', state='readonly', font=self.ta_sum_font)
-            actual_debit_entry.grid(row=current_row, column=1, padx=5, pady=(4,2), sticky='ew'); 
-            # Not added to navigable_entries as it's readonly
-            self._add_widget_to_list(actual_debit_entry, 'entry', is_main_input=False); current_row +=1
-        else:
-             print(f"Warning: Card data missing 'actual_debit_input' for key '{card_key}'.")
+                print(f"Warning: Card data missing reception field '{field_name}' for key '{card_key}'.")
 
-        # Differenz - Display only, calculated, with color coding
-        if 'difference_display' in card_data and isinstance(card_data['difference_display'], tk.StringVar):
-            self._add_widget_to_list(ttk.Label(parent_frame, text="Differenz:", style='Bold.TLabel').grid(row=current_row, column=0, padx=5, pady=(4,3), sticky='w'), 'label')
-            
-            # The actual color style will be set by _update_diff_label_colors
-            
-            diff_label = tk.Label(parent_frame, textvariable=card_data['difference_display'], anchor='e', font=self.ta_sum_font)
-            diff_label.grid(row=current_row, column=1, padx=5, pady=(4,3), sticky='ew')
-            
-            # Store custom attributes for _update_diff_label_colors
-            diff_label._custom_type = "card_difference"; diff_label._card_type = card_key 
-            
-            # Store reference to the label widget in card_data for easy access
-            card_data['diff_label_widget'] = diff_label 
-            
-            # Add to tracking lists (is_diff_label=True)
-            self._add_widget_to_list(diff_label, 'label', is_diff_label=True); current_row += 1
+        # ── Abgebucht — 3-D raised wrapper + styled display label ───────────
+        if 'actual_debit_input' in card_data and isinstance(card_data['actual_debit_input'], tk.StringVar):
+            debit_wrap = tk.Frame(tbl, bg='#E3F2FD', relief='raised', bd=3)
+            debit_lbl = ttk.Label(debit_wrap, textvariable=card_data['actual_debit_input'],
+                                  style='Cash.NumberDisplay.TLabel', anchor='e',
+                                  font=("Segoe UI", 12, "bold"))
+            debit_lbl.pack(fill='both', expand=True, padx=2, pady=1)
+            _add_row("Abgebucht (Summe Rezeptions.):", debit_wrap,
+                     acc=_ACC_SUM, lbl_fg='#1B5E20')
+            self._add_widget_to_list(debit_lbl, 'label')
         else:
-             print(f"Warning: Card data missing 'difference_display' for key '{card_key}'.")
+            print(f"Warning: Card data missing 'actual_debit_input' for key '{card_key}'.")
+
+        # ── Differenz — 3-D raised wrapper + tk.Label (colors via _update_diff_label_colors)
+        if 'difference_display' in card_data and isinstance(card_data['difference_display'], tk.StringVar):
+            diff_wrap = tk.Frame(tbl, bg=_BG_A, relief='raised', bd=3)
+            diff_label = tk.Label(diff_wrap, textvariable=card_data['difference_display'],
+                                  anchor='e', font=self.ta_sum_font)
+            diff_label.pack(fill='both', expand=True, padx=2, pady=1)
+            row_bg = _add_row("Differenz:", diff_wrap, acc=_ACC_DIF)
+            # Sync wrapper and label bg to actual row bg; store for _update_diff_label_colors
+            diff_wrap.config(bg=row_bg)
+            diff_label._card_row_bg   = row_bg
+            diff_label._wrapper_frame = diff_wrap
+            diff_label._custom_type   = "card_difference"
+            diff_label._card_type     = card_key
+            card_data['diff_label_widget'] = diff_label
+            self._add_widget_to_list(diff_label, 'label', is_diff_label=True)
+        else:
+            print(f"Warning: Card data missing 'difference_display' for key '{card_key}'.")
 
 
     def _update_card_calculation(self, card_key, vars_dict, shift_name, other_shift_vars_dict):
@@ -22743,9 +23308,13 @@ class KassenprotokollApp:
                 if label.cget('foreground') != target_fg:
                     label.config(foreground=target_fg)
                 
-                # Sicherstellen, dass der Hintergrund Standard ist
-                if label.cget('background') != default_bg:
-                    label.config(background=default_bg)
+                # Restore background (use card row bg if set, otherwise app bg)
+                actual_bg = getattr(label, '_card_row_bg', default_bg)
+                if label.cget('background') != actual_bg:
+                    label.config(background=actual_bg)
+                wrap = getattr(label, '_wrapper_frame', None)
+                if wrap and wrap.winfo_exists() and wrap.cget('bg') != actual_bg:
+                    wrap.config(bg=actual_bg)
 
             except Exception as e:
                 print(f"Error updating diff label color for variable '{var_str_name}': {e}")
@@ -22754,8 +23323,12 @@ class KassenprotokollApp:
                         # Bei einem Fehler auf Standardfarben zurücksetzen
                         if label.cget('foreground') != default_fg:
                             label.config(foreground=default_fg)
-                        if label.cget('background') != default_bg:
-                            label.config(background=default_bg)
+                        actual_bg = getattr(label, '_card_row_bg', default_bg)
+                        if label.cget('background') != actual_bg:
+                            label.config(background=actual_bg)
+                        wrap = getattr(label, '_wrapper_frame', None)
+                        if wrap and wrap.winfo_exists() and wrap.cget('bg') != actual_bg:
+                            wrap.config(bg=actual_bg)
                     except tk.TclError:
                         pass
     def _format_on_focus_out(self, event, string_var, is_count=False):
@@ -29275,13 +29848,20 @@ class KassenprotokollApp:
         dialog_vars['color_vars'] = {}
 
         # Theme
-        if ThemedTk:
-            ttk.Label(parent_frame, text="Theme:").grid(row=row_idx, column=0, sticky='w', padx=5, pady=5)
-            dialog_vars['selected_theme_var'] = tk.StringVar(value=temp_settings.get('selected_theme', 'arc'))
-            theme_combo = ttk.Combobox(parent_frame, textvariable=dialog_vars['selected_theme_var'], state='readonly',
-                                       values=sorted(self.master.get_themes()))
-            theme_combo.grid(row=row_idx, column=1, columnspan=3, sticky='ew', padx=5, pady=5)
-            row_idx += 1
+        ttk.Label(parent_frame, text="Theme:").grid(row=row_idx, column=0, sticky='w', padx=5, pady=5)
+        if ThemedTk and hasattr(self.master, 'get_themes'):
+            _all_themes = sorted(self.master.get_themes())
+        else:
+            _all_themes = sorted(ttk.Style().theme_names())
+        dialog_vars['selected_theme_var'] = tk.StringVar(value=temp_settings.get('selected_theme', 'alt'))
+        theme_combo = ttk.Combobox(parent_frame, textvariable=dialog_vars['selected_theme_var'], state='readonly',
+                                   values=_all_themes)
+        theme_combo.grid(row=row_idx, column=1, columnspan=3, sticky='ew', padx=5, pady=5)
+        row_idx += 1
+        ttk.Label(parent_frame, text="⚠ Hinweis: Bildbasierte Themes (arc, equilux, keramik…) können die App verlangsamen.\n   Empfohlen: alt, clam, default, vista, xpnative",
+                  foreground='#B8860B', font=("Segoe UI", 8)).grid(
+            row=row_idx, column=0, columnspan=4, sticky='w', padx=5, pady=(0, 6))
+        row_idx += 1
 
         # Font Sizes
         ttk.Label(parent_frame, text="Allg. Schriftgröße:").grid(row=row_idx, column=0, sticky='w', padx=5, pady=3)
@@ -29398,7 +29978,8 @@ class KassenprotokollApp:
         row_idx = self._create_settings_offene_rechnungen_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         row_idx = self._create_settings_offene_rechnungen_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         row_idx = self._create_settings_auth_code_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_generic_button_config_section(parent_frame, temp_settings, dialog_vars, "MOD-Rundgang: Button-Icons", 'mod_rundgang_button_configs', ['MOD_Save', 'MOD_Email', 'MOD_Reset', 'MOD_PDF'], row_idx)
+        row_idx = self._create_generic_button_config_section(parent_frame, temp_settings, dialog_vars, "Kassenprotokoll: Hero-Icon", 'kassenprotokoll_button_configs', ['KP_HeroIcon'], row_idx)
+        row_idx = self._create_generic_button_config_section(parent_frame, temp_settings, dialog_vars, "MOD-Rundgang: Button-Icons", 'mod_rundgang_button_configs', ['MOD_Save', 'MOD_Email', 'MOD_Reset', 'MOD_PDF', 'MOD_HeroIcon', 'MOD_NameIcon', 'MOD_DateIcon'], row_idx)
         row_idx = self._create_settings_mod_rundgang_colors_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         row_idx = self._create_settings_layover_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
         row_idx = self._create_settings_list_views_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
@@ -30215,7 +30796,8 @@ class KassenprotokollApp:
         button_order = [
             'Namensliste_Add', 'Namensliste_BulkAdd', 'Namensliste_Edit', 'Namensliste_Delete',
             'Namensliste_Prepare', 'Namensliste_CheckDups',
-            'Namensliste_History', 'Namensliste_SavePDF', 'Namensliste_Print'
+            'Namensliste_History', 'Namensliste_SavePDF', 'Namensliste_Print',
+            'NL_FirmIcon', 'NL_InfoIcon', 'NL_DateIcon',
         ]
 
         # Fehlende Einträge aus den Standardwerten ergänzen (z.B. nach App-Update)
@@ -32957,130 +33539,301 @@ class KassenprotokollApp:
     def _create_namensliste_page(self, parent_frame):
         for widget in parent_frame.winfo_children():
             widget.destroy()
-        
-        parent_frame.grid_rowconfigure(1, weight=1)
-        parent_frame.grid_columnconfigure(0, weight=1)
-        
-        header = ttk.Frame(parent_frame, style='AppBackground.TFrame', height=60)
-        header.grid(row=0, column=0, sticky='ew')
-        header.columnconfigure(1, weight=1)
 
-        home_button = self._create_home_button(header)
-        if home_button:
-            home_button.grid(row=0, column=0, sticky='w', padx=10, pady=10)
-        
-        ttk.Label(header, text="Namensliste", font=("Segoe UI", 20, "bold")).grid(row=0, column=1, sticky='w', padx=20, pady=10)
-        
-        content_frame = ttk.Frame(parent_frame, style='AppBackground.TFrame', padding=(15, 8))
-        content_frame.grid(row=1, column=0, sticky='nsew')
-        content_frame.columnconfigure(0, weight=1)
-        content_frame.rowconfigure(1, weight=1)
+        # ── FARBEN ─────────────────────────────────────────────────────────────
+        C_BAR  = '#1A2E3B'
+        C_HDR1 = '#0D2137'
+        C_HDR2 = '#1B6CA8'
+        C_ACC  = '#2196F3'
 
-        info_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        info_frame.grid(row=0, column=0, sticky='ew', pady=(0, 10))
-        info_frame.columnconfigure(1, weight=1)
-        info_frame.columnconfigure(2, weight=0)
-        
-        try:
-            base_font_family = tkFont.Font(font=self.style.lookup('TLabel', 'font')).actual('family')
-        except (tk.TclError, AttributeError):
-            base_font_family = "Segoe UI"
-        header_entry_font = tkFont.Font(family=base_font_family, size=12)
-        
-        entry_ipady = 5
+        # ── FELD-ICONS (konfigurierbar via Einstellungen) ──────────────────────
+        _nl_cfgs = {**self.default_settings.get('namensliste_button_configs', {}),
+                    **self.current_settings.get('namensliste_button_configs', {})}
+        if not hasattr(self, 'mod_rundgang_button_images'):
+            self.mod_rundgang_button_images = {}
 
-        ttk.Label(info_frame, text="Firmenname:", font=header_entry_font).grid(row=0, column=0, sticky='w', padx=5, pady=2)
-        firmenname_entry = ttk.Entry(info_frame, textvariable=self.namensliste_firmenname_var, font=header_entry_font)
-        firmenname_entry.grid(row=0, column=1, sticky='ew', padx=5, pady=2, ipady=entry_ipady)
-        
-        ttk.Label(info_frame, text="Extra-Infos:", font=header_entry_font).grid(row=1, column=0, sticky='w', padx=5, pady=2)
-        extra_infos_entry = ttk.Entry(info_frame, textvariable=self.namensliste_extra_infos_var, font=header_entry_font)
-        extra_infos_entry.grid(row=1, column=1, sticky='ew', padx=5, pady=2, ipady=entry_ipady)
-        
-        ttk.Label(info_frame, text="Datum für PDF:", font=header_entry_font).grid(row=2, column=0, sticky='w', padx=5, pady=2)
-        datum_entry = ttk.Entry(info_frame, textvariable=self.namensliste_datum_var, font=header_entry_font, width=20)
-        datum_entry.grid(row=2, column=1, sticky='w', padx=5, pady=2, ipady=entry_ipady)
+        def _nl_icon(key, default_sym, size=(22, 22)):
+            cfg = _nl_cfgs.get(key, {'type': 'symbol', 'value': default_sym})
+            if cfg.get('type') == 'image':
+                path = cfg.get('value', '')
+                if path and os.path.exists(path) and pil_available:
+                    try:
+                        img = Image.open(path).resize(size, Image.Resampling.LANCZOS)
+                        photo = ImageTk.PhotoImage(img)
+                        self.mod_rundgang_button_images[key] = photo
+                        return photo, None
+                    except Exception:
+                        pass
+            return None, cfg.get('value', default_sym)
 
-        # --- Anzahl-Karte ---
-        count_card = tk.Frame(info_frame, bg="#2F65C3", relief="flat", bd=0, padx=18, pady=10)
-        count_card.grid(row=0, column=2, rowspan=3, sticky='ns', padx=(15, 5), pady=2)
-        tk.Label(count_card, text="👥  Einträge", font=tkFont.Font(family=base_font_family, size=10, weight="bold"),
-                 bg="#2F65C3", fg="white").pack(anchor='center')
-        self.namensliste_count_label = tk.Label(count_card, text="0",
-                 font=tkFont.Font(family=base_font_family, size=28, weight="bold"),
-                 bg="#2F65C3", fg="white")
-        self.namensliste_count_label.pack(anchor='center', pady=(2, 0))
+        _firm_ph, _firm_sym = _nl_icon('NL_FirmIcon', '🏢')
+        _info_ph, _info_sym = _nl_icon('NL_InfoIcon', 'ℹ️')
+        _date_ph, _date_sym = _nl_icon('NL_DateIcon', '📅')
 
-        tree_frame = ttk.Frame(content_frame, style='AppBackground.TFrame')
-        tree_frame.grid(row=1, column=0, sticky="nsew")
-        tree_frame.columnconfigure(0, weight=1)
-        tree_frame.rowconfigure(0, weight=1)
+        def _hex_lerp(c1, c2, t):
+            r1,g1,b1 = int(c1[1:3],16), int(c1[3:5],16), int(c1[5:7],16)
+            r2,g2,b2 = int(c2[1:3],16), int(c2[3:5],16), int(c2[5:7],16)
+            return (f'#{int(r1+(r2-r1)*t):02x}'
+                    f'{int(g1+(g2-g1)*t):02x}'
+                    f'{int(b1+(b2-b1)*t):02x}')
 
-        heading_font = tkFont.Font(family=base_font_family, size=16, weight="bold")
-        self.style.configure("Namensliste.Treeview", rowheight=40)
-        self.style.configure("Namensliste.Treeview.Heading", font=heading_font, padding=(5, 5))
+        def _lighten(hex_c, amt=25):
+            return '#{:02x}{:02x}{:02x}'.format(
+                min(255, int(hex_c[1:3], 16) + amt),
+                min(255, int(hex_c[3:5], 16) + amt),
+                min(255, int(hex_c[5:7], 16) + amt))
 
-        columns = ("name", "nationality", "contact", "car", "signature")
-        self.namensliste_tree = ttk.Treeview(tree_frame, columns=columns, show="headings", style="Namensliste.Treeview")
-        
-        col_configs = {
-            "name": {"text": "Nachname, Vorname", "width": 300, "anchor": "w"},
-            "nationality": {"text": "Nationalität", "width": 120, "anchor": "w"},
-            "contact": {"text": "E-Mail / Telefon", "width": 350, "anchor": "w"},
-            "car": {"text": "PKW", "width": 120, "anchor": "w"},
-            "signature": {"text": "Unterschrift", "width": 150, "anchor": "w"}
-        }
+        def _bar_btn(parent, text, command):
+            return tk.Button(parent, text=text, command=command,
+                             bg=C_BAR, fg='white',
+                             activebackground=_lighten(C_BAR, 22),
+                             activeforeground='white',
+                             relief='flat', bd=0,
+                             highlightthickness=0,
+                             cursor='hand2',
+                             font=("Segoe UI", 10))
 
-        for col_id, config in col_configs.items():
-            self.namensliste_tree.heading(col_id, text=config["text"])
-            self.namensliste_tree.column(col_id, width=config["width"], anchor=config["anchor"], stretch=tk.YES)
+        # ── ACTION BAR ─────────────────────────────────────────────────────────
+        action_bar = tk.Frame(parent_frame, bg=C_BAR, pady=8)
+        action_bar.pack(fill='x')
 
-        vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=self.namensliste_tree.yview)
-        self.namensliste_tree.configure(yscrollcommand=vsb.set)
-        self.namensliste_tree.grid(row=0, column=0, sticky="nsew")
-        vsb.grid(row=0, column=1, sticky="ns")
-        
-        self.namensliste_tree.bind("<Double-1>", self._edit_namensliste_entry)
-        self._setupTreeViewCellNavigation(self.namensliste_tree, edit_command_func=self._edit_namensliste_entry)
-        
-        action_button_frame = ttk.Frame(content_frame, style='AppBackground.TFrame', padding=(0,10,0,0))
-        action_button_frame.grid(row=2, column=0, sticky="ew")
-        
-        style_cfg = self.current_settings.get('list_views_button_style', {})
-        ipady = style_cfg.get('ipady', 5)
-        pady = style_cfg.get('pady', 5)
+        home_btn = self._create_home_button(action_bar, bar_color=C_BAR)
+        if home_btn:
+            home_btn.pack(side='left', padx=8)
 
         if not hasattr(self, 'namensliste_buttons'):
             self.namensliste_buttons = {}
-        
+
         button_configs = self.current_settings.get('namensliste_button_configs', {})
-        
-        # Diese Definition ist jetzt die einzige und korrekte Version
         button_definitions = [
-            ('Namensliste_Add', "Neuer Eintrag", self._add_namensliste_entry),
-            ('Namensliste_BulkAdd', "Liste einfügen", self._add_bulk_namensliste_entries),
-            ('Namensliste_Edit', "Bearbeiten", self._edit_namensliste_entry),
-            ('Namensliste_Delete', "Löschen", self._delete_namensliste_entry),
-            (None, None, None), # Separator
-            ('Namensliste_Prepare', "Liste aufbereiten", self._prepare_namensliste),
-            ('Namensliste_CheckDups', "Duplikate prüfen", self._check_namensliste_duplicates),
-            (None, None, None), # Separator
-            ('Namensliste_History', "Verlauf", self._open_namensliste_history_dialog),
-            ('Namensliste_SavePDF', "Als PDF speichern", self._save_namensliste_as_pdf),
-            ('Namensliste_Print', "Drucken", self._print_namensliste)
+            ('Namensliste_Add',       "Neuer Eintrag",     self._add_namensliste_entry),
+            ('Namensliste_BulkAdd',   "Liste einfügen",    self._add_bulk_namensliste_entries),
+            ('Namensliste_Edit',      "Bearbeiten",         self._edit_namensliste_entry),
+            ('Namensliste_Delete',    "Löschen",            self._delete_namensliste_entry),
+            (None, None, None),
+            ('Namensliste_Prepare',   "Liste aufbereiten",  self._prepare_namensliste),
+            ('Namensliste_CheckDups', "Duplikate prüfen",   self._check_namensliste_duplicates),
+            (None, None, None),
+            ('Namensliste_History',   "Verlauf",            self._open_namensliste_history_dialog),
+            ('Namensliste_SavePDF',   "Als PDF speichern",  self._save_namensliste_as_pdf),
+            ('Namensliste_Print',     "Drucken",            self._print_namensliste),
         ]
 
         for key, default_text, command in button_definitions:
             if key is None:
-                ttk.Separator(action_button_frame, orient='vertical').pack(side="left", fill='y', padx=(8, 8), pady=4)
+                tk.Frame(action_bar, bg=_lighten(C_BAR, 18), width=1).pack(
+                    side='left', fill='y', padx=6, pady=4)
                 continue
-
-            config = button_configs.get(key, {})
-            if config.get('is_active', True):
-                btn = ttk.Button(action_button_frame, command=command, style='TButton')
-                self._configure_list_tab_button(btn, key, default_text, button_config_source=button_configs)
-                btn.pack(side="left", padx=2, ipady=ipady, pady=pady, fill='x', expand=True)
+            cfg = button_configs.get(key, {})
+            if cfg.get('is_active', True):
+                btn = _bar_btn(action_bar, default_text, command)
+                btn.pack(side='left', padx=10, pady=4)
+                self._configure_list_tab_button(btn, key, default_text,
+                                                button_config_source=button_configs)
+                btn.config(bg=C_BAR, fg='white',
+                           activebackground=_lighten(C_BAR, 22),
+                           activeforeground='white',
+                           padx=14, pady=8)
                 self.namensliste_buttons[key] = btn
+
+        # ── GRADIENT HERO ──────────────────────────────────────────────────────
+        hero = tk.Canvas(parent_frame, height=80, highlightthickness=0, bg=C_HDR1)
+        hero.pack(fill='x')
+
+        _title_font = tkFont.Font(family="Segoe UI", size=20, weight="bold")
+
+        def _draw_hero(event=None):
+            hero.delete('bg')
+            hero.delete('static')
+            ww = hero.winfo_width()
+            hh = hero.winfo_height()
+            if ww < 4: ww = parent_frame.winfo_width() or 1000
+            if hh < 4: hh = 80
+            for i in range(hh):
+                hero.create_line(0, i, ww, i,
+                                 fill=_hex_lerp(C_HDR1, C_HDR2, i / max(hh - 1, 1)),
+                                 tags='bg')
+            hero.create_text(ww // 2, hh // 2, text="Namensliste",
+                             font=_title_font, fill='white',
+                             anchor='center', tags='static')
+            try:
+                hero.tag_raise('clock')
+            except tk.TclError:
+                pass
+
+        hero.bind('<Configure>', _draw_hero)
+        hero.after_idle(_draw_hero)
+
+        def _nl_tick():
+            if not hero.winfo_exists():
+                return
+            hero.delete('clock')
+            ww = hero.winfo_width() or parent_frame.winfo_width() or 1000
+            hero.create_text(ww - 16, 40,
+                             text=datetime.datetime.now().strftime("🕐 %H:%M:%S"),
+                             font=("Segoe UI", 12, "bold"), fill='white',
+                             anchor='e', tags='clock')
+            try:
+                hero.tag_raise('clock')
+            except tk.TclError:
+                pass
+            hero.after(1000, _nl_tick)
+
+        _nl_tick()
+
+        # ── INPUT STRIP ────────────────────────────────────────────────────────
+        input_strip = tk.Frame(parent_frame, bg='#FFFFFF',
+                               highlightthickness=1, highlightbackground='#CBD5E0')
+        input_strip.pack(fill='x', padx=15, pady=(8, 4))
+        _inner = tk.Frame(input_strip, bg='#FFFFFF')
+        _inner.pack(fill='x', padx=15, pady=8)
+        _inner.columnconfigure(1, weight=1)
+
+        try:
+            base_font_family = tkFont.Font(font=self.style.lookup('TLabel', 'font')).actual('family')
+        except (tk.TclError, AttributeError):
+            base_font_family = "Segoe UI"
+
+        lbl_font   = tkFont.Font(family=base_font_family, size=12, weight='bold')
+        entry_font = tkFont.Font(family=base_font_family, size=12)
+
+        def _mk_entry(parent, var, width=None, readonly=False):
+            kw = dict(textvariable=var, font=entry_font,
+                      relief='solid', bd=1,
+                      highlightthickness=2,
+                      highlightcolor=C_ACC,
+                      highlightbackground='#CBD5E0',
+                      bg='#F7FAFC', fg='#1A202C',
+                      insertbackground=C_ACC)
+            if width:
+                kw['width'] = width
+            if readonly:
+                kw['state'] = 'readonly'
+                kw['cursor'] = 'hand2'
+            return tk.Entry(parent, **kw)
+
+        def _field_label(parent, row, photo, symbol, text):
+            """Erstellt ein Label mit konfiguriertem Icon (Bild oder Emoji) + Text."""
+            _lf = tk.Frame(parent, bg='#FFFFFF')
+            _lf.grid(row=row, column=0, sticky='w', padx=(0, 10), pady=5)
+            if photo:
+                tk.Label(_lf, image=photo, bg='#FFFFFF').pack(side='left', padx=(0, 6))
+                tk.Label(_lf, text=text, font=lbl_font,
+                         bg='#FFFFFF', fg='#2D3748').pack(side='left')
+            else:
+                tk.Label(_lf, text=f"{symbol}  {text}", font=lbl_font,
+                         bg='#FFFFFF', fg='#2D3748').pack(side='left')
+
+        # Firmenname
+        _field_label(_inner, 0, _firm_ph, _firm_sym, "Firmenname:")
+        _mk_entry(_inner, self.namensliste_firmenname_var).grid(
+            row=0, column=1, sticky='ew', ipady=6, pady=5)
+
+        # Extra-Infos
+        _field_label(_inner, 1, _info_ph, _info_sym, "Extra-Infos:")
+        _mk_entry(_inner, self.namensliste_extra_infos_var).grid(
+            row=1, column=1, sticky='ew', ipady=6, pady=5)
+
+        # Datum
+        _field_label(_inner, 2, _date_ph, _date_sym, "Datum für PDF:")
+        _datum_row = tk.Frame(_inner, bg='#FFFFFF')
+        _datum_row.grid(row=2, column=1, sticky='w', pady=5)
+        datum_entry = _mk_entry(_datum_row, self.namensliste_datum_var, width=13, readonly=True)
+        datum_entry.pack(side='left', ipady=6)
+        datum_entry.bind('<Button-1>', lambda e: CalendarPopup(self.master, self.namensliste_datum_var))
+        tk.Button(_datum_row, text="📅", width=3,
+                  bg='#EDF2F7', fg='#4A5568',
+                  activebackground='#DBEAFE', activeforeground='#1565C0',
+                  relief='solid', bd=1, highlightthickness=0,
+                  cursor='hand2', font=("Segoe UI", 10),
+                  command=lambda: CalendarPopup(self.master, self.namensliste_datum_var)
+                  ).pack(side='left', padx=(6, 0))
+
+        # Einträge-Karte — Canvas-Gradient (echter moderner Look)
+        _CW, _CH = 155, 110
+        _count_canvas = tk.Canvas(_inner, width=_CW, height=_CH,
+                                   highlightthickness=0, bg='#FFFFFF')
+        _count_canvas.grid(row=0, column=2, rowspan=3, sticky='ns', padx=(22, 0), pady=4)
+
+        _GC1 = (0x0D, 0x47, 0xA1)   # #0D47A1 dunkelblau oben
+        _GC2 = (0x42, 0xA5, 0xF5)   # #42A5F5 hellblau unten
+
+        def _draw_count_card(val="0"):
+            _count_canvas.delete('all')
+            # Schatten
+            _count_canvas.create_rectangle(4, 4, _CW, _CH,
+                                            fill='#90CAF9', outline='', width=0)
+            # Gradient-Füllung
+            for _i in range(_CH - 4):
+                _t = _i / max(_CH - 5, 1)
+                _r = int(_GC1[0] + (_GC2[0] - _GC1[0]) * _t)
+                _g = int(_GC1[1] + (_GC2[1] - _GC1[1]) * _t)
+                _b = int(_GC1[2] + (_GC2[2] - _GC1[2]) * _t)
+                _count_canvas.create_line(0, _i, _CW - 4, _i,
+                                           fill=f'#{_r:02x}{_g:02x}{_b:02x}')
+            # Icon + Titel
+            _count_canvas.create_text(_CW // 2 - 2, 22,
+                                       text="👥  Einträge",
+                                       font=("Segoe UI", 11, "bold"),
+                                       fill='#B3E5FC', anchor='center')
+            # Trennlinie
+            _count_canvas.create_line(14, 38, _CW - 18, 38,
+                                       fill='#64B5F6', width=1)
+            # Große Zahl
+            _count_canvas.create_text(_CW // 2 - 2, 74,
+                                       text=val,
+                                       font=("Segoe UI", 40, "bold"),
+                                       fill='white', anchor='center')
+
+        _draw_count_card("0")
+        self._namensliste_count_update = _draw_count_card
+        # Dummy-Label für Rückwärtskompatibilität (wird nicht angezeigt)
+        self.namensliste_count_label = tk.Label(_count_canvas)
+
+        # ── TREEVIEW ───────────────────────────────────────────────────────────
+        tree_outer = tk.Frame(parent_frame, bg='#FFFFFF',
+                              highlightthickness=1, highlightbackground='#CBD5E0')
+        tree_outer.pack(fill='both', expand=True, padx=15, pady=(0, 12))
+
+        heading_font = tkFont.Font(family=base_font_family, size=13, weight="bold")
+        self.style.configure("Namensliste.Treeview",
+                             rowheight=44,
+                             font=tkFont.Font(family=base_font_family, size=12),
+                             background='#FFFFFF', fieldbackground='#FFFFFF',
+                             foreground='#1A202C')
+        self.style.configure("Namensliste.Treeview.Heading",
+                             font=heading_font,
+                             background=C_HDR1, foreground='white',
+                             relief='flat', padding=(8, 6))
+        self.style.map("Namensliste.Treeview",
+                       background=[('selected', '#DBEAFE')],
+                       foreground=[('selected', '#1565C0')])
+
+        columns = ("name", "nationality", "contact", "car", "signature")
+        self.namensliste_tree = ttk.Treeview(tree_outer, columns=columns,
+                                              show="headings", style="Namensliste.Treeview")
+        col_configs = {
+            "name":        {"text": "Nachname, Vorname",  "width": 300},
+            "nationality": {"text": "Nationalität",        "width": 120},
+            "contact":     {"text": "E-Mail / Telefon",    "width": 350},
+            "car":         {"text": "PKW",                 "width": 120},
+            "signature":   {"text": "Unterschrift",        "width": 150},
+        }
+        for col_id, cfg in col_configs.items():
+            self.namensliste_tree.heading(col_id, text=cfg["text"])
+            self.namensliste_tree.column(col_id, width=cfg["width"], anchor="w", stretch=tk.YES)
+
+        self.namensliste_tree.tag_configure('oddrow',  background='#F0F4F8')
+        self.namensliste_tree.tag_configure('evenrow', background='#FFFFFF')
+
+        vsb = ttk.Scrollbar(tree_outer, orient="vertical", command=self.namensliste_tree.yview)
+        self.namensliste_tree.configure(yscrollcommand=vsb.set)
+        self.namensliste_tree.pack(side='left', fill='both', expand=True)
+        vsb.pack(side='right', fill='y')
+
+        self.namensliste_tree.bind("<Double-1>", self._edit_namensliste_entry)
+        self._setupTreeViewCellNavigation(self.namensliste_tree,
+                                          edit_command_func=self._edit_namensliste_entry)
 
         self._load_and_display_namensliste()
    
@@ -33098,8 +33851,8 @@ class KassenprotokollApp:
 
         for item in self.namensliste_tree.get_children(): self.namensliste_tree.delete(item)
 
-        self.namensliste_tree.tag_configure('oddrow', background='#F0F0F0')
-        self.namensliste_tree.tag_configure('evenrow', background='white')
+        self.namensliste_tree.tag_configure('oddrow',  background='#F0F4F8')
+        self.namensliste_tree.tag_configure('evenrow', background='#FFFFFF')
 
         for i, entry in enumerate(self.namensliste_data_cache):
             tag = 'oddrow' if i % 2 else 'evenrow'
@@ -33114,7 +33867,9 @@ class KassenprotokollApp:
 
         # Anzahl-Karte aktualisieren
         count = len(self.namensliste_data_cache)
-        if self.namensliste_count_label and self.namensliste_count_label.winfo_exists():
+        if hasattr(self, '_namensliste_count_update'):
+            self._namensliste_count_update(str(count))
+        elif self.namensliste_count_label and self.namensliste_count_label.winfo_exists():
             self.namensliste_count_label.config(text=str(count))
 
     def _check_namensliste_duplicates(self):
@@ -35447,10 +36202,10 @@ class SplashLoader:
         # 3. Custom Progress Bar Style
         style = ttk.Style()
         style.theme_use('default')
-        style.configure("Splash.Horizontal.TProgressbar", 
-                        thickness=10, 
-                        troughcolor=accent_color, 
-                        background="#5E81AC", 
+        style.configure("Splash.Horizontal.TProgressbar",
+                        thickness=10,
+                        troughcolor=accent_color,
+                        background="#5E81AC",
                         borderwidth=0)
         
         self.progress_var = tk.DoubleVar()
