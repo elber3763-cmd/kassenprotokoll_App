@@ -8599,14 +8599,14 @@ class MODRundgangApp:
         email_btn.pack(side='left', padx=4)
         self.app._configure_mod_rundgang_button(email_btn, 'MOD_Email', '📧 E-Mail senden')
 
-        # Reset + PDF on the right side of the same bar
-        pdf_btn = _bar_btn(action_bar, "📄 PDF exportieren", self.export_pdf)
-        pdf_btn.pack(side='right', padx=8)
-        self.app._configure_mod_rundgang_button(pdf_btn, 'MOD_PDF', '📄 PDF exportieren')
-
+        # Reset + PDF left-aligned after the other buttons
         reset_btn = _bar_btn(action_bar, "🗑️ Zurücksetzen", self.reset_all)
-        reset_btn.pack(side='right', padx=4)
+        reset_btn.pack(side='left', padx=4)
         self.app._configure_mod_rundgang_button(reset_btn, 'MOD_Reset', '🗑️ Zurücksetzen')
+
+        pdf_btn = _bar_btn(action_bar, "📄 PDF exportieren", self.export_pdf)
+        pdf_btn.pack(side='left', padx=4)
+        self.app._configure_mod_rundgang_button(pdf_btn, 'MOD_PDF', '📄 PDF exportieren')
 
         # ── GRADIENT HERO HEADER ───────────────────────────────────────────────
         hero = tk.Canvas(self.parent_frame, height=88, highlightthickness=0, bg=C_HDR1)
