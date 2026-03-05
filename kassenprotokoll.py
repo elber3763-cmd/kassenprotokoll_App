@@ -8599,6 +8599,15 @@ class MODRundgangApp:
         email_btn.pack(side='left', padx=4)
         self.app._configure_mod_rundgang_button(email_btn, 'MOD_Email', '📧 E-Mail senden')
 
+        # Reset + PDF on the right side of the same bar
+        pdf_btn = _bar_btn(action_bar, "📄 PDF exportieren", self.export_pdf)
+        pdf_btn.pack(side='right', padx=8)
+        self.app._configure_mod_rundgang_button(pdf_btn, 'MOD_PDF', '📄 PDF exportieren')
+
+        reset_btn = _bar_btn(action_bar, "🗑️ Zurücksetzen", self.reset_all)
+        reset_btn.pack(side='right', padx=4)
+        self.app._configure_mod_rundgang_button(reset_btn, 'MOD_Reset', '🗑️ Zurücksetzen')
+
         # ── GRADIENT HERO HEADER ───────────────────────────────────────────────
         hero = tk.Canvas(self.parent_frame, height=88, highlightthickness=0, bg=C_HDR1)
         hero.pack(fill='x')
@@ -8894,18 +8903,6 @@ class MODRundgangApp:
             command=self.save_state, bg='#FFFFFF', fg='#263238',
             selectcolor='#E8F5E9', activebackground='#FFFFFF', cursor='hand2')
         self.sign_check.pack(anchor='w')
-
-        # ── FOOTER ACTION BAR (packed after container so expand works) ─────────
-        footer = tk.Frame(self.parent_frame, bg=C_BAR, padx=14, pady=10)
-        footer.pack(fill='x')
-
-        reset_btn = _bar_btn(footer, "🗑️ Zurücksetzen", self.reset_all)
-        reset_btn.pack(side='left', padx=5)
-        self.app._configure_mod_rundgang_button(reset_btn, 'MOD_Reset', '🗑️ Zurücksetzen')
-
-        pdf_btn = _bar_btn(footer, "📄 PDF exportieren", self.export_pdf)
-        pdf_btn.pack(side='right', padx=5)
-        self.app._configure_mod_rundgang_button(pdf_btn, 'MOD_PDF', '📄 PDF exportieren')
 
         # ── MOUSEWHEEL BINDING ─────────────────────────────────────────────────
         canvas.bind("<MouseWheel>", _on_mousewheel)
