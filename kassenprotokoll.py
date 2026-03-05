@@ -8559,17 +8559,47 @@ class MODRundgangApp:
                     f'{int(g1+(g2-g1)*t):02x}'
                     f'{int(b1+(b2-b1)*t):02x}')
 
+        def _lighten(hex_c, amt=25):
+            return '#{:02x}{:02x}{:02x}'.format(
+                min(255, int(hex_c[1:3], 16) + amt),
+                min(255, int(hex_c[3:5], 16) + amt),
+                min(255, int(hex_c[5:7], 16) + amt))
+
+        def _darken(hex_c, amt=20):
+            return '#{:02x}{:02x}{:02x}'.format(
+                max(0, int(hex_c[1:3], 16) - amt),
+                max(0, int(hex_c[3:5], 16) - amt),
+                max(0, int(hex_c[5:7], 16) - amt))
+
+        def _bar_btn(parent, text, command):
+            """tk.Button that blends seamlessly into the dark action/footer bar."""
+            return tk.Button(
+                parent, text=text, command=command,
+                bg=C_BAR, fg='white',
+                activebackground=_lighten(C_BAR, 22),
+                activeforeground='white',
+                relief='flat', bd=0,
+                highlightthickness=0,
+                cursor='hand2',
+                font=("Segoe UI", 10))
+
         # ── TOP ACTION BAR ─────────────────────────────────────────────────────
         action_bar = tk.Frame(self.parent_frame, bg=C_BAR, pady=5)
         action_bar.pack(fill='x')
-        self.app._create_home_button(action_bar).pack(side='left', padx=8)
 
-        save_btn = ttk.Button(action_bar, text="💾 Speichern", command=self.save_state)
+        home_btn = self.app._create_home_button(action_bar)
+        home_btn.pack(side='left', padx=8)
+        try:  # make home button blend into the bar if possible
+            home_btn.config(bg=C_BAR, activebackground=_lighten(C_BAR, 22))
+        except tk.TclError:
+            pass
+
+        save_btn = _bar_btn(action_bar, "💾 Speichern", self.save_state)
         save_btn.pack(side='left', padx=4)
         self.app._configure_mod_rundgang_button(save_btn, 'MOD_Save', '💾 Speichern')
 
-        email_btn = ttk.Button(action_bar, text="📧 E-Mail senden",
-                               command=self._send_mod_checkliste_email)
+        email_btn = _bar_btn(action_bar, "📧 E-Mail senden",
+                             self._send_mod_checkliste_email)
         email_btn.pack(side='left', padx=4)
         self.app._configure_mod_rundgang_button(email_btn, 'MOD_Email', '📧 E-Mail senden')
 
@@ -8684,18 +8714,6 @@ class MODRundgangApp:
 
         # ── 3D CARD HELPERS ────────────────────────────────────────────────────
         CB_SIZE = 22
-
-        def _lighten(hex_c, amt=25):
-            return '#{:02x}{:02x}{:02x}'.format(
-                min(255, int(hex_c[1:3], 16) + amt),
-                min(255, int(hex_c[3:5], 16) + amt),
-                min(255, int(hex_c[5:7], 16) + amt))
-
-        def _darken(hex_c, amt=20):
-            return '#{:02x}{:02x}{:02x}'.format(
-                max(0, int(hex_c[1:3], 16) - amt),
-                max(0, int(hex_c[3:5], 16) - amt),
-                max(0, int(hex_c[5:7], 16) - amt))
 
         def _draw_cb_unchecked(c):
             """Draw a 3-D unchecked checkbox on a Canvas."""
@@ -8885,11 +8903,11 @@ class MODRundgangApp:
         footer = tk.Frame(self.parent_frame, bg=C_BAR, padx=14, pady=10)
         footer.pack(fill='x')
 
-        reset_btn = ttk.Button(footer, text="🗑️ Zurücksetzen", command=self.reset_all)
+        reset_btn = _bar_btn(footer, "🗑️ Zurücksetzen", self.reset_all)
         reset_btn.pack(side='left', padx=5)
         self.app._configure_mod_rundgang_button(reset_btn, 'MOD_Reset', '🗑️ Zurücksetzen')
 
-        pdf_btn = ttk.Button(footer, text="📄 PDF exportieren", command=self.export_pdf)
+        pdf_btn = _bar_btn(footer, "📄 PDF exportieren", self.export_pdf)
         pdf_btn.pack(side='right', padx=5)
         self.app._configure_mod_rundgang_button(pdf_btn, 'MOD_PDF', '📄 PDF exportieren')
 
@@ -17122,7 +17140,11 @@ class KassenprotokollApp:
                 slant=base_slant
             )
             self.style.configure(unique_style_name, font=custom_font)
-            button_widget.config(style=unique_style_name, text=btn_value)
+            # tk.Button (used in MOD bars) has no 'style' option – configure directly
+            if isinstance(button_widget, ttk.Button):
+                button_widget.config(style=unique_style_name, text=btn_value)
+            else:
+                button_widget.config(text=btn_value, font=custom_font)
 
     def _redraw_shuttle_cb_canvas(self, booking_type):
         """Zeichnet die Checkbox-Bilder auf den Canvas links neben der Shuttle-Treeview."""
