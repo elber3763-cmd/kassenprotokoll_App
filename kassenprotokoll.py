@@ -466,18 +466,29 @@ class OffeneRechnungenPDF(FPDF):
         for row_data in data:
             if self.get_y() > (self.h - self.b_margin - 12): self.add_page()
 
-            # ── Hauptzeile (einheitliche Höhe = cell_h) ──────────────────────
+            # ── Zeilenhöhe berechnen (Mehrfachzeilen wenn Text zu lang) ──────
             row_y = self.get_y()
+            max_lines = 1
+            for col_id, config in main_cols.items():
+                col_w = page_width * config['width_pct']
+                text = str(row_data.get(col_id, ''))
+                n = self._count_wrap_lines(text, col_w)
+                if n > max_lines:
+                    max_lines = n
+            row_h = cell_h * max_lines
+
+            # ── Hauptzeile ────────────────────────────────────────────────────
             x = self.l_margin
             for col_id, config in main_cols.items():
                 col_w = page_width * config['width_pct']
                 text = str(row_data.get(col_id, ''))
-                while text and self.get_string_width(text) > col_w - 1:
-                    text = text[:-1]
-                self.set_xy(x, row_y)
-                self.cell(col_w, cell_h, text, 1, align=config.get('align', 'L'))
+                self.rect(x, row_y, col_w, row_h)
+                self.set_xy(x + 1, row_y + 1)
+                self.multi_cell(col_w - 2, cell_h, text, border=0,
+                                align=config.get('align', 'L'),
+                                max_line_height=cell_h)
                 x += col_w
-            self.set_xy(self.l_margin, row_y + cell_h)
+            self.set_xy(self.l_margin, row_y + row_h)
 
             # ── Kommentar-Subzeile (volle Breite, nur wenn Inhalt vorhanden) ─
             for col_id, config in col_configs.items():
