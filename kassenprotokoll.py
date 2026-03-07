@@ -462,7 +462,7 @@ class OffeneRechnungenPDF(FPDF):
 
         # Data
         cell_h = 6
-        self.set_font(self.font_family, '', 7)
+        self.set_font(self.font_family, '', 6)
         for row_data in data:
             if self.get_y() > (self.h - self.b_margin - 12): self.add_page()
 
