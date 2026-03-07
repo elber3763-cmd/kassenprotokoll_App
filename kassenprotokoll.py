@@ -2079,20 +2079,18 @@ class OffeneRechnungenApp:
                 "Empfangsteam"
             )
 
-            email_callback = None
-            use_outlook = platform.system() == "Windows" and win32_available
-            if use_outlook:
-                try:
-                    win32.Dispatch('outlook.application'); email_callback = self.app._send_email_via_outlook
-                except Exception: use_outlook = False
-
-            if not use_outlook:
+            def email_callback(pdf_path, recipient, subject, body, cc=None):
+                use_outlook = platform.system() == "Windows" and win32_available
+                if use_outlook:
+                    try:
+                        win32.Dispatch('outlook.application')
+                        return self.app._send_email_via_outlook(pdf_path, recipient, subject, body, cc=cc)
+                    except Exception:
+                        pass
                 smtp_cfg = self.app.current_settings.get('smtp_settings', {})
                 if not all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email', 'username', 'password']):
-                    messagebox.showerror("Fehler", "Die E-Mail (SMTP) Einstellungen sind unvollständig.", parent=self.app.master)
-                    if os.path.exists(temp_pdf_path): os.remove(temp_pdf_path)
-                    return
-                email_callback = self.app._send_email_silently
+                    return False, "SMTP-Einstellungen sind unvollständig."
+                return self.app._send_email_silently(pdf_path, recipient, subject, body, cc=cc)
 
             preview_dialog = PDFPreviewDialog(
                 parent=self.app.master, app_ref=self.app, pdf_path=temp_pdf_path,
@@ -33882,8 +33880,8 @@ class KassenprotokollApp:
         dialog_vars['smtp_vars'] = {}
         smtp_cfg = temp_settings.get('smtp_settings', {})
         
-        smtp_options = [('server', 'Server:', 0), ('port', 'Port:', 0), ('sender_email', 'Absender-E-Mail:', 1),
-                        ('username', 'Benutzername:', 2), ('password', 'Passwort:', 2)]
+        smtp_options = [('server', 'Server:', 0), ('port', 'Port:', 1), ('sender_email', 'Absender-E-Mail:', 2),
+                        ('username', 'Benutzername:', 3), ('password', 'Passwort:', 4)]
         
         for key, label, r in smtp_options:
             var = tk.StringVar(value=smtp_cfg.get(key, ''))
@@ -36570,21 +36568,18 @@ class KassenprotokollApp:
         subject = f"Anrufnotiz für {entry_data.get('fuer_abteilung', 'unbekannt')} von {entry_data.get('anrufer', 'unbekannt')}"
 
         # Schritt 3: E-Mail-Versandmethode bestimmen
-        email_callback = None
-        use_outlook = platform.system() == "Windows" and win32_available
-        if use_outlook:
-            try:
-                win32.Dispatch('outlook.application')
-                email_callback = self._send_html_email_via_outlook
-            except Exception:
-                use_outlook = False
-
-        if not use_outlook:
+        def email_callback(recipient, subject, body):
+            use_outlook = platform.system() == "Windows" and win32_available
+            if use_outlook:
+                try:
+                    win32.Dispatch('outlook.application')
+                    return self._send_html_email_via_outlook(recipient, subject, body)
+                except Exception:
+                    pass
             smtp_cfg = self.current_settings.get('smtp_settings', {})
             if not all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email', 'username', 'password']):
-                messagebox.showerror("Fehler", "Die E-Mail (SMTP) Einstellungen sind unvollständig.", parent=self.master)
-                return
-            email_callback = self._send_html_email_silently
+                return False, "SMTP-Einstellungen sind unvollständig."
+            return self._send_html_email_silently(recipient, subject, body)
         
         # Schritt 4: Vorschau-Dialog mit den Rohdaten öffnen
         preview_dialog = EmailPreviewDialog(
