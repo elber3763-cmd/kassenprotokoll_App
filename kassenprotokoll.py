@@ -636,176 +636,6 @@ class CalendarPopup(tk.Toplevel):
         self.destroy()
 
 
-class CleanupPreviewDialog(tk.Toplevel):
-    """
-    Zeigt eine elegante Vorschau aller Einträge, die beim Aufräumen
-    gelöscht werden würden, und lässt den Mitarbeiter bestätigen oder abbrechen.
-    """
-    def __init__(self, parent, entries):
-        super().__init__(parent)
-        self.transient(parent)
-        self.grab_set()
-        self.confirmed = False
-
-        self.title("Aufräumen – Vorschau")
-        self.resizable(True, True)
-
-        # ── Farben ──────────────────────────────────────────────────
-        BG        = "#1e1e2e"
-        CARD_BG   = "#2a2a3e"
-        HDR_BG    = "#c0392b"
-        HDR_FG    = "#ffffff"
-        ROW_EVEN  = "#2a2a3e"
-        ROW_ODD   = "#252535"
-        ROW_SEL   = "#e74c3c"
-        FG        = "#ecf0f1"
-        MUTED     = "#95a5a6"
-        BTN_DEL   = "#c0392b"
-        BTN_DEL_H = "#e74c3c"
-        BTN_CNL   = "#34495e"
-        BTN_CNL_H = "#4a6278"
-
-        self.configure(bg=BG)
-
-        # ── Hauptrahmen ──────────────────────────────────────────────
-        outer = tk.Frame(self, bg=BG, padx=20, pady=20)
-        outer.pack(fill='both', expand=True)
-
-        # ── Kopfzeile ───────────────────────────────────────────────
-        header = tk.Frame(outer, bg=HDR_BG, padx=16, pady=12)
-        header.pack(fill='x', pady=(0, 14))
-
-        tk.Label(
-            header, text="⚠  Einträge zum Löschen",
-            bg=HDR_BG, fg=HDR_FG,
-            font=("Segoe UI", 14, "bold")
-        ).pack(side='left')
-
-        count_badge = tk.Label(
-            header,
-            text=f"  {len(entries)} Einträge  ",
-            bg="#e74c3c", fg=HDR_FG,
-            font=("Segoe UI", 10, "bold"),
-            padx=6, pady=2, relief='flat'
-        )
-        count_badge.pack(side='right', padx=(0, 4))
-
-        # ── Info-Text ────────────────────────────────────────────────
-        tk.Label(
-            outer,
-            text="Die folgenden Einträge haben das Final-Datum vor mehr als 7 Tagen\n"
-                 "und werden bei Bestätigung unwiderruflich gelöscht.",
-            bg=BG, fg=MUTED,
-            font=("Segoe UI", 9),
-            justify='left'
-        ).pack(anchor='w', pady=(0, 10))
-
-        # ── Treeview-Rahmen ──────────────────────────────────────────
-        tree_frame = tk.Frame(outer, bg=CARD_BG, padx=2, pady=2)
-        tree_frame.pack(fill='both', expand=True)
-
-        cols = ("veranstaltung", "va_datum", "nachgehackt_2")
-        self.tree = ttk.Treeview(tree_frame, columns=cols, show="headings", height=12)
-
-        style = ttk.Style(self)
-        style.theme_use(style.theme_use())  # Keep current theme
-        style.configure("Cleanup.Treeview",
-                        background=ROW_EVEN, foreground=FG,
-                        fieldbackground=ROW_EVEN,
-                        rowheight=26, font=("Segoe UI", 9),
-                        borderwidth=0)
-        style.configure("Cleanup.Treeview.Heading",
-                        background=CARD_BG, foreground=MUTED,
-                        font=("Segoe UI", 9, "bold"),
-                        relief='flat')
-        style.map("Cleanup.Treeview",
-                  background=[("selected", ROW_SEL)],
-                  foreground=[("selected", HDR_FG)])
-        self.tree.configure(style="Cleanup.Treeview")
-
-        col_cfg = [
-            ("veranstaltung", "Veranstaltung",    260, 'w'),
-            ("va_datum",      "VA Datum",          150, 'center'),
-            ("nachgehackt_2", "2. mal Nachgehackt", 160, 'center'),
-        ]
-        for cid, lbl, w, anchor in col_cfg:
-            self.tree.heading(cid, text=lbl)
-            self.tree.column(cid, width=w, anchor=anchor, stretch=(cid == "veranstaltung"))
-
-        self.tree.tag_configure("even", background=ROW_EVEN)
-        self.tree.tag_configure("odd",  background=ROW_ODD)
-
-        vsb = ttk.Scrollbar(tree_frame, orient="vertical",   command=self.tree.yview)
-        hsb = ttk.Scrollbar(tree_frame, orient="horizontal", command=self.tree.xview)
-        self.tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
-
-        self.tree.grid(row=0, column=0, sticky='nsew')
-        vsb.grid(row=0, column=1, sticky='ns')
-        hsb.grid(row=1, column=0, sticky='ew')
-        tree_frame.rowconfigure(0, weight=1)
-        tree_frame.columnconfigure(0, weight=1)
-
-        for i, entry in enumerate(entries):
-            tag = "even" if i % 2 == 0 else "odd"
-            anreise = entry.get('anreise', '')
-            abreise = entry.get('abreise', '')
-            va_datum = f"{anreise} - {abreise}" if anreise and abreise else anreise or abreise
-            final_datum = entry.get('final_datum', '')
-            final_kuerzel = entry.get('final_kuerzel', '')
-            nachgehackt_2 = f"{final_datum} ({final_kuerzel})" if final_datum and final_kuerzel else final_datum
-            self.tree.insert("", "end", tags=(tag,), values=(
-                entry.get('gruppenname', ''),
-                va_datum,
-                nachgehackt_2,
-            ))
-
-        # ── Trennlinie ───────────────────────────────────────────────
-        tk.Frame(outer, bg="#3d3d55", height=1).pack(fill='x', pady=(14, 10))
-
-        # ── Button-Leiste ────────────────────────────────────────────
-        btn_bar = tk.Frame(outer, bg=BG)
-        btn_bar.pack(fill='x')
-
-        def _on_enter_del(e):  del_btn.configure(bg=BTN_DEL_H)
-        def _on_leave_del(e):  del_btn.configure(bg=BTN_DEL)
-        def _on_enter_cnl(e):  cnl_btn.configure(bg=BTN_CNL_H)
-        def _on_leave_cnl(e):  cnl_btn.configure(bg=BTN_CNL)
-
-        cnl_btn = tk.Button(
-            btn_bar, text="Abbrechen",
-            bg=BTN_CNL, fg=FG, activebackground=BTN_CNL_H, activeforeground=FG,
-            font=("Segoe UI", 10), relief='flat', padx=20, pady=8, cursor='hand2',
-            command=self.destroy
-        )
-        cnl_btn.pack(side='right', padx=(8, 0))
-        cnl_btn.bind("<Enter>", _on_enter_cnl)
-        cnl_btn.bind("<Leave>", _on_leave_cnl)
-
-        del_btn = tk.Button(
-            btn_bar, text="🗑  Alle löschen",
-            bg=BTN_DEL, fg=HDR_FG, activebackground=BTN_DEL_H, activeforeground=HDR_FG,
-            font=("Segoe UI", 10, "bold"), relief='flat', padx=20, pady=8, cursor='hand2',
-            command=self._confirm
-        )
-        del_btn.pack(side='right')
-        del_btn.bind("<Enter>", _on_enter_del)
-        del_btn.bind("<Leave>", _on_leave_del)
-
-        # ── Fenster-Größe und Zentrierung ────────────────────────────
-        self.update_idletasks()
-        w, h = 720, 520
-        px = parent.winfo_rootx() + (parent.winfo_width()  - w) // 2
-        py = parent.winfo_rooty() + (parent.winfo_height() - h) // 2
-        self.geometry(f"{w}x{h}+{px}+{py}")
-        self.minsize(600, 400)
-
-        self.bind("<Escape>", lambda e: self.destroy())
-        self.wait_window(self)
-
-    def _confirm(self):
-        self.confirmed = True
-        self.destroy()
-
 
 class OffeneRechnungEntryDialog(tk.Toplevel):
     """ Dialog zum Hinzufügen oder Bearbeiten eines Eintrags für offene Rechnungen. """
@@ -853,7 +683,7 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
         else:
             self.data_vars['id'].set(uuid.uuid4().hex)
 
-        kuerzel_options = ['', 'MZ', 'SS', 'JH']
+        kuerzel_options = ['', 'MZ', 'SS', 'JH', 'an Bankett übergeben']
 
         row = 0
         ttk.Label(main_frame, text="Veranstaltung:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
@@ -876,7 +706,7 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
             ttk.Separator(main_frame, orient='horizontal').grid(row=row, column=0, columnspan=4, sticky='ew', pady=8); row+=1
             ttk.Label(main_frame, text=label, font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
             ttk.Label(main_frame, text="Kürzel:", font=dialog_font).grid(row=row, column=2, sticky='e', padx=5)
-            ttk.Combobox(main_frame, textvariable=self.data_vars[kuerzel_key], values=kuerzel_options, state='readonly', width=7, font=dialog_font).grid(row=row, column=3, sticky='w', padx=5); row+=1
+            ttk.Combobox(main_frame, textvariable=self.data_vars[kuerzel_key], values=kuerzel_options, state='readonly', width=20, font=dialog_font).grid(row=row, column=3, sticky='w', padx=5); row+=1
             ttk.Label(main_frame, text="Datum:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
             self._make_date_field(main_frame, self.data_vars[datum_key], dialog_font, entry_ipady, max_date=datetime.date.today()).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
         
@@ -987,60 +817,6 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
         super().destroy()
 
 # HIER ENDET DIE ERSETZTE KLASSE
-class WarningDialogWithDismiss(tk.Toplevel):
-    """Ein benutzerdefiniertes Warndialogfeld mit einem "Nicht erneut warnen"-Button."""
-    def __init__(self, parent, title, message, dismiss_callback):
-        super().__init__(parent)
-        self.transient(parent)
-        self.grab_set()
-        self.title(title)
-        self.dismiss_callback = dismiss_callback
-
-        main_frame = ttk.Frame(self, padding=20)
-        main_frame.pack(expand=True, fill="both")
-
-        message_frame = ttk.Frame(main_frame)
-        message_frame.pack(pady=(0, 20), fill='x')
-        
-        try:
-            # Versucht, ein Standard-Warn-Icon vom System zu laden
-            img = Image.open(resource_path("icons/warning.png")).resize((48, 48), Image.Resampling.LANCZOS)
-            photo = ImageTk.PhotoImage(img)
-            icon_label = ttk.Label(message_frame, image=photo)
-            icon_label.image = photo
-            icon_label.pack(side='left', padx=(0, 15))
-        except:
-            ttk.Label(message_frame, text="⚠️", font=("Segoe UI Emoji", 24)).pack(side='left', padx=(0, 15))
-
-        ttk.Label(message_frame, text=message, wraplength=350, justify='left').pack(side='left', fill='x', expand=True)
-
-        button_frame = ttk.Frame(main_frame)
-        button_frame.pack(fill='x', pady=(10, 0))
-        button_frame.columnconfigure((0, 1), weight=1)
-
-        ok_button = ttk.Button(button_frame, text="OK", command=self.destroy)
-        ok_button.grid(row=0, column=0, padx=5, ipady=5, sticky='ew')
-        
-        dismiss_button = ttk.Button(button_frame, text="Nicht erneut warnen!", command=self.on_dismiss)
-        dismiss_button.grid(row=0, column=1, padx=5, ipady=5, sticky='ew')
-
-        self.protocol("WM_DELETE_WINDOW", self.destroy)
-        ok_button.focus_set()
-        
-        self.update_idletasks()
-        parent_x = parent.winfo_x(); parent_y = parent.winfo_y()
-        parent_width = parent.winfo_width(); parent_height = parent.winfo_height()
-        dialog_width = self.winfo_width(); dialog_height = self.winfo_height()
-        x = parent_x + (parent_width // 2) - (dialog_width // 2)
-        y = parent_y + (parent_height // 2) - (dialog_height // 2)
-        self.geometry(f'+{x}+{y}')
-        
-        self.wait_window(self)
-
-    def on_dismiss(self):
-        self.dismiss_callback()
-        self.destroy()
-
 class CommentDialog(tk.Toplevel):
     """Ein Dialogfenster zum Erfassen, Bearbeiten und Löschen von Kommentaren."""
     def __init__(self, parent, app_ref, initial_comment=""):
@@ -1373,7 +1149,6 @@ class OffeneRechnungenApp:
         self.offene_rechnungen_data_file = os.path.join(self.app.ZIELORDNER_OFFENE_RECHNUNGEN, 'offene_rechnungen_data.json')
         self.all_data = []
         self.tree = None
-        self.periodic_check_job = None
         self.action_buttons = {}
         self.button_images = {}
         self.is_destroyed = False
@@ -1493,7 +1268,6 @@ class OffeneRechnungenApp:
             'OR_DeleteAll': {'text': 'Papierkorb',      'command': self._on_delete_all},
             'OR_Edit':      {'text': 'Bearbeiten',      'command': self._on_edit_selected_entry},
             'OR_Kommentar': {'text': '💬 Kommentar',    'command': self._on_comment_selected_entry},
-            'OR_Cleanup':   {'text': '>7 Tage löschen', 'command': self._on_cleanup_old},
             'OR_SavePDF':   {'text': 'PDF Speichern',   'command': self._on_save_and_export_pdf},
             'OR_Email':     {'text': 'E-Mail',          'command': self._on_email},
             'OR_History':   {'text': 'Verlauf',         'command': self._on_show_history},
@@ -1532,9 +1306,6 @@ class OffeneRechnungenApp:
         tree = ttk.Treeview(tree_frame, columns=list(cols.keys()), show='tree headings', style=style_name)
         tree.column("#0", width=40, stretch=tk.NO, anchor='center')
         tree.heading("#0", text="💬")
-        tree.tag_configure('red_row', background='#FFDDDD')
-        tree.tag_configure('yellow_row', background='#FFFFE0')
-        tree.tag_configure('green_row', background='#DDFFDD')
         for col_id, cfg in cols.items():
             tree.heading(col_id, text=cfg['text'])
             tree.column(col_id, width=cfg['width'], minwidth=cfg['minwidth'], anchor='w', stretch=tk.YES)
@@ -1546,8 +1317,8 @@ class OffeneRechnungenApp:
 
         tree.bind("<Double-1>", self._on_edit_entry)
         tree.bind("<Button-3>", self._open_comment_editor)
-        tree.bind("<<TreeviewSelect>>", self._on_tree_select)
         TreeViewCellNavigation(tree, edit_command_func=self._on_edit_selected_entry)
+        tree.bind("<<TreeviewSelect>>", self._on_tree_select, add="+")
 
         add_btn_frame = ttk.Frame(parent); add_btn_frame.grid(row=1, column=0, sticky='w', pady=(10, 0))
         add_button = ttk.Button(add_btn_frame, command=self._on_add_entry)
@@ -1661,11 +1432,10 @@ class OffeneRechnungenApp:
         for item in self.tree.get_children():
             self.tree.delete(item)
         for entry in self.all_data:
-            color_tag = self._get_row_color_tag(entry)
             disp = self._build_display_row(entry)
             values_list = [disp[k] for k in ['veranstaltung', 'va_datum', 'inforg_raus', 'nachgehackt_1', 'nachgehackt_2', 'rg_raus']]
             item_id = entry['id']
-            self.tree.insert('', 'end', iid=item_id, values=values_list, tags=(color_tag,))
+            self.tree.insert('', 'end', iid=item_id, values=values_list)
             if entry.get('kommentar', ''):
                 self.tree.item(item_id, image=self.comment_icon)
             else:
@@ -1692,7 +1462,6 @@ class OffeneRechnungenApp:
         else:
             self.all_data = []
         self.populate_tables()
-        self.start_periodic_invoice_check()
 
     def _save_history_snapshot(self, action):
         if not hasattr(self.app, 'offene_rechnungen_history_file'):
@@ -1792,49 +1561,20 @@ class OffeneRechnungenApp:
                 self.save_data(show_toast=False, action="Eintrag bearbeitet")
 
     def _on_delete_all(self):
-        if messagebox.askyesno("Bestätigung", "Wirklich ALLE Einträge löschen?", parent=self.app.master):
-            self.all_data.clear()
+        if not self.tree.selection():
+            SuccessToast(self.app.master, title="Keine Auswahl", message="Bitte einen Eintrag zum Löschen auswählen.", toast_type='warning', colors=self.app.current_settings.get('toast_colors'))
+            return
+        selected_id = self.tree.selection()[0]
+        entry_to_delete = next((e for e in self.all_data if e.get('id') == selected_id), None)
+        if not entry_to_delete:
+            return
+        name = entry_to_delete.get('gruppenname', 'diesen Eintrag')
+        if messagebox.askyesno("Bestätigung", f'Eintrag "{name}" wirklich löschen?', parent=self.app.master):
+            self.all_data = [e for e in self.all_data if e.get('id') != selected_id]
             self.populate_tables()
-            self.save_data(show_toast=False, action="Alle Einträge gelöscht")
-            SuccessToast(self.app.master, title="Gelöscht", message="Alle Einträge wurden entfernt.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
+            self.save_data(show_toast=False, action=f"Eintrag gelöscht: {name}")
+            SuccessToast(self.app.master, title="Gelöscht", message=f'"{name}" wurde entfernt.', toast_type='success', colors=self.app.current_settings.get('toast_colors'))
 
-    def _on_cleanup_old(self):
-        try:
-            cutoff = datetime.date.today() - datetime.timedelta(days=7)
-
-            def is_old_and_final(entry):
-                final_datum = entry.get('final_datum')
-                if not final_datum:
-                    return False
-                entry_date = self._parse_date(final_datum)
-                if entry_date is None:
-                    return False
-                return entry_date < cutoff
-
-            to_delete = [e for e in self.all_data if is_old_and_final(e)]
-
-            if not to_delete:
-                messagebox.showinfo(
-                    "Aufräumen",
-                    "Es wurden keine Einträge gefunden, bei denen die Rechnung\n"
-                    "Final versendet wurde und das Datum mehr als 7 Tage zurückliegt.",
-                    parent=self.app.master
-                )
-                return
-
-            dlg = CleanupPreviewDialog(self.app.master, to_delete)
-            if not dlg.confirmed:
-                return
-
-            deleted_count = len(to_delete)
-            self.all_data = [e for e in self.all_data if not is_old_and_final(e)]
-            self.populate_tables()
-            self.save_data(show_toast=False, action=f"{deleted_count} alte Einträge aufgeräumt")
-            SuccessToast(self.app.master, title="Aufgeräumt", message=f"{deleted_count} Einträge wurden entfernt.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
-
-        except Exception as e:
-            messagebox.showerror("Fehler beim Aufräumen", f"Ein Fehler ist aufgetreten:\n{e}", parent=self.app.master)
-        
     def _on_import_excel(self):
         if not openpyxl_available:
             messagebox.showerror("Fehlende Bibliothek", 
@@ -1871,94 +1611,8 @@ class OffeneRechnungenApp:
         except Exception as e:
             messagebox.showerror("Importfehler", f"Die Datei konnte nicht importiert werden.\n\nFehler: {e}", parent=self.app.master)
         
-    def start_periodic_invoice_check(self):
-        self.is_destroyed = False
-        if self.periodic_check_job:
-            try: self.parent_frame.after_cancel(self.periodic_check_job)
-            except tk.TclError: pass
-        self._check_and_reschedule()
-
-    def _check_and_reschedule(self):
-        # KORREKTUR: Beendet die Funktion, wenn die App zerstört wird.
-        if self.is_destroyed:
-            return
-        
-        try:
-            # KORREKTUR: Stellt sicher, dass das Hauptfenster noch existiert.
-            if not self.app.master.winfo_exists():
-                return
-        except (tk.TclError, AttributeError):
-            return
-            
-        if self.app.current_page_name == "Dashboard":
-            self._find_and_show_one_warning()
-        
-        # KORREKTUR: Plant den nächsten Job nur, wenn nicht im Zerstörungsprozess.
-        if not self.is_destroyed:
-            self.periodic_check_job = self.app.master.after(60000, self._check_and_reschedule)
-        
-    def _find_and_show_one_warning(self):
-        try:
-            if not self.app.master.winfo_exists():
-                return
-        except (tk.TclError, AttributeError):
-            return
-
-        for w in self.app.master.winfo_children():
-            if isinstance(w, tk.Toplevel) and w.title() in ["Warnung", "Hinweis zur Bereinigung"]:
-                return
-
-        today = datetime.date.today()
-        for entry in self.all_data:
-            entry_id = entry.get('id')
-            gruppenname = entry.get('gruppenname', 'Unbekannt')
-            if not entry_id:
-                continue
-            
-            warnings_dismissed = entry.get('warnings_dismissed', {})
-
-            try:
-                if not warnings_dismissed.get('cleanup_ready', False) and entry.get('final_datum'):
-                    entry_date = self._parse_date(entry['final_datum'])
-                    if entry_date and (today - entry_date).days >= 14:
-                        WarningDialogWithDismiss(self.app.master, "Hinweis zur Bereinigung", f"14 Tage nach dem 2.mal Nachgehackt sind vergangen. Die Rechnung für '{gruppenname}' kann nun über den Button '>14 Tage löschen' entfernt werden.", lambda eid=entry_id, flag='cleanup_ready': self.dismiss_warning_for_entry(eid, flag)); return
-
-                elif not warnings_dismissed.get('final_send', False) and entry.get('erneut_datum'):
-                    erneut_date = self._parse_date(entry['erneut_datum'])
-                    if erneut_date and (today - erneut_date).days >= 7:
-                        WarningDialogWithDismiss(self.app.master, "Warnung", f"Eine Woche nach dem 1.mal Nachgehackt ist vergangen. Bitte '{gruppenname}' erneut kontaktieren (2.mal Nachgehackt).", lambda eid=entry_id, flag='final_send': self.dismiss_warning_for_entry(eid, flag)); return
-
-                elif not warnings_dismissed.get('erneut', False) and entry.get('info_datum'):
-                    info_date = self._parse_date(entry['info_datum'])
-                    if info_date and (today - info_date).days >= 7:
-                        WarningDialogWithDismiss(self.app.master, "Warnung", f"Eine Woche nach dem Versand der INFORG ist vergangen. Bitte '{gruppenname}' nachgehackt (1.mal Nachgehackt).", lambda eid=entry_id, flag='erneut': self.dismiss_warning_for_entry(eid, flag)); return
-
-                elif entry.get('abreise') and not (entry.get('info_datum') or entry.get('erneut_datum') or entry.get('final_datum')) and not warnings_dismissed.get('initial_send', False):
-                    abreise_date = self._parse_date(entry['abreise'])
-                    if abreise_date and (today - abreise_date).days >= 7:
-                        WarningDialogWithDismiss(self.app.master, "Warnung", f"Die Rechnung für '{gruppenname}' wurde vor einer Woche verschickt. Da keine Antwort eingegangen ist, bitte erneut versenden (1. Versuch).", lambda eid=entry_id, flag='initial_send': self.dismiss_warning_for_entry(eid, flag)); return
-
-            except (ValueError, TypeError) as e:
-                print(f"Überspringe Warnungsprüfung für '{gruppenname}' aufgrund eines Datenfehlers: {e}")
-                pass
-                
     def destroy(self):
         self.is_destroyed = True
-        if self.periodic_check_job:
-            try:
-                # Versucht, den geplanten Job sicher abzubrechen
-                self.app.master.after_cancel(self.periodic_check_job)
-            except (tk.TclError, AttributeError):
-                # Ignoriert Fehler, falls das Fenster oder der Job bereits weg ist
-                pass
-            self.periodic_check_job = None
-                
-    def dismiss_warning_for_entry(self, entry_id, flag_to_set):
-        for entry in self.all_data:
-            if entry.get('id') == entry_id:
-                    entry.setdefault('warnings_dismissed', {})[flag_to_set] = True
-                    self.save_data(show_toast=False)
-                    return
 
     def _parse_date(self, date_str):
         """Parst ein Datum im Format TT.MM.JJJJ oder TT.MM.JJ (2-stelliges Jahr)."""
@@ -1992,36 +1646,6 @@ class OffeneRechnungenApp:
             'kommentar':     entry.get('kommentar', ''),
         }
 
-    def _get_row_color_tag(self, entry):
-        ampel1_char = self._get_ampel_char_for_date(entry, 7)
-        ampel2_char = self._get_ampel_char_for_date(entry, 14)
-        if '🔴' in (ampel1_char, ampel2_char): return 'red_row'
-        if '🟡' in (ampel1_char, ampel2_char): return 'yellow_row'
-        if '🟢' in (ampel1_char, ampel2_char): return 'green_row'
-        return ''
-
-    def _get_ampel_char_for_date(self, entry, cycle_days):
-        date_str = ''
-        if cycle_days == 7: date_str = entry.get('info_datum', '')
-        elif cycle_days == 14: date_str = entry.get('erneut_datum', '')
-        if not date_str: return ''
-        parsed = self._parse_date(date_str)
-        if parsed is None: return ''
-        try:
-            ablaufdatum = parsed + datetime.timedelta(days=cycle_days)
-            tage_bis_ablauf = (ablaufdatum - datetime.date.today()).days
-            if cycle_days == 7:
-                if tage_bis_ablauf < 0: return '🔴'
-                elif tage_bis_ablauf <= 2: return '🟡'
-                elif 5 <= tage_bis_ablauf <= 7: return '🟢'
-                else: return '🟡'
-            elif cycle_days == 14:
-                if tage_bis_ablauf < 0: return '🔴'
-                elif tage_bis_ablauf <= 2: return '🟡'
-                elif 12 <= tage_bis_ablauf <= 14: return '🟢'
-                else: return '🟡'
-        except: return ''
-        return ''
 
     def _create_html_email_body(self, title, data, col_configs):
         email_text = """
@@ -13919,7 +13543,6 @@ class KassenprotokollApp:
                 'OR_DeleteAll': {'type': 'symbol', 'value': '🗑️ Papierkorb', 'is_active': True},
                 'OR_Edit': {'type': 'symbol', 'value': '✏️ Bearbeiten', 'is_active': True},
                 'OR_Kommentar': {'type': 'symbol', 'value': '💬 Kommentar', 'is_active': True},
-                'OR_Cleanup': {'type': 'symbol', 'value': '⏳ >14 Tage löschen', 'is_active': True},
                 'OR_SavePDF': {'type': 'symbol', 'value': '💾 PDF Speichern', 'is_active': True},
                 'OR_Email': {'type': 'symbol', 'value': '📧 E-Mail', 'is_active': True},
                 'OR_History': {'type': 'symbol', 'value': '🕰️ Verlauf', 'is_active': True},
@@ -14039,7 +13662,6 @@ class KassenprotokollApp:
                 # Dies ist der Fallback, falls kein globales Icon (s.o.) hochgeladen wurde
                 'OR_Edit': {'type': 'symbol', 'value': '✏️ Bearbeiten', 'is_active': True},
                 'OR_Kommentar': {'type': 'symbol', 'value': '💬 Kommentar', 'is_active': True},
-                'OR_Cleanup': {'type': 'symbol', 'value': '⏳ >14 Tage löschen', 'is_active': True},
                 'OR_SavePDF': {'type': 'symbol', 'value': '💾 PDF Speichern', 'is_active': True},
                 'OR_Email': {'type': 'symbol', 'value': '📧 E-Mail', 'is_active': True},
                 'OR_History': {'type': 'symbol', 'value': '🕰️ Verlauf', 'is_active': True},
@@ -15460,7 +15082,7 @@ class KassenprotokollApp:
                 self.master.after(10, self._restore_kassenprotokoll_tabs)
                 self._on_notebook_tab_changed()
             elif page_name == "Offene Rechnungen":
-                if self.offene_rechnungen_app_instance: self.offene_rechnungen_app_instance.start_periodic_invoice_check()
+                pass
         else:
             print(f"Error: Page '{page_name}' not found.")
             
@@ -18587,10 +18209,16 @@ class KassenprotokollApp:
             # 3. Den "dirty"-Status zurücksetzen, da nun gespeichert ist.
             self.checklist_dirty[shift_key] = False
 
+            # 4. Manuelles Backup erstellen
+            try:
+                self._perform_manual_backup(ask_confirmation=False)
+            except Exception as e_bak:
+                print(f"Fehler beim manuellen Backup (Checkliste): {e_bak}")
+
             if show_feedback:
                 shift_name = "Frühdienst" if shift_key == 'frueh' else "Spätdienst" if shift_key == 'spaet' else "Nachtdienst"
                 SuccessToast(self.master, title="Gespeichert", message=f"Checkliste für {shift_name} wurde gespeichert.", toast_type='success', colors=self.current_settings.get('toast_colors'))
-            
+
             return True
 
         except Exception as e:
@@ -27943,8 +27571,8 @@ class KassenprotokollApp:
         
     def _handle_daten_aktualisieren_click(self):
         """Handles the 'Daten aktualisieren' button click event using SuccessToast for feedback."""
-        try: 
-            self._save_current_state_to_history() 
+        try:
+            self._save_current_state_to_history()
         except Exception as e_save_initial:
             SuccessToast(self.master,
                          title="Fehler beim Speichern",
@@ -27953,6 +27581,11 @@ class KassenprotokollApp:
                          colors=self.current_settings.get('toast_colors'),
                          duration=5000)
             print(f"Error during pre-emptive save in _handle_daten_aktualisieren_click: {e_save_initial}"); import traceback; traceback.print_exc()
+
+        try:
+            self._perform_manual_backup(ask_confirmation=False)
+        except Exception as e_bak:
+            print(f"Fehler beim manuellen Backup (Daten aktualisieren): {e_bak}")
 
         loaded_from_shared_successfully = False
         sync_attempted_with_history = False
@@ -30764,7 +30397,7 @@ class KassenprotokollApp:
         button_order = [
             'OR_AddRow',
             'OR_Import', 'OR_DeleteAll', 'OR_Edit', 'OR_Kommentar',
-            'OR_Cleanup', 'OR_SavePDF', 'OR_Email',
+            'OR_SavePDF', 'OR_Email',
             'OR_History'
         ]
         
