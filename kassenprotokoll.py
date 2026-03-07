@@ -1152,7 +1152,8 @@ class OffeneRechnungenApp:
         self.action_buttons = {}
         self.button_images = {}
         self.is_destroyed = False
-        self.comment_icon = self.app.comment_icon 
+        self.checked_ids = set()
+        self.comment_icon = self.app.comment_icon
         
         self._build_ui()
         
@@ -1278,6 +1279,8 @@ class OffeneRechnungenApp:
             self._configure_or_button(btn, key, props['text'])
             self.action_buttons[key] = btn
 
+        self._update_delete_button_state()
+
     def _create_table_view(self, parent):
         parent.grid_rowconfigure(0, weight=1); parent.grid_columnconfigure(0, weight=1)
         tree_frame = tk.Frame(parent, bg='#B8CCE0')
@@ -1285,6 +1288,7 @@ class OffeneRechnungenApp:
         tree_frame.rowconfigure(0, weight=1); tree_frame.columnconfigure(0, weight=1)
 
         cols = {
+            'check':         {'text': '☑',                  'width': 44,  'minwidth': 44},
             'veranstaltung': {'text': 'Veranstaltung',     'width': 220, 'minwidth': 150},
             'va_datum':      {'text': 'VA Datum',           'width': 170, 'minwidth': 100},
             'inforg_raus':   {'text': 'INFORG raus am',     'width': 170, 'minwidth': 150},
@@ -1315,8 +1319,11 @@ class OffeneRechnungenApp:
         tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
         tree.grid(row=0, column=0, sticky='nsew'); vsb.grid(row=0, column=1, sticky='ns'); hsb.grid(row=1, column=0, sticky='ew')
 
+        tree.tag_configure('checked', background='#C8E6FF')
+
         tree.bind("<Double-1>", self._on_edit_entry)
         tree.bind("<Button-3>", self._open_comment_editor)
+        tree.bind("<ButtonRelease-1>", self._on_check_click)
         TreeViewCellNavigation(tree, edit_command_func=self._on_edit_selected_entry)
         tree.bind("<<TreeviewSelect>>", self._on_tree_select, add="+")
 
@@ -1433,9 +1440,11 @@ class OffeneRechnungenApp:
             self.tree.delete(item)
         for entry in self.all_data:
             disp = self._build_display_row(entry)
-            values_list = [disp[k] for k in ['veranstaltung', 'va_datum', 'inforg_raus', 'nachgehackt_1', 'nachgehackt_2', 'rg_raus']]
             item_id = entry['id']
-            self.tree.insert('', 'end', iid=item_id, values=values_list)
+            check_val = '☑' if item_id in self.checked_ids else '☐'
+            values_list = [check_val] + [disp[k] for k in ['veranstaltung', 'va_datum', 'inforg_raus', 'nachgehackt_1', 'nachgehackt_2', 'rg_raus']]
+            row_tags = ('checked',) if item_id in self.checked_ids else ()
+            self.tree.insert('', 'end', iid=item_id, values=values_list, tags=row_tags)
             if entry.get('kommentar', ''):
                 self.tree.item(item_id, image=self.comment_icon)
             else:
@@ -1461,7 +1470,9 @@ class OffeneRechnungenApp:
                 self.all_data = []
         else:
             self.all_data = []
+        self.checked_ids.clear()
         self.populate_tables()
+        self._update_delete_button_state()
 
     def _save_history_snapshot(self, action):
         if not hasattr(self.app, 'offene_rechnungen_history_file'):
@@ -1560,20 +1571,43 @@ class OffeneRechnungenApp:
                 self.populate_tables()
                 self.save_data(show_toast=False, action="Eintrag bearbeitet")
 
+    def _on_check_click(self, event):
+        region = self.tree.identify_region(event.x, event.y)
+        if region != 'cell':
+            return
+        col = self.tree.identify_column(event.x)
+        if col != '#1':
+            return
+        row = self.tree.identify_row(event.y)
+        if not row:
+            return
+        if row in self.checked_ids:
+            self.checked_ids.discard(row)
+            self.tree.set(row, 'check', '☐')
+            self.tree.item(row, tags=())
+        else:
+            self.checked_ids.add(row)
+            self.tree.set(row, 'check', '☑')
+            self.tree.item(row, tags=('checked',))
+        self._update_delete_button_state()
+
+    def _update_delete_button_state(self):
+        btn = self.action_buttons.get('OR_DeleteAll')
+        if btn:
+            btn.config(state='normal' if self.checked_ids else 'disabled')
+
     def _on_delete_all(self):
-        if not self.tree.selection():
-            SuccessToast(self.app.master, title="Keine Auswahl", message="Bitte einen Eintrag zum Löschen auswählen.", toast_type='warning', colors=self.app.current_settings.get('toast_colors'))
+        if not self.checked_ids:
+            SuccessToast(self.app.master, title="Keine Auswahl", message="Bitte mindestens eine Checkbox markieren.", toast_type='warning', colors=self.app.current_settings.get('toast_colors'))
             return
-        selected_id = self.tree.selection()[0]
-        entry_to_delete = next((e for e in self.all_data if e.get('id') == selected_id), None)
-        if not entry_to_delete:
-            return
-        name = entry_to_delete.get('gruppenname', 'diesen Eintrag')
-        if messagebox.askyesno("Bestätigung", f'Eintrag "{name}" wirklich löschen?', parent=self.app.master):
-            self.all_data = [e for e in self.all_data if e.get('id') != selected_id]
-            self.populate_tables()
-            self.save_data(show_toast=False, action=f"Eintrag gelöscht: {name}")
-            SuccessToast(self.app.master, title="Gelöscht", message=f'"{name}" wurde entfernt.', toast_type='success', colors=self.app.current_settings.get('toast_colors'))
+        ids_to_delete = set(self.checked_ids)
+        count = len(ids_to_delete)
+        self.all_data = [e for e in self.all_data if e.get('id') not in ids_to_delete]
+        self.checked_ids.clear()
+        self.populate_tables()
+        self._update_delete_button_state()
+        self.save_data(show_toast=False, action=f"{count} Eintrag/Einträge gelöscht")
+        SuccessToast(self.app.master, title="Gelöscht", message=f"{count} Eintrag/Einträge wurden entfernt.", toast_type='success', colors=self.app.current_settings.get('toast_colors'))
 
     def _on_import_excel(self):
         if not openpyxl_available:
