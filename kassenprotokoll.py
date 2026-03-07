@@ -418,31 +418,98 @@ class OffeneRechnungenPDF(FPDF):
         self.set_font(self.font_family, '', 8)
         self.cell(0, 10, f'Seite {self.page_no()}', 0, align='C')
 
+    def _count_wrap_lines(self, text, col_w):
+        """Zählt Zeilen – wortweise, bei zu langen Wörtern zeichenweise."""
+        usable_w = col_w - 2
+        if usable_w <= 0:
+            return 1
+        space_w = self.get_string_width(' ')
+        lines, line_w = 1, 0
+        for word in text.split(' '):
+            word_w = self.get_string_width(word)
+            sep_w = space_w if line_w > 0 else 0
+            if word_w > usable_w:
+                for char in word:
+                    char_w = self.get_string_width(char)
+                    if line_w + char_w > usable_w and line_w > 0:
+                        lines += 1
+                        line_w = char_w
+                    else:
+                        line_w += char_w
+            elif line_w + sep_w + word_w > usable_w and line_w > 0:
+                lines += 1
+                line_w = word_w
+            else:
+                line_w += sep_w + word_w
+        return lines
+
     def draw_table(self, title, data, col_configs):
         self.set_font(self.font_family, 'B', 12)
         self.cell(0, 10, title, 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
-        
+
+        # Haupt-Spalten (ohne separate_row-Spalten) für Header
+        main_cols = {k: v for k, v in col_configs.items() if not v.get('separate_row')}
+
         # Header
         self.set_font(self.font_family, 'B', 8)
         self.set_fill_color(220, 220, 220)
         page_width = self.w - 2 * self.l_margin
-        for col_id, config in col_configs.items():
+        # Tabellenbreite = Summe der Hauptspalten (kann < page_width sein)
+        table_w = sum(cfg['width_pct'] for cfg in main_cols.values()) * page_width
+        for col_id, config in main_cols.items():
             self.cell(page_width * config['width_pct'], 7, config['text'], 1, align='C', fill=1)
         self.ln()
 
         # Data
+        cell_h = 6
         self.set_font(self.font_family, '', 7)
         for row_data in data:
             if self.get_y() > (self.h - self.b_margin - 12): self.add_page()
 
-            for col_id, config in col_configs.items():
+            # ── Hauptzeile (einheitliche Höhe = cell_h) ──────────────────────
+            row_y = self.get_y()
+            x = self.l_margin
+            for col_id, config in main_cols.items():
                 col_w = page_width * config['width_pct']
                 text = str(row_data.get(col_id, ''))
-                # Text abschneiden, falls er breiter als die Zelle ist
                 while text and self.get_string_width(text) > col_w - 1:
                     text = text[:-1]
-                self.cell(col_w, 6, text, 1, align=config.get('align', 'L'))
-            self.ln()
+                self.set_xy(x, row_y)
+                self.cell(col_w, cell_h, text, 1, align=config.get('align', 'L'))
+                x += col_w
+            self.set_xy(self.l_margin, row_y + cell_h)
+
+            # ── Kommentar-Subzeile (volle Breite, nur wenn Inhalt vorhanden) ─
+            for col_id, config in col_configs.items():
+                if not config.get('separate_row'):
+                    continue
+                comment = str(row_data.get(col_id, '')).strip()
+                if not comment:
+                    continue
+                if self.get_y() > (self.h - self.b_margin - 12): self.add_page()
+                sub_y = self.get_y()
+                label = config.get('label', config['text']) + ': '
+                self.set_font(self.font_family, 'B', 7)
+                label_w = self.get_string_width(label) + 2
+                text_w = table_w - label_w - 2
+                self.set_font(self.font_family, '', 7)
+                n_lines = self._count_wrap_lines(comment, text_w)
+                sub_h = n_lines * cell_h
+                # Hintergrund + Rahmen – exakt so breit wie die Tabelle
+                self.set_fill_color(245, 245, 245)
+                self.rect(self.l_margin, sub_y, table_w, sub_h, style='FD')
+                # Label fett
+                self.set_font(self.font_family, 'B', 7)
+                self.set_xy(self.l_margin + 1, sub_y)
+                self.cell(label_w, cell_h, label, 0, align='L')
+                # Text mehrzeilig
+                self.set_font(self.font_family, '', 7)
+                self.set_xy(self.l_margin + label_w + 1, sub_y)
+                self.multi_cell(text_w, cell_h, comment, border=0,
+                                align='L', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+                self.set_xy(self.l_margin, sub_y + sub_h)
+                self.set_fill_color(255, 255, 255)
+
         self.ln(8)
 
 class CalendarPopup(tk.Toplevel):
@@ -637,7 +704,7 @@ class CleanupPreviewDialog(tk.Toplevel):
         tree_frame = tk.Frame(outer, bg=CARD_BG, padx=2, pady=2)
         tree_frame.pack(fill='both', expand=True)
 
-        cols = ("bk_ref", "gruppenname", "anreise", "abreise", "final_datum")
+        cols = ("veranstaltung", "va_datum", "nachgehackt_2")
         self.tree = ttk.Treeview(tree_frame, columns=cols, show="headings", height=12)
 
         style = ttk.Style(self)
@@ -657,15 +724,13 @@ class CleanupPreviewDialog(tk.Toplevel):
         self.tree.configure(style="Cleanup.Treeview")
 
         col_cfg = [
-            ("bk_ref",      "BK-Referenz",    110, 'center'),
-            ("gruppenname", "Gruppenname",     260, 'w'),
-            ("anreise",     "Anreise",          90, 'center'),
-            ("abreise",     "Abreise",          90, 'center'),
-            ("final_datum", "Final versendet",  110, 'center'),
+            ("veranstaltung", "Veranstaltung",    260, 'w'),
+            ("va_datum",      "VA Datum",          150, 'center'),
+            ("nachgehackt_2", "2. mal Nachgehackt", 160, 'center'),
         ]
         for cid, lbl, w, anchor in col_cfg:
             self.tree.heading(cid, text=lbl)
-            self.tree.column(cid, width=w, anchor=anchor, stretch=(cid == "gruppenname"))
+            self.tree.column(cid, width=w, anchor=anchor, stretch=(cid == "veranstaltung"))
 
         self.tree.tag_configure("even", background=ROW_EVEN)
         self.tree.tag_configure("odd",  background=ROW_ODD)
@@ -682,12 +747,16 @@ class CleanupPreviewDialog(tk.Toplevel):
 
         for i, entry in enumerate(entries):
             tag = "even" if i % 2 == 0 else "odd"
+            anreise = entry.get('anreise', '')
+            abreise = entry.get('abreise', '')
+            va_datum = f"{anreise} - {abreise}" if anreise and abreise else anreise or abreise
+            final_datum = entry.get('final_datum', '')
+            final_kuerzel = entry.get('final_kuerzel', '')
+            nachgehackt_2 = f"{final_datum} ({final_kuerzel})" if final_datum and final_kuerzel else final_datum
             self.tree.insert("", "end", tags=(tag,), values=(
-                entry.get('bk_ref', ''),
                 entry.get('gruppenname', ''),
-                entry.get('anreise', ''),
-                entry.get('abreise', ''),
-                entry.get('final_datum', ''),
+                va_datum,
+                nachgehackt_2,
             ))
 
         # ── Trennlinie ───────────────────────────────────────────────
@@ -770,11 +839,12 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
         entry_ipady = 8
 
         self.data_vars = {
-            'id': tk.StringVar(), 'bk_ref': tk.StringVar(), 'gruppenname': tk.StringVar(),
+            'id': tk.StringVar(), 'gruppenname': tk.StringVar(),
             'anreise': tk.StringVar(), 'abreise': tk.StringVar(),
-            'info_sent': tk.StringVar(value="Nein"), 'info_kuerzel': tk.StringVar(), 'info_datum': tk.StringVar(),
-            'erneut_sent': tk.StringVar(value="Nein"), 'erneut_kuerzel': tk.StringVar(), 'erneut_datum': tk.StringVar(),
-            'final_sent': tk.StringVar(value="Nein"), 'final_kuerzel': tk.StringVar(), 'final_datum': tk.StringVar()
+            'info_kuerzel': tk.StringVar(), 'info_datum': tk.StringVar(),
+            'erneut_kuerzel': tk.StringVar(), 'erneut_datum': tk.StringVar(),
+            'final_kuerzel': tk.StringVar(), 'final_datum': tk.StringVar(),
+            'rg_kuerzel': tk.StringVar(), 'rg_datum': tk.StringVar(),
         }
 
         if self.is_editing and entry_data:
@@ -784,16 +854,11 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
             self.data_vars['id'].set(uuid.uuid4().hex)
 
         kuerzel_options = ['', 'MZ', 'SS', 'JH']
-        # Die leere Option ('') ist wichtig, damit die Logik eine unvollständige Eingabe erkennen kann.
-        status_options = ['','Ja', 'Nein', 'in Bearbeitung', 'an Bankett übergeben', 'noch offen']
 
         row = 0
-        ttk.Label(main_frame, text="BK-Referenz:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
-        ttk.Entry(main_frame, textvariable=self.data_vars['bk_ref'], font=dialog_font).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3, ipady=entry_ipady); row+=1
-        
-        ttk.Label(main_frame, text="Gruppenname:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
+        ttk.Label(main_frame, text="Veranstaltung:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
         ttk.Entry(main_frame, textvariable=self.data_vars['gruppenname'], font=dialog_font).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3, ipady=entry_ipady); row+=1
-        
+
         ttk.Label(main_frame, text="Anreise:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
         self._make_date_field(main_frame, self.data_vars['anreise'], dialog_font, entry_ipady, max_date=datetime.date.today() - datetime.timedelta(days=1)).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
 
@@ -801,15 +866,15 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
         self._make_date_field(main_frame, self.data_vars['abreise'], dialog_font, entry_ipady).grid(row=row, column=1, columnspan=3, sticky='ew', padx=5, pady=3); row+=1
 
         sections = [
-            ('Info versendet:', 'info_sent', 'info_kuerzel', 'info_datum'),
-            ('Erneut versendet:', 'erneut_sent', 'erneut_kuerzel', 'erneut_datum'),
-            ('Final versendet:', 'final_sent', 'final_kuerzel', 'final_datum')
+            ('INFORG raus am:', 'info_kuerzel', 'info_datum'),
+            ('1.mal Nachgehackt:', 'erneut_kuerzel', 'erneut_datum'),
+            ('2. mal Nachgehackt:', 'final_kuerzel', 'final_datum'),
+            ('RG raus am:', 'rg_kuerzel', 'rg_datum'),
         ]
-        
-        for i, (label, status_key, kuerzel_key, datum_key) in enumerate(sections):
+
+        for label, kuerzel_key, datum_key in sections:
             ttk.Separator(main_frame, orient='horizontal').grid(row=row, column=0, columnspan=4, sticky='ew', pady=8); row+=1
             ttk.Label(main_frame, text=label, font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
-            ttk.Combobox(main_frame, textvariable=self.data_vars[status_key], values=status_options, state='readonly', width=22, font=dialog_font).grid(row=row, column=1, sticky='w', padx=5)
             ttk.Label(main_frame, text="Kürzel:", font=dialog_font).grid(row=row, column=2, sticky='e', padx=5)
             ttk.Combobox(main_frame, textvariable=self.data_vars[kuerzel_key], values=kuerzel_options, state='readonly', width=7, font=dialog_font).grid(row=row, column=3, sticky='w', padx=5); row+=1
             ttk.Label(main_frame, text="Datum:", font=dialog_font).grid(row=row, column=0, sticky='w', padx=5, pady=3)
@@ -855,23 +920,12 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
         return frame
 
     def on_save(self):
-        import re
-        # BK-Referenz validieren (Format: BK gefolgt von Ziffern, optional /Ziffern, z.B. BK009514 oder BK123456/1)
-        bk_ref = self.data_vars['bk_ref'].get().strip()
-        if not re.match(r'^BK\d+(/\d+)?$', bk_ref):
-            messagebox.showerror(
-                "Ungültige BK-Referenz",
-                "Die BK-Referenz muss das Format BK + Ziffern haben (z.B. BK009514 oder BK123456/1).",
-                parent=self
-            )
-            return
-
-        # Grundlegende Validierung für den Gruppennamen
+        # Grundlegende Validierung für den Veranstaltungsnamen
         if not self.data_vars['gruppenname'].get().strip():
-            messagebox.showerror("Fehler", "Der Gruppenname darf nicht leer sein.", parent=self)
+            messagebox.showerror("Fehler", "Der Veranstaltungsname darf nicht leer sein.", parent=self)
             return
 
-        # Datumsvalidierung: Anreise muss in der Vergangenheit liegen, Abreise maximal heute
+        # Datumsvalidierung: Anreise muss in der Vergangenheit liegen
         def parse_date(s):
             for fmt in ("%d.%m.%Y", "%d.%m.%y"):
                 try:
@@ -882,7 +936,6 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
 
         today = datetime.date.today()
         anreise_date = parse_date(self.data_vars['anreise'].get())
-        abreise_date = parse_date(self.data_vars['abreise'].get())
 
         if anreise_date and anreise_date >= today:
             messagebox.showerror(
@@ -893,54 +946,25 @@ class OffeneRechnungEntryDialog(tk.Toplevel):
             )
             return
 
-
-        # Definition der zu prüfenden Sektionen
+        # Prüfung jeder Sektion: wenn kuerzel oder datum gesetzt, müssen beide gesetzt sein
         sections_to_validate = [
-            {'label': 'Info versendet', 'keys': ('info_sent', 'info_kuerzel', 'info_datum')},
-            {'label': 'Erneut versendet', 'keys': ('erneut_sent', 'erneut_kuerzel', 'erneut_datum')},
-            {'label': 'Final versendet', 'keys': ('final_sent', 'final_kuerzel', 'final_datum')}
+            ('INFORG raus am', 'info_kuerzel', 'info_datum'),
+            ('1.mal Nachgehackt', 'erneut_kuerzel', 'erneut_datum'),
+            ('2. mal Nachgehackt', 'final_kuerzel', 'final_datum'),
+            ('RG raus am', 'rg_kuerzel', 'rg_datum'),
         ]
 
-        # Prüfung jeder Sektion auf Vollständigkeit, falls sie bearbeitet wurde
-        for section in sections_to_validate:
-            status_key, kuerzel_key, datum_key = section['keys']
+        for label, kuerzel_key, datum_key in sections_to_validate:
+            kuerzel = self.data_vars[kuerzel_key].get()
+            datum = self.data_vars[datum_key].get().strip()
+            if bool(kuerzel) != bool(datum):
+                messagebox.showerror(
+                    "Unvollständige Eingabe",
+                    f"Im Bereich '{label}' müssen Kürzel und Datum entweder beide ausgefüllt oder beide leer sein.",
+                    parent=self
+                )
+                return
 
-            # Aktuelle Werte aus den UI-Elementen holen
-            current_status = self.data_vars[status_key].get()
-            current_kuerzel = self.data_vars[kuerzel_key].get()
-            current_datum = self.data_vars[datum_key].get().strip()
-
-            # Ursprüngliche Werte aus den beim Öffnen gespeicherten Daten holen
-            initial_status = self.initial_data.get(status_key, "Nein")
-            initial_kuerzel = self.initial_data.get(kuerzel_key, "")
-            initial_datum = self.initial_data.get(datum_key, "")
-
-            # Prüfen, ob irgendein Feld in dieser Sektion geändert wurde
-            was_edited = (
-                current_status != initial_status or
-                current_kuerzel != initial_kuerzel or
-                current_datum != initial_datum
-            )
-
-            # Wenn eine Änderung stattgefunden hat, muss die Sektion vollständig sein
-            if was_edited:
-                # Vollständigkeit prüfen: Alle drei Felder müssen einen Wert haben (nicht leer sein)
-                is_complete = all([
-                    current_status,  # Prüft, ob der String nicht leer ist ('')
-                    current_kuerzel, # Prüft, ob der String nicht leer ist ('')
-                    current_datum    # Prüft, ob der String nach dem Strippen nicht leer ist
-                ])
-
-                if not is_complete:
-                    messagebox.showerror(
-                        "Unvollständige Eingabe",
-                        f"Im Bereich '{section['label']}' wurde eine Änderung vorgenommen. "
-                        f"Bitte füllen Sie alle drei Felder (Status, Kürzel und Datum) vollständig aus.",
-                        parent=self
-                    )
-                    return # Verhindert das Schließen des Fensters
-
-        # Wenn alle Prüfungen bestanden wurden, Daten speichern und Dialog schließen
         self.result = {key: var.get() for key, var in self.data_vars.items()}
         self.destroy()
 
@@ -1487,21 +1511,23 @@ class OffeneRechnungenApp:
         tree_frame.rowconfigure(0, weight=1); tree_frame.columnconfigure(0, weight=1)
 
         cols = {
-            'bk_ref': {'text': 'BK-Referenz', 'width': 150}, 'gruppenname': {'text': 'Gruppenname', 'width': 350},
-            'anreise': {'text': 'Anreise', 'width': 100}, 'abreise': {'text': 'Abreise', 'width': 100},
-            'info_sent': {'text': 'Info Versendet', 'width': 160}, 'info_kuerzel': {'text': 'Kürzel', 'width': 60}, 'info_datum': {'text': 'Datum', 'width': 100},
-            'erneut_sent': {'text': 'Erneut versendet', 'width': 160}, 'erneut_kuerzel': {'text': 'Kürzel', 'width': 60}, 'erneut_datum': {'text': 'Datum', 'width': 100},
-            'final_sent': {'text': 'Final versendet', 'width': 160}, 'final_kuerzel': {'text': 'Kürzel', 'width': 60}, 'final_datum': {'text': 'Datum', 'width': 100}
+            'veranstaltung': {'text': 'Veranstaltung',     'width': 220, 'minwidth': 150},
+            'va_datum':      {'text': 'VA Datum',           'width': 170, 'minwidth': 100},
+            'inforg_raus':   {'text': 'INFORG raus am',     'width': 170, 'minwidth': 150},
+            'nachgehackt_1': {'text': '1.mal Nachgehackt',  'width': 170, 'minwidth': 160},
+            'nachgehackt_2': {'text': '2. mal Nachgehackt', 'width': 175, 'minwidth': 165},
+            'rg_raus':       {'text': 'RG raus am',         'width': 165, 'minwidth': 120},
         }
 
         style_name = "OffeneRechnungen.Treeview"
         self.app.style.configure(style_name, rowheight=40, font=("Segoe UI", 12),
                                  background='#FFFFFF', fieldbackground='#FFFFFF')
         self.app.style.configure(f"{style_name}.Heading",
-                                 font=("Segoe UI", 14, "bold"),
-                                 background='#1B6CA8', foreground='white', relief='flat')
+                                 font=("Segoe UI", 12, "bold"),
+                                 background='#1B6CA8', foreground='white', relief='flat',
+                                 padding=(8, 6))
         self.app.style.map(f"{style_name}.Heading",
-                           background=[('active', '#0D2137')])
+                           background=[('active', '#155A8A')])
 
         tree = ttk.Treeview(tree_frame, columns=list(cols.keys()), show='tree headings', style=style_name)
         tree.column("#0", width=40, stretch=tk.NO, anchor='center')
@@ -1510,7 +1536,8 @@ class OffeneRechnungenApp:
         tree.tag_configure('yellow_row', background='#FFFFE0')
         tree.tag_configure('green_row', background='#DDFFDD')
         for col_id, cfg in cols.items():
-            tree.heading(col_id, text=cfg['text']); tree.column(col_id, width=cfg['width'], anchor='w', stretch=tk.NO)
+            tree.heading(col_id, text=cfg['text'])
+            tree.column(col_id, width=cfg['width'], minwidth=cfg['minwidth'], anchor='w', stretch=tk.YES)
 
         vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=tree.yview)
         hsb = ttk.Scrollbar(tree_frame, orient="horizontal", command=tree.xview)
@@ -1519,7 +1546,7 @@ class OffeneRechnungenApp:
 
         tree.bind("<Double-1>", self._on_edit_entry)
         tree.bind("<Button-3>", self._open_comment_editor)
-        TreeViewToolTip(tree, self, '#0', 'kommentar')
+        tree.bind("<<TreeviewSelect>>", self._on_tree_select)
         TreeViewCellNavigation(tree, edit_command_func=self._on_edit_selected_entry)
 
         add_btn_frame = ttk.Frame(parent); add_btn_frame.grid(row=1, column=0, sticky='w', pady=(10, 0))
@@ -1551,7 +1578,26 @@ class OffeneRechnungenApp:
         ipady_cfg = self.app.current_settings.get('list_views_button_style', {})
         ipady = ipady_cfg.get('ipady', 5)
         add_button.pack(ipady=ipady)
-        
+
+        # ── Kommentar-Vorschau-Strip ──────────────────────────────────────────
+        comment_frame = tk.Frame(parent, bg='#F0F4F8', relief='flat',
+                                 highlightbackground='#B8CCE0', highlightthickness=1)
+        comment_frame.grid(row=2, column=0, sticky='ew', pady=(8, 0))
+        comment_frame.columnconfigure(1, weight=1)
+
+        tk.Label(comment_frame, text="💬 Kommentar:", bg='#F0F4F8',
+                 font=("Segoe UI", 11, "bold"), fg='#1B6CA8').grid(
+            row=0, column=0, padx=(8, 6), pady=6, sticky='nw')
+
+        self.comment_preview_text = tk.Text(
+            comment_frame, wrap='word', height=3,
+            font=("Segoe UI", 11), bg='#F0F4F8', fg='#2C3E50',
+            relief='flat', bd=0, state='disabled',
+            cursor='arrow'
+        )
+        self.comment_preview_text.grid(row=0, column=1, padx=(0, 8), pady=6, sticky='ew')
+        self._set_comment_preview("Zeile auswählen um den Kommentar anzuzeigen.", placeholder=True)
+
         return tree
 
     def _open_comment_editor(self, event):
@@ -1580,6 +1626,30 @@ class OffeneRechnungenApp:
                 self.tree.item(item_id, image=self.comment_icon)
             else:
                 self.tree.item(item_id, image='')
+            self._on_tree_select()
+
+    def _set_comment_preview(self, text, placeholder=False):
+        """Setzt den Text im Kommentar-Vorschau-Strip."""
+        if not hasattr(self, 'comment_preview_text') or not self.comment_preview_text.winfo_exists():
+            return
+        w = self.comment_preview_text
+        w.config(state='normal')
+        w.delete('1.0', 'end')
+        w.insert('1.0', text)
+        w.config(fg='#999999' if placeholder else '#2C3E50', state='disabled')
+
+    def _on_tree_select(self, event=None):
+        """Aktualisiert den Kommentar-Strip bei Zeilenauswahl."""
+        sel = self.tree.selection()
+        if not sel:
+            self._set_comment_preview("Zeile auswählen um den Kommentar anzuzeigen.", placeholder=True)
+            return
+        entry = next((e for e in self.all_data if e.get('id') == sel[0]), None)
+        comment = entry.get('kommentar', '').strip() if entry else ''
+        if comment:
+            self._set_comment_preview(comment)
+        else:
+            self._set_comment_preview("Kein Kommentar vorhanden.", placeholder=True)
 
     def populate_tables(self):
         # KORREKTUR: Sicherheitsprüfung, ob die Instanz zerstört wird.
@@ -1592,7 +1662,8 @@ class OffeneRechnungenApp:
             self.tree.delete(item)
         for entry in self.all_data:
             color_tag = self._get_row_color_tag(entry)
-            values_list = [entry.get(k, '') for k in ['bk_ref', 'gruppenname', 'anreise', 'abreise', 'info_sent', 'info_kuerzel', 'info_datum', 'erneut_sent', 'erneut_kuerzel', 'erneut_datum', 'final_sent', 'final_kuerzel', 'final_datum']]
+            disp = self._build_display_row(entry)
+            values_list = [disp[k] for k in ['veranstaltung', 'va_datum', 'inforg_raus', 'nachgehackt_1', 'nachgehackt_2', 'rg_raus']]
             item_id = entry['id']
             self.tree.insert('', 'end', iid=item_id, values=values_list, tags=(color_tag,))
             if entry.get('kommentar', ''):
@@ -1708,14 +1779,11 @@ class OffeneRechnungenApp:
             if entry_index != -1:
                 warnings_dismissed = entry_to_edit.get('warnings_dismissed',
                                                        {"erneut": False, "final_send": False, "final": False, "cleanup_ready": False, "initial_send": False})
-                if (entry_to_edit.get('info_sent') != 'Ja' and updated_data.get('info_sent') == 'Ja') or \
-                   (updated_data.get('info_sent') == 'Ja' and entry_to_edit.get('info_datum') != updated_data.get('info_datum')):
+                if entry_to_edit.get('info_datum') != updated_data.get('info_datum'):
                     warnings_dismissed['erneut'] = False
-                if (entry_to_edit.get('erneut_sent') != 'Ja' and updated_data.get('erneut_sent') == 'Ja') or \
-                   (updated_data.get('erneut_sent') == 'Ja' and entry_to_edit.get('erneut_datum') != updated_data.get('erneut_datum')):
+                if entry_to_edit.get('erneut_datum') != updated_data.get('erneut_datum'):
                     warnings_dismissed['final_send'] = False
-                if (entry_to_edit.get('final_sent') != 'Ja' and updated_data.get('final_sent') == 'Ja') or \
-                   (updated_data.get('final_sent') == 'Ja' and entry_to_edit.get('final_datum') != updated_data.get('final_datum')):
+                if entry_to_edit.get('final_datum') != updated_data.get('final_datum'):
                     warnings_dismissed['cleanup_ready'] = False
                 updated_data['warnings_dismissed'] = warnings_dismissed
                 updated_data['kommentar'] = entry_to_edit.get('kommentar', '')
@@ -1735,15 +1803,13 @@ class OffeneRechnungenApp:
             cutoff = datetime.date.today() - datetime.timedelta(days=7)
 
             def is_old_and_final(entry):
-                if entry.get('final_sent') == 'Ja' or entry.get('final_datum'):
-                    final_datum = entry.get('final_datum')
-                    if not final_datum:
-                        return False
-                    entry_date = self._parse_date(final_datum)
-                    if entry_date is None:
-                        return False
-                    return entry_date < cutoff
-                return False
+                final_datum = entry.get('final_datum')
+                if not final_datum:
+                    return False
+                entry_date = self._parse_date(final_datum)
+                if entry_date is None:
+                    return False
+                return entry_date < cutoff
 
             to_delete = [e for e in self.all_data if is_old_and_final(e)]
 
@@ -1785,7 +1851,7 @@ class OffeneRechnungenApp:
             workbook = openpyxl.load_workbook(file_path)
             sheet = workbook.active
             imported_count = 0; new_entries = []
-            expected_keys = ['bk_ref', 'gruppenname', 'anreise', 'abreise', 'info_sent', 'info_kuerzel', 'info_datum', 'erneut_sent', 'erneut_kuerzel', 'erneut_datum', 'final_sent', 'final_kuerzel', 'final_datum']
+            expected_keys = ['gruppenname', 'anreise', 'abreise', 'info_kuerzel', 'info_datum', 'erneut_kuerzel', 'erneut_datum', 'final_kuerzel', 'final_datum', 'rg_kuerzel', 'rg_datum']
 
             for row in sheet.iter_rows(min_row=2, values_only=True):
                 if not any(row): continue
@@ -1852,22 +1918,22 @@ class OffeneRechnungenApp:
             warnings_dismissed = entry.get('warnings_dismissed', {})
 
             try:
-                if not warnings_dismissed.get('cleanup_ready', False) and entry.get('final_sent') == 'Ja' and entry.get('final_datum'):
+                if not warnings_dismissed.get('cleanup_ready', False) and entry.get('final_datum'):
                     entry_date = self._parse_date(entry['final_datum'])
                     if entry_date and (today - entry_date).days >= 14:
-                        WarningDialogWithDismiss(self.app.master, "Hinweis zur Bereinigung", f"14 Tage nach dem 3. Versuch sind vergangen. Die Rechnung für '{gruppenname}' kann nun über den Button '>14 Tage löschen' entfernt werden.", lambda eid=entry_id, flag='cleanup_ready': self.dismiss_warning_for_entry(eid, flag)); return
+                        WarningDialogWithDismiss(self.app.master, "Hinweis zur Bereinigung", f"14 Tage nach dem 2.mal Nachgehackt sind vergangen. Die Rechnung für '{gruppenname}' kann nun über den Button '>14 Tage löschen' entfernt werden.", lambda eid=entry_id, flag='cleanup_ready': self.dismiss_warning_for_entry(eid, flag)); return
 
-                elif not warnings_dismissed.get('final_send', False) and entry.get('erneut_sent') == 'Ja' and entry.get('erneut_datum'):
+                elif not warnings_dismissed.get('final_send', False) and entry.get('erneut_datum'):
                     erneut_date = self._parse_date(entry['erneut_datum'])
                     if erneut_date and (today - erneut_date).days >= 7:
-                        WarningDialogWithDismiss(self.app.master, "Warnung", f"Eine Woche nach dem 2. Versuch ist vergangen. Bitte die Rechnung für '{gruppenname}' erneut versenden (3. Versuch).", lambda eid=entry_id, flag='final_send': self.dismiss_warning_for_entry(eid, flag)); return
+                        WarningDialogWithDismiss(self.app.master, "Warnung", f"Eine Woche nach dem 1.mal Nachgehackt ist vergangen. Bitte '{gruppenname}' erneut kontaktieren (2.mal Nachgehackt).", lambda eid=entry_id, flag='final_send': self.dismiss_warning_for_entry(eid, flag)); return
 
-                elif not warnings_dismissed.get('erneut', False) and entry.get('info_sent') == 'Ja' and entry.get('info_datum'):
+                elif not warnings_dismissed.get('erneut', False) and entry.get('info_datum'):
                     info_date = self._parse_date(entry['info_datum'])
                     if info_date and (today - info_date).days >= 7:
-                        WarningDialogWithDismiss(self.app.master, "Warnung", f"Eine Woche nach dem Verschicken des 1. Versuchs ist vergangen. Bitte die Rechnung für '{gruppenname}' erneut versenden (2. Versuch).", lambda eid=entry_id, flag='erneut': self.dismiss_warning_for_entry(eid, flag)); return
+                        WarningDialogWithDismiss(self.app.master, "Warnung", f"Eine Woche nach dem Versand der INFORG ist vergangen. Bitte '{gruppenname}' nachgehackt (1.mal Nachgehackt).", lambda eid=entry_id, flag='erneut': self.dismiss_warning_for_entry(eid, flag)); return
 
-                elif entry.get('abreise') and not (entry.get('info_sent') == 'Ja' or entry.get('erneut_sent') == 'Ja' or entry.get('final_sent') == 'Ja') and not warnings_dismissed.get('initial_send', False):
+                elif entry.get('abreise') and not (entry.get('info_datum') or entry.get('erneut_datum') or entry.get('final_datum')) and not warnings_dismissed.get('initial_send', False):
                     abreise_date = self._parse_date(entry['abreise'])
                     if abreise_date and (today - abreise_date).days >= 7:
                         WarningDialogWithDismiss(self.app.master, "Warnung", f"Die Rechnung für '{gruppenname}' wurde vor einer Woche verschickt. Da keine Antwort eingegangen ist, bitte erneut versenden (1. Versuch).", lambda eid=entry_id, flag='initial_send': self.dismiss_warning_for_entry(eid, flag)); return
@@ -1905,6 +1971,27 @@ class OffeneRechnungenApp:
                 continue
         return None
 
+    def _build_display_row(self, entry):
+        """Berechnet die Anzeigewerte für eine Tabellenzeile."""
+        def fmt(datum, kuerzel):
+            if datum and kuerzel:
+                return f"{datum} ({kuerzel})"
+            return datum or ''
+
+        anreise = entry.get('anreise', '')
+        abreise = entry.get('abreise', '')
+        va_datum = f"{anreise} - {abreise}" if anreise and abreise else anreise or abreise
+
+        return {
+            'veranstaltung': entry.get('gruppenname', ''),
+            'va_datum':      va_datum,
+            'inforg_raus':   fmt(entry.get('info_datum', ''), entry.get('info_kuerzel', '')),
+            'nachgehackt_1': fmt(entry.get('erneut_datum', ''), entry.get('erneut_kuerzel', '')),
+            'nachgehackt_2': fmt(entry.get('final_datum', ''), entry.get('final_kuerzel', '')),
+            'rg_raus':       fmt(entry.get('rg_datum', ''), entry.get('rg_kuerzel', '')),
+            'kommentar':     entry.get('kommentar', ''),
+        }
+
     def _get_row_color_tag(self, entry):
         ampel1_char = self._get_ampel_char_for_date(entry, 7)
         ampel2_char = self._get_ampel_char_for_date(entry, 14)
@@ -1915,8 +2002,8 @@ class OffeneRechnungenApp:
 
     def _get_ampel_char_for_date(self, entry, cycle_days):
         date_str = ''
-        if cycle_days == 7 and entry.get('info_sent') == 'Ja': date_str = entry.get('info_datum')
-        elif cycle_days == 14 and entry.get('erneut_sent') == 'Ja': date_str = entry.get('erneut_datum')
+        if cycle_days == 7: date_str = entry.get('info_datum', '')
+        elif cycle_days == 14: date_str = entry.get('erneut_datum', '')
         if not date_str: return ''
         parsed = self._parse_date(date_str)
         if parsed is None: return ''
@@ -2024,10 +2111,19 @@ class OffeneRechnungenApp:
     def _generate_pdf(self, file_path):
         pdf = OffeneRechnungenPDF(logo_path=_get_pdf_logo_path(self.app.current_settings, 'offene_rechnungen'), datum_str=self.app.date_display_var.get())
         pdf.add_page()
-        col_configs = {'bk_ref':{'text':'BK','width_pct':0.076},'gruppenname':{'text':'Name','width_pct':0.147},'anreise':{'text':'Anr.','width_pct':0.065},'abreise':{'text':'Abr.','width_pct':0.065},'info_sent':{'text':'Info','width_pct':0.108},'info_kuerzel':{'text':'K.','width_pct':0.033},'info_datum':{'text':'Datum','width_pct':0.072},'erneut_sent':{'text':'Erneut','width_pct':0.108},'erneut_kuerzel':{'text':'K.','width_pct':0.033},'erneut_datum':{'text':'Datum','width_pct':0.072},'final_sent':{'text':'Final','width_pct':0.108},'final_kuerzel':{'text':'K.','width_pct':0.033},'final_datum':{'text':'Datum','width_pct':0.072}}
-        
+        col_configs = {
+            'veranstaltung': {'text': 'Veranstaltung',     'width_pct': 0.24},
+            'va_datum':      {'text': 'VA Datum',           'width_pct': 0.16},
+            'inforg_raus':   {'text': 'INFORG raus am',     'width_pct': 0.16},
+            'nachgehackt_1': {'text': '1.mal Nachgehackt',  'width_pct': 0.15},
+            'nachgehackt_2': {'text': '2. mal Nachgehackt', 'width_pct': 0.15},
+            'rg_raus':       {'text': 'RG raus am',         'width_pct': 0.14},
+            'kommentar':     {'text': 'Kommentar', 'label': 'Kommentar', 'separate_row': True, 'width_pct': 0},
+        }
+
         if self.all_data:
-            pdf.draw_table("Offene Rechnungen", self.all_data, col_configs)
+            display_data = [self._build_display_row(e) for e in self.all_data]
+            pdf.draw_table("Offene Rechnungen", display_data, col_configs)
         else:
             pdf.set_font(pdf.font_family, 'B', 12)
             pdf.cell(0, 10, "Offene Rechnungen", 0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
@@ -14564,6 +14660,7 @@ class KassenprotokollApp:
         # Das Schließen-Protokoll wird auf die korrekte Beenden-Methode umgeleitet
         self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
         # ^^^^^ ENDE DER KORREKTUR ^^^^^
+        self.master.bind("<Map>", self._on_window_restore)
 
         self.show_page("Dashboard")
         self.is_loading_data = False
@@ -21128,8 +21225,20 @@ class KassenprotokollApp:
         self.date_display_var.set(formatted_date)
         
     def _minimize_window(self):
-        """Minimiert das Hauptfenster, anstatt es zu schließen."""
+        """Minimiert das Hauptfenster."""
         self.master.iconify()
+
+    def _on_window_restore(self, event):
+        """Stellt das Fenster korrekt aus der Taskleiste wieder her (Windows-Fix)."""
+        if event.widget is not self.master:
+            return
+        try:
+            if self.master.state() in ('iconic', 'withdrawn'):
+                self.master.deiconify()
+            self.master.lift()
+            self.master.focus_force()
+        except tk.TclError:
+            pass
 
 
 
@@ -36781,7 +36890,10 @@ class SplashLoader:
 
     def _finish(self):
         self.splash.destroy()
-        self.root.deiconify() # Hauptfenster zeigen
+        self.root.deiconify()   # Hauptfenster zeigen
+        self.root.update()      # Windows-Zustand vollständig verarbeiten
+        self.root.lift()        # In den Vordergrund bringen
+        self.root.focus_force() # Fokus erzwingen
         self.on_complete_callback() # Haupt-App Logik starten
 
 if __name__ == "__main__":
