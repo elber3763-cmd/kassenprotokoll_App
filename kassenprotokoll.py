@@ -466,29 +466,18 @@ class OffeneRechnungenPDF(FPDF):
         for row_data in data:
             if self.get_y() > (self.h - self.b_margin - 12): self.add_page()
 
-            # ── Zeilenhöhe berechnen (Mehrfachzeilen wenn Text zu lang) ──────
+            # ── Hauptzeile (einheitliche Höhe = cell_h) ──────────────────────
             row_y = self.get_y()
-            max_lines = 1
-            for col_id, config in main_cols.items():
-                col_w = page_width * config['width_pct']
-                text = str(row_data.get(col_id, ''))
-                n = self._count_wrap_lines(text, col_w)
-                if n > max_lines:
-                    max_lines = n
-            row_h = cell_h * max_lines
-
-            # ── Hauptzeile ────────────────────────────────────────────────────
             x = self.l_margin
             for col_id, config in main_cols.items():
                 col_w = page_width * config['width_pct']
                 text = str(row_data.get(col_id, ''))
-                self.rect(x, row_y, col_w, row_h)
-                self.set_xy(x + 1, row_y + 1)
-                self.multi_cell(col_w - 2, cell_h, text, border=0,
-                                align=config.get('align', 'L'),
-                                max_line_height=cell_h)
+                while text and self.get_string_width(text) > col_w - 1:
+                    text = text[:-1]
+                self.set_xy(x, row_y)
+                self.cell(col_w, cell_h, text, 1, align=config.get('align', 'L'))
                 x += col_w
-            self.set_xy(self.l_margin, row_y + row_h)
+            self.set_xy(self.l_margin, row_y + cell_h)
 
             # ── Kommentar-Subzeile (volle Breite, nur wenn Inhalt vorhanden) ─
             for col_id, config in col_configs.items():
@@ -1779,12 +1768,12 @@ class OffeneRechnungenApp:
         pdf = OffeneRechnungenPDF(logo_path=_get_pdf_logo_path(self.app.current_settings, 'offene_rechnungen'), datum_str=self.app.date_display_var.get())
         pdf.add_page()
         col_configs = {
-            'veranstaltung': {'text': 'Veranstaltung',     'width_pct': 0.24},
-            'va_datum':      {'text': 'VA Datum',           'width_pct': 0.16},
+            'veranstaltung': {'text': 'Veranstaltung',     'width_pct': 0.22},
+            'va_datum':      {'text': 'VA Datum',           'width_pct': 0.14},
             'inforg_raus':   {'text': 'INFORG raus am',     'width_pct': 0.16},
-            'nachgehackt_1': {'text': '1.mal Nachgehackt',  'width_pct': 0.15},
-            'nachgehackt_2': {'text': '2. mal Nachgehackt', 'width_pct': 0.15},
-            'rg_raus':       {'text': 'RG raus am',         'width_pct': 0.14},
+            'nachgehackt_1': {'text': '1.mal Nachgehackt',  'width_pct': 0.16},
+            'nachgehackt_2': {'text': '2. mal Nachgehackt', 'width_pct': 0.16},
+            'rg_raus':       {'text': 'RG raus am',         'width_pct': 0.16},
             'kommentar':     {'text': 'Kommentar', 'label': 'Kommentar', 'separate_row': True, 'width_pct': 0},
         }
 
