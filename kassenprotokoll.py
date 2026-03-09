@@ -1738,17 +1738,12 @@ class OffeneRechnungenApp:
             )
 
             def email_callback(pdf_path, recipient, subject, body, cc=None):
-                use_outlook = platform.system() == "Windows" and win32_available
-                if use_outlook:
-                    try:
-                        win32.Dispatch('outlook.application')
-                        return self.app._send_email_via_outlook(pdf_path, recipient, subject, body, cc=cc)
-                    except Exception:
-                        pass
+                if platform.system() == "Windows" and win32_available:
+                    return self.app._send_email_via_outlook(pdf_path, recipient, subject, body, cc=cc)
                 smtp_cfg = self.app.current_settings.get('smtp_settings', {})
-                if not all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email', 'username', 'password']):
-                    return False, "SMTP-Einstellungen sind unvollständig."
-                return self.app._send_email_silently(pdf_path, recipient, subject, body, cc=cc)
+                if all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email']):
+                    return self.app._send_email_silently(pdf_path, recipient, subject, body, cc=cc)
+                return False, "Outlook (pywin32) ist auf diesem System nicht verfügbar und keine SMTP-Konfiguration vorhanden."
 
             preview_dialog = PDFPreviewDialog(
                 parent=self.app.master, app_ref=self.app, pdf_path=temp_pdf_path,
@@ -3433,12 +3428,13 @@ class NamenslistePDF(FPDF):
         self.cell(0, 10, f'Seite {self.page_no()}', 0, align='C')
 
     def create_table(self, data, num_empty_rows=15, col_widths=None):
-        DEFAULTS = {"name": 50, "nationality": 25, "contact": 125, "car": 35, "signature": 42}
+        DEFAULTS = {"room": 38, "name": 50, "nationality": 25, "contact": 87, "car": 35, "signature": 42}
         cw = {k: int(col_widths.get(k, DEFAULTS[k])) if col_widths else DEFAULTS[k] for k in DEFAULTS}
 
         def _draw_header():
             self.set_font(self.font_family, 'B', 10)
             self.set_fill_color(220, 220, 220)
+            self.cell(cw["room"],        8, "Zimmernummer",      1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
             self.cell(cw["name"],        8, "Nachname, Vorname", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
             self.cell(cw["nationality"], 8, "Nationalität",      1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
             self.cell(cw["contact"],     8, "E-Mail / Telefon",  1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
@@ -3457,6 +3453,7 @@ class NamenslistePDF(FPDF):
                 self.set_font(self.font_family, '', 10)
 
             self.set_fill_color(245, 245, 245) if fill else self.set_fill_color(255, 255, 255)
+            self.cell(cw["room"],        10, row.get('room', ''),        1, new_x=XPos.RIGHT,  new_y=YPos.TOP,  align='L', fill=1)
             self.cell(cw["name"],        10, row.get('name', ''),        1, new_x=XPos.RIGHT,  new_y=YPos.TOP,  align='L', fill=1)
             self.cell(cw["nationality"], 10, row.get('nationality', ''), 1, new_x=XPos.RIGHT,  new_y=YPos.TOP,  align='L', fill=1)
             self.cell(cw["contact"],     10, row.get('contact', ''),     1, new_x=XPos.RIGHT,  new_y=YPos.TOP,  align='L', fill=1)
@@ -3578,6 +3575,7 @@ class NamenslisteEntryDialog(tk.Toplevel):
         main_frame.columnconfigure(1, weight=1)
 
         self.id_var = tk.StringVar()
+        self.room_var = tk.StringVar()
         self.name_var = tk.StringVar()
         self.nationality_var = tk.StringVar()
         self.contact_var = tk.StringVar()
@@ -3585,6 +3583,7 @@ class NamenslisteEntryDialog(tk.Toplevel):
 
         if self.is_editing and entry_data:
             self.id_var.set(entry_data.get('id', ''))
+            self.room_var.set(entry_data.get('room', ''))
             self.name_var.set(entry_data.get('name', ''))
             self.nationality_var.set(entry_data.get('nationality', ''))
             self.contact_var.set(entry_data.get('contact', ''))
@@ -3593,6 +3592,7 @@ class NamenslisteEntryDialog(tk.Toplevel):
             self.id_var.set(uuid.uuid4().hex)
 
         fields = [
+            ("Zimmernummer:", self.room_var),
             ("Name (Nachname, Vorname):", self.name_var),
             ("Nationalität:", self.nationality_var),
             ("E-Mail / Telefon:", self.contact_var),
@@ -3633,6 +3633,7 @@ class NamenslisteEntryDialog(tk.Toplevel):
 
         self.result = {
             "id": self.id_var.get(),
+            "room": self.room_var.get().strip(),
             "name": name,
             "nationality": self.nationality_var.get().strip(),
             "contact": self.contact_var.get().strip(),
@@ -9045,19 +9046,12 @@ class MODRundgangApp:
             # Email Callback definieren
             # WICHTIG: Nimmt 'cc' als Argument entgegen, falls der Nutzer es im Dialog ändert
             def email_callback_for_mod_checkliste(pdf_path, recipient, subject, body, cc=None):
-                use_outlook = platform.system() == "Windows" and win32_available
-                if use_outlook:
-                    try:
-                        win32.Dispatch('outlook.application')
-                        return self.app._send_email_via_outlook(pdf_path, recipient, subject, body, cc=cc)
-                    except Exception:
-                        pass
-                
+                if platform.system() == "Windows" and win32_available:
+                    return self.app._send_email_via_outlook(pdf_path, recipient, subject, body, cc=cc)
                 smtp_cfg = self.app.current_settings.get('smtp_settings', {})
-                if not all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email', 'username', 'password']):
-                    return False, "SMTP-Einstellungen sind unvollständig."
-                
-                return self.app._send_email_silently(pdf_path, recipient, subject, body, cc=cc)
+                if all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email']):
+                    return self.app._send_email_silently(pdf_path, recipient, subject, body, cc=cc)
+                return False, "Outlook (pywin32) ist auf diesem System nicht verfügbar und keine SMTP-Konfiguration vorhanden."
             
             # Vorschau-Dialog öffnen
             # Hier wird 'cc_email_setting' als Startwert übergeben
@@ -10845,22 +10839,28 @@ class WeekendPlannerApp:
             
             # Wir senden das ORIGINAL html_body, nicht den Vorschau-Text!
             
-            # 1. Outlook Versuch
-            if hasattr(self.app, '_send_html_email_via_outlook') and self.app._send_html_email_via_outlook(rec, sub, html_body):
-                dialog.destroy()
-                SuccessToast(self.parent_frame, "Gesendet", "E-Mail erfolgreich an Outlook übergeben.")
+            # 1. Outlook (direkt, ohne Fenster)
+            if platform.system() == "Windows" and win32_available:
+                ok, outlook_msg = self.app._send_html_email_via_outlook(rec, sub, html_body)
+                if ok:
+                    dialog.destroy()
+                    SuccessToast(self.parent_frame, "Gesendet", "E-Mail erfolgreich über Outlook versendet.")
+                else:
+                    messagebox.showerror("Fehler beim Senden", outlook_msg)
                 return
 
-            # 2. SMTP Fallback
-            if hasattr(self.app, '_send_html_email_silently'):
+            # 2. SMTP Fallback (wenn konfiguriert)
+            smtp_cfg = self.app.current_settings.get('smtp_settings', {})
+            if all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email']):
                 success, msg = self.app._send_html_email_silently(rec, sub, html_body)
                 if success:
                     dialog.destroy()
                     SuccessToast(self.parent_frame, "Gesendet", "E-Mail per SMTP versendet.")
                 else:
                     messagebox.showerror("Fehler", f"Versand fehlgeschlagen: {msg}")
-            else:
-                messagebox.showerror("Fehler", "Keine Versandmethode gefunden.")
+                return
+
+            messagebox.showerror("Fehler", "Outlook (pywin32) ist nicht verfügbar und keine SMTP-Konfiguration vorhanden.")
 
         ttk.Button(btn_frame, text="Senden", command=do_send).pack(side='right')
         ttk.Button(btn_frame, text="Abbrechen", command=dialog.destroy).pack(side='right', padx=10)
@@ -13109,7 +13109,7 @@ class KassenprotokollApp:
         'overall_header_font_size': 14, 
         'header_logo_path': '',
         'namensliste_col_widths': {
-            'name': 50, 'nationality': 25, 'contact': 125, 'car': 35, 'signature': 42,
+            'room': 38, 'name': 50, 'nationality': 25, 'contact': 87, 'car': 35, 'signature': 42,
         },
         'pdf_logo_paths': {
             'offene_rechnungen': '',
@@ -19074,9 +19074,10 @@ class KassenprotokollApp:
                     success, message = self._send_email_via_outlook(pdf_path, recipient, subject, body)
                 else:
                     smtp_cfg = self.current_settings.get('smtp_settings', {})
-                    if not all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email', 'username', 'password']):
-                        return False, "SMTP-Einstellungen unvollständig."
-                    success, message = self._send_email_silently(pdf_path, recipient, subject, body)
+                    if all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email']):
+                        success, message = self._send_email_silently(pdf_path, recipient, subject, body)
+                    else:
+                        success, message = self._send_email_via_mailto(pdf_path, recipient, subject, body)
 
                 if success:
                     self._save_tagesabrechnung_to_pdf(show_success_message=False, open_folder_after=False)
@@ -19125,35 +19126,78 @@ class KassenprotokollApp:
     
     
     def _send_email_via_outlook(self, pdf_path, recipient, subject, body, cc=None):
-        """Sendet E-Mail via Outlook mit optionalem CC."""
-        if not (platform.system() == "Windows" and win32_available):
-            return False, "Outlook-Automatisierung ist nicht verfügbar."
+        """Sendet E-Mail via Outlook COM. Fällt auf mailto zurück wenn COM nicht verfügbar (z.B. New Outlook)."""
+        if platform.system() == "Windows" and win32_available:
+            try:
+                outlook = win32.Dispatch('Outlook.Application')
+                mail = outlook.CreateItem(0)
 
+                if isinstance(recipient, list): mail.To = "; ".join(recipient)
+                else: mail.To = str(recipient)
+
+                if cc:
+                    if isinstance(cc, list): mail.CC = "; ".join(cc)
+                    else: mail.CC = str(cc)
+
+                mail.Subject = subject
+                mail.Body = body
+
+                if pdf_path and os.path.exists(pdf_path):
+                    attachment = mail.Attachments.Add(pdf_path)
+                    if "Tagesabrechnung" in subject:
+                        attachment.DisplayName = "tagesabrechnung.pdf"
+
+                mail.Send()
+                return True, "E-Mail wurde erfolgreich über Outlook versendet."
+            except Exception:
+                pass  # COM nicht verfügbar (z.B. New Outlook) → mailto-Fallback
+
+        # mailto-Fallback (öffnet Outlook Compose-Fenster)
+        return self._send_email_via_mailto(pdf_path, recipient, subject, body, cc=cc)
+
+    def _send_email_via_mailto(self, pdf_path, recipient, subject, body, cc=None):
+        """Öffnet Outlook Compose-Fenster via mailto: (ShellExecuteW – kein Passwort nötig)."""
+        import urllib.parse, ctypes
         try:
-            outlook = win32.Dispatch('outlook.application')
-            mail = outlook.CreateItem(0)
-            
-            # To
-            if isinstance(recipient, list): mail.To = "; ".join(recipient)
-            else: mail.To = str(recipient)
-
-            # CC (NEU)
+            if isinstance(recipient, list):
+                to_str = ','.join(recipient)
+            else:
+                to_str = str(recipient)
+            params = [('subject', subject), ('body', body)]
             if cc:
-                if isinstance(cc, list): mail.CC = "; ".join(cc)
-                else: mail.CC = str(cc)
-
-            mail.Subject = subject
-            mail.Body = body
-            
+                cc_str = ','.join(cc) if isinstance(cc, list) else str(cc)
+                params.append(('cc', cc_str))
+            query = '&'.join(
+                f"{urllib.parse.quote(k)}={urllib.parse.quote(v, safe='')}"
+                for k, v in params
+            )
+            mailto_url = f"mailto:{urllib.parse.quote(to_str, safe='')}?{query}"
+            ctypes.windll.shell32.ShellExecuteW(None, 'open', mailto_url, None, None, 1)
             if pdf_path and os.path.exists(pdf_path):
-                attachment = mail.Attachments.Add(pdf_path)
-                if "Tagesabrechnung" in subject:
-                    attachment.DisplayName = "tagesabrechnung.pdf"
-
-            mail.Send()
-            return True, "E-Mail wurde erfolgreich über Outlook versendet."
+                ctypes.windll.shell32.ShellExecuteW(
+                    None, 'open', os.path.dirname(os.path.abspath(pdf_path)), None, None, 1
+                )
+            return True, "Outlook geöffnet. Bitte E-Mail prüfen und senden."
         except Exception as e:
-            return False, f"Fehler bei Outlook: {e}"
+            return False, f"Fehler beim Öffnen von Outlook: {e}"
+
+    def _send_html_email_via_mailto(self, recipient, subject, body_html):
+        """Öffnet Outlook Compose-Fenster via mailto: (ShellExecuteW)."""
+        import urllib.parse, re, ctypes
+        try:
+            plain_body = re.sub(r'<[^>]+>', '', body_html)
+            plain_body = plain_body.replace('&nbsp;', ' ').strip()
+            params = [('subject', subject), ('body', plain_body)]
+            query = '&'.join(
+                f"{urllib.parse.quote(k)}={urllib.parse.quote(v, safe='')}"
+                for k, v in params
+            )
+            to_str = str(recipient)
+            mailto_url = f"mailto:{urllib.parse.quote(to_str, safe='')}?{query}"
+            ctypes.windll.shell32.ShellExecuteW(None, 'open', mailto_url, None, None, 1)
+            return True, "Outlook geöffnet."
+        except Exception as e:
+            return False, f"Fehler beim Öffnen von Outlook: {e}"
 
     def _send_email_silently(self, pdf_path, recipient, subject, body, cc=None):
         """Sendet E-Mail via SMTP mit optionalem CC."""
@@ -19194,12 +19238,19 @@ class KassenprotokollApp:
 
         context = ssl.create_default_context()
         try:
-            with smtplib.SMTP(smtp_cfg.get('server'), smtp_cfg.get('port', 587)) as server:
-                server.starttls(context=context)
-                server.login(smtp_cfg.get('username'), smtp_cfg.get('password'))
-                # send_message extrahiert CC automatisch aus dem Header, wenn to_addrs nicht angegeben ist,
-                # aber es ist sicherer, alle Empfänger explizit zu übergeben.
-                server.send_message(msg, to_addrs=recipients_list) 
+            server_addr = smtp_cfg.get('server')
+            port = smtp_cfg.get('port', 587)
+            username = smtp_cfg.get('username', '')
+            password = smtp_cfg.get('password', '')
+            if port == 465:
+                smtp_conn = smtplib.SMTP_SSL(server_addr, port, context=context)
+            else:
+                smtp_conn = smtplib.SMTP(server_addr, port)
+                smtp_conn.starttls(context=context)
+            with smtp_conn:
+                if username and password:
+                    smtp_conn.login(username, password)
+                smtp_conn.send_message(msg, to_addrs=recipients_list)
                 return True, "E-Mail via SMTP versendet."
         except Exception as e:
             return False, f"SMTP Fehler: {e}"
@@ -19208,38 +19259,51 @@ class KassenprotokollApp:
         
         # Fügen Sie diese beiden Methoden in der KassenprotokollApp-Klasse hinzu
     def _send_html_email_via_outlook(self, recipient, subject, body):
-        """Sendet eine HTML-E-Mail über Outlook."""
-        if not (platform.system() == "Windows" and win32_available):
-            return False, "Outlook-Automatisierung ist nur auf Windows mit pywin32 verfügbar."
-        try:
-            outlook = win32.Dispatch('outlook.application')
-            mail = outlook.CreateItem(0)
-            mail.To = recipient
-            mail.Subject = subject
-            mail.HTMLBody = body
-            mail.Send()
-            return True, "E-Mail wurde erfolgreich über Outlook versendet."
-        except Exception as e:
-            return False, f"Fehler bei der Outlook-Automatisierung:\n{e}"
+        """Sendet HTML-E-Mail über Outlook COM. Fällt auf mailto zurück wenn COM nicht verfügbar (New Outlook)."""
+        if platform.system() == "Windows" and win32_available:
+            try:
+                outlook = win32.Dispatch('Outlook.Application')
+                mail = outlook.CreateItem(0)
+                mail.To = recipient
+                mail.Subject = subject
+                mail.HTMLBody = body
+                mail.Send()
+                return True, "E-Mail wurde erfolgreich über Outlook versendet."
+            except Exception:
+                pass  # COM nicht verfügbar → mailto-Fallback
+
+        # mailto-Fallback (öffnet Outlook Compose-Fenster)
+        return self._send_html_email_via_mailto(recipient, subject, body)
 
     def _send_html_email_silently(self, recipient, subject, body):
         """Sendet eine HTML-E-Mail im Hintergrund per SMTP."""
-        smtp_cfg = self.current_settings['smtp_settings']
+        smtp_cfg = self.current_settings.get('smtp_settings', {})
+        if not all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email']):
+            return False, "SMTP-Einstellungen unvollständig (Server, Port oder Absender-E-Mail fehlt)."
         msg = MIMEMultipart()
-        msg['From'] = smtp_cfg['sender_email']
+        msg['From'] = smtp_cfg.get('sender_email', '')
         msg['To'] = recipient
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'html', 'utf-8'))
 
         context = ssl.create_default_context()
         try:
-            with smtplib.SMTP(smtp_cfg['server'], smtp_cfg['port']) as server:
-                server.starttls(context=context)
-                server.login(smtp_cfg['username'], smtp_cfg['password'])
-                server.send_message(msg)
+            server_addr = smtp_cfg.get('server')
+            port = smtp_cfg.get('port', 587)
+            username = smtp_cfg.get('username', '')
+            password = smtp_cfg.get('password', '')
+            if port == 465:
+                smtp_conn = smtplib.SMTP_SSL(server_addr, port, context=context)
+            else:
+                smtp_conn = smtplib.SMTP(server_addr, port)
+                smtp_conn.starttls(context=context)
+            with smtp_conn:
+                if username and password:
+                    smtp_conn.login(username, password)
+                smtp_conn.send_message(msg)
                 return True, "E-Mail erfolgreich via SMTP versendet."
         except Exception as e:
-            return False, f"Ein Fehler ist beim Senden aufgetreten:\n{e}"
+            return False, f"SMTP Fehler: {e}"
         
         
     def _save_data_to_pdf(self):
@@ -21235,6 +21299,13 @@ class KassenprotokollApp:
                 
                 if isinstance(loaded_settings, dict):
                     recursive_update(self.current_settings, loaded_settings)
+
+                    # Migration: Falls alte Einstellungen keine 'room'-Spalte haben, Defaults wiederherstellen
+                    loaded_col_widths = loaded_settings.get('namensliste_col_widths', {})
+                    if loaded_col_widths and 'room' not in loaded_col_widths:
+                        self.current_settings['namensliste_col_widths'] = json.loads(
+                            json.dumps(self.default_settings.get('namensliste_col_widths', {}))
+                        )
 
             except (json.JSONDecodeError, IOError, Exception) as e:
                 messagebox.showwarning(
@@ -23446,15 +23517,15 @@ class KassenprotokollApp:
             if not self.is_loading_data:
                 self._initiate_debounced_save()
 
-            # ── Differenz Bargeld: gezähltes Bargeld − Kasse Total ────────────
+            # ── Differenz Bargeld: Summe Posten (Bargeld + Briefmarken + Quittungen + Diverses) − Kasse Total ────────────
             if hasattr(self, 'dashboard_bargeld_diff_var'):
                 try:
                     active_shift = self._get_current_active_shift_name_internal()
-                    active_vars  = self.fruehdienst_vars if active_shift == "Frühdienst" else self.spaetdienst_vars
-                    cash_sum_val = decimal.Decimal(str(active_vars.get('cash_sum', tk.DoubleVar()).get()))
+                    summe_posten_str = self.kassenabschluss_wert_vars.get(active_shift, {}).get('SUMME_POSTEN', tk.StringVar(value='0')).get()
+                    summe_posten_val = self._parse_input_string(summe_posten_str) or decimal.Decimal('0.00')
                     kasse_total_str = self.kassenabschluss_wert_vars.get(active_shift, {}).get('KASSE_TOTAL', tk.StringVar(value='0')).get()
                     kasse_total_val = self._parse_input_string(kasse_total_str) or decimal.Decimal('0.00')
-                    diff_barg = cash_sum_val - kasse_total_val
+                    diff_barg = summe_posten_val - kasse_total_val
                     self.dashboard_bargeld_diff_var.set(self._format_decimal_for_display(diff_barg))
                 except Exception:
                     pass
@@ -31065,6 +31136,7 @@ class KassenprotokollApp:
         """Spaltenbreiten der Namensliste-Tabelle konfigurieren (Summe = 277 mm für A4-Querformat)."""
         TOTAL_WIDTH = 277
         COLUMNS = [
+            ('room',        "Zimmernummer"),
             ('name',        "Nachname, Vorname"),
             ('nationality', "Nationalität"),
             ('contact',     "E-Mail / Telefon"),
@@ -34047,14 +34119,18 @@ class KassenprotokollApp:
                              font=heading_font,
                              background=C_HDR1, foreground='white',
                              relief='flat', padding=(8, 6))
+        self.style.map("Namensliste.Treeview.Heading",
+                       background=[('active', C_HDR1), ('!active', C_HDR1)],
+                       foreground=[('active', 'white'), ('!active', 'white')])
         self.style.map("Namensliste.Treeview",
                        background=[('selected', '#DBEAFE')],
                        foreground=[('selected', '#1565C0')])
 
-        columns = ("name", "nationality", "contact", "car", "signature")
+        columns = ("room", "name", "nationality", "contact", "car", "signature")
         self.namensliste_tree = ttk.Treeview(tree_outer, columns=columns,
                                               show="headings", style="Namensliste.Treeview")
         col_configs = {
+            "room":        {"text": "Zimmernummer",        "width": 160},
             "name":        {"text": "Nachname, Vorname",  "width": 300},
             "nationality": {"text": "Nationalität",        "width": 120},
             "contact":     {"text": "E-Mail / Telefon",    "width": 350},
@@ -34099,6 +34175,7 @@ class KassenprotokollApp:
         for i, entry in enumerate(self.namensliste_data_cache):
             tag = 'oddrow' if i % 2 else 'evenrow'
             values = (
+                entry.get('room', ''),
                 entry.get('name', ''),
                 entry.get('nationality', ''),
                 entry.get('contact', ''),
@@ -34991,18 +35068,12 @@ class KassenprotokollApp:
             )
 
             def email_callback_for_reservierung(pdf_path, recipient, subject, body):
-                use_outlook = platform.system() == "Windows" and win32_available
-                if use_outlook:
-                    try:
-                        win32.Dispatch('outlook.application')
-                        return self._send_email_via_outlook(pdf_path, recipient, subject, body)
-                    except Exception:
-                        pass
-                
+                if platform.system() == "Windows" and win32_available:
+                    return self._send_email_via_outlook(pdf_path, recipient, subject, body)
                 smtp_cfg = self.current_settings.get('smtp_settings', {})
-                if not all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email', 'username', 'password']):
-                    return False, "SMTP-Einstellungen sind unvollständig."
-                return self._send_email_silently(pdf_path, recipient, subject, body)
+                if all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email']):
+                    return self._send_email_silently(pdf_path, recipient, subject, body)
+                return False, "Outlook (pywin32) ist auf diesem System nicht verfügbar und keine SMTP-Konfiguration vorhanden."
 
             preview_dialog = PDFPreviewDialog(
                 parent=self.master,
@@ -36236,17 +36307,12 @@ class KassenprotokollApp:
 
         # Schritt 3: E-Mail-Versandmethode bestimmen
         def email_callback(recipient, subject, body):
-            use_outlook = platform.system() == "Windows" and win32_available
-            if use_outlook:
-                try:
-                    win32.Dispatch('outlook.application')
-                    return self._send_html_email_via_outlook(recipient, subject, body)
-                except Exception:
-                    pass
+            if platform.system() == "Windows" and win32_available:
+                return self._send_html_email_via_outlook(recipient, subject, body)
             smtp_cfg = self.current_settings.get('smtp_settings', {})
-            if not all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email', 'username', 'password']):
-                return False, "SMTP-Einstellungen sind unvollständig."
-            return self._send_html_email_silently(recipient, subject, body)
+            if all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email']):
+                return self._send_html_email_silently(recipient, subject, body)
+            return False, "Outlook (pywin32) ist auf diesem System nicht verfügbar und keine SMTP-Konfiguration vorhanden."
         
         # Schritt 4: Vorschau-Dialog mit den Rohdaten öffnen
         preview_dialog = EmailPreviewDialog(
