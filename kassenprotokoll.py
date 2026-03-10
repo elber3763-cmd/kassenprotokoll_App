@@ -32203,8 +32203,7 @@ class KassenprotokollApp:
                 messagebox.showinfo("Speicherort Geändert", "Der Datenspeicherort wurde geändert. Die Anwendung verwendet nun den neuen Pfad.\nBitte stellen Sie sicher, dass vorhandene Daten bei Bedarf manuell kopiert werden.", parent=self.master)
 
         def cancel_and_close_settings():
-            if canvas.winfo_exists():
-                canvas.unbind_all("<MouseWheel>")
+            settings_window.unbind_all("<MouseWheel>")
             settings_window.destroy()
 
         # --- UI Aufbau ---
@@ -32213,55 +32212,59 @@ class KassenprotokollApp:
         button_frame_settings.columnconfigure((0,1), weight=1)
         ttk.Button(button_frame_settings, text="Speichern & Schließen", command=save_and_close_settings).pack(side='left', fill='x', expand=True, padx=5, ipady=4)
         ttk.Button(button_frame_settings, text="Abbrechen", command=cancel_and_close_settings).pack(side='left', fill='x', expand=True, padx=5, ipady=4)
-        
-        canvas = tk.Canvas(main_settings_frame, borderwidth=0, highlightthickness=0)
-        vsb = ttk.Scrollbar(main_settings_frame, orient="vertical", command=canvas.yview)
-        canvas.configure(yscrollcommand=vsb.set)
-        
-        vsb.grid(row=1, column=1, sticky='ns')
-        canvas.grid(row=1, column=0, sticky='nsew')
 
-        settings_content_frame = ttk.Frame(canvas, padding=10)
-        canvas_window_id = canvas.create_window((0,0), window=settings_content_frame, anchor="nw")
+        settings_notebook = ttk.Notebook(main_settings_frame)
+        settings_notebook.grid(row=1, column=0, sticky='nsew')
 
-        def _on_frame_configure(event):
-            canvas.configure(scrollregion=canvas.bbox("all"))
-        def _on_canvas_configure(event):
-            canvas.itemconfig(canvas_window_id, width=event.width)
+        def _make_scrollable_tab():
+            """Erstellt einen Tab-Frame mit eigenem Canvas+Scrollbar. Gibt (tab, content_frame) zurück."""
+            tab = ttk.Frame(settings_notebook)
+            tab.rowconfigure(0, weight=1)
+            tab.columnconfigure(0, weight=1)
+            c = tk.Canvas(tab, borderwidth=0, highlightthickness=0)
+            vsb = ttk.Scrollbar(tab, orient="vertical", command=c.yview)
+            c.configure(yscrollcommand=vsb.set)
+            vsb.grid(row=0, column=1, sticky='ns')
+            c.grid(row=0, column=0, sticky='nsew')
+            content = ttk.Frame(c, padding=10)
+            wid = c.create_window((0, 0), window=content, anchor="nw")
+            content.bind("<Configure>", lambda e: c.configure(scrollregion=c.bbox("all")))
+            c.bind("<Configure>", lambda e, w=wid: c.itemconfig(w, width=e.width))
+            return tab, c, content
 
-        settings_content_frame.bind("<Configure>", _on_frame_configure)
-        canvas.bind("<Configure>", _on_canvas_configure)
+        tab_general_frame,    canvas_gen, content_general    = _make_scrollable_tab()
+        tab_appearance_frame, canvas_app, content_appearance = _make_scrollable_tab()
+        tab_logic_frame,      canvas_log, content_logic      = _make_scrollable_tab()
+        tab_pdf_frame,        canvas_pdf, content_pdf        = _make_scrollable_tab()
+
+        settings_notebook.add(tab_general_frame,    text="Allgemein")
+        settings_notebook.add(tab_appearance_frame, text="Darstellung")
+        settings_notebook.add(tab_logic_frame,      text="Inhalte & Logik")
+        settings_notebook.add(tab_pdf_frame,        text="PDF-Logos")
+
+        self._populate_general_settings_tab(content_general, temp_settings, dialog_vars)
+        self._populate_appearance_settings_tab(content_appearance, temp_settings, dialog_vars)
+        self._populate_content_logic_settings_tab(content_logic, temp_settings, dialog_vars)
+        self._populate_pdf_logos_settings_tab(content_pdf, temp_settings, dialog_vars)
+
+        _canvases = [canvas_gen, canvas_app, canvas_log, canvas_pdf]
+        _active_canvas = [canvas_gen]
+
+        def _on_tab_changed(event):
+            try:
+                idx = settings_notebook.index(settings_notebook.select())
+                _active_canvas[0] = _canvases[idx]
+            except Exception:
+                pass
+
+        settings_notebook.bind("<<NotebookTabChanged>>", _on_tab_changed)
 
         def _on_mousewheel(event):
-            if canvas.winfo_exists():
-                canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+            c = _active_canvas[0]
+            if c.winfo_exists():
+                c.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
-        settings_notebook = ttk.Notebook(settings_content_frame)
-        settings_notebook.pack(fill='x', expand=False)
-
-        tab_general = ttk.Frame(settings_notebook, padding=10)
-        tab_appearance = ttk.Frame(settings_notebook, padding=10)
-        tab_content_logic = ttk.Frame(settings_notebook, padding=10)
-        tab_pdf_logos = ttk.Frame(settings_notebook, padding=10)
-
-        settings_notebook.add(tab_general, text="Allgemein")
-        settings_notebook.add(tab_appearance, text="Darstellung")
-        settings_notebook.add(tab_content_logic, text="Inhalte & Logik")
-        settings_notebook.add(tab_pdf_logos, text="PDF-Logos")
-
-        self._populate_general_settings_tab(tab_general, temp_settings, dialog_vars)
-        self._populate_appearance_settings_tab(tab_appearance, temp_settings, dialog_vars)
-        self._populate_content_logic_settings_tab(tab_content_logic, temp_settings, dialog_vars)
-        self._populate_pdf_logos_settings_tab(tab_pdf_logos, temp_settings, dialog_vars)
-
-        def _update_scrollregion(*_):
-            settings_content_frame.update_idletasks()
-            canvas.configure(scrollregion=canvas.bbox("all"))
-            canvas.yview_moveto(0)
-
-        settings_notebook.bind("<<NotebookTabChanged>>", _update_scrollregion)
-        settings_window.after(100, _update_scrollregion)
+        settings_window.bind_all("<MouseWheel>", _on_mousewheel)
 
         settings_window.protocol("WM_DELETE_WINDOW", cancel_and_close_settings)
         
