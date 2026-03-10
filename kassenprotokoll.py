@@ -32238,7 +32238,7 @@ class KassenprotokollApp:
         canvas.bind_all("<MouseWheel>", _on_mousewheel)
 
         settings_notebook = ttk.Notebook(settings_content_frame)
-        settings_notebook.pack(fill='both', expand=True)
+        settings_notebook.pack(fill='x', expand=False)
 
         tab_general = ttk.Frame(settings_notebook, padding=10)
         tab_appearance = ttk.Frame(settings_notebook, padding=10)
@@ -32254,6 +32254,14 @@ class KassenprotokollApp:
         self._populate_appearance_settings_tab(tab_appearance, temp_settings, dialog_vars)
         self._populate_content_logic_settings_tab(tab_content_logic, temp_settings, dialog_vars)
         self._populate_pdf_logos_settings_tab(tab_pdf_logos, temp_settings, dialog_vars)
+
+        def _update_scrollregion(*_):
+            settings_content_frame.update_idletasks()
+            canvas.configure(scrollregion=canvas.bbox("all"))
+            canvas.yview_moveto(0)
+
+        settings_notebook.bind("<<NotebookTabChanged>>", _update_scrollregion)
+        settings_window.after(100, _update_scrollregion)
 
         settings_window.protocol("WM_DELETE_WINDOW", cancel_and_close_settings)
         
