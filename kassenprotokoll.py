@@ -32247,6 +32247,11 @@ class KassenprotokollApp:
         self._populate_content_logic_settings_tab(content_logic, temp_settings, dialog_vars)
         self._populate_pdf_logos_settings_tab(content_pdf, temp_settings, dialog_vars)
 
+        # Force correct scrollregion after all widgets are created
+        settings_window.update_idletasks()
+        for _c in [canvas_gen, canvas_app, canvas_log, canvas_pdf]:
+            _c.configure(scrollregion=_c.bbox("all"))
+
         _canvases = [canvas_gen, canvas_app, canvas_log, canvas_pdf]
         _active_canvas = [canvas_gen]
 
@@ -32271,6 +32276,14 @@ class KassenprotokollApp:
         settings_window.resizable(True, True)
         settings_window.state('zoomed')
         settings_window.minsize(750, 650)
+
+        def _update_scrollregions_after_zoom():
+            settings_window.update_idletasks()
+            for _c in [canvas_gen, canvas_app, canvas_log, canvas_pdf]:
+                if _c.winfo_exists():
+                    _c.configure(scrollregion=_c.bbox("all"))
+
+        settings_window.after(200, _update_scrollregions_after_zoom)
 
     def cancel_and_close_settings():
         settings_window.destroy()
