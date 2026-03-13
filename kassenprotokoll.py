@@ -1,4 +1,4 @@
-﻿import os
+import os
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, colorchooser, simpledialog
 import tkinter.font as tkFont
@@ -8,8 +8,7 @@ import locale
 import csv
 import json
 import platform
-from fpdf import FPDF
-from fpdf.enums import XPos, YPos
+from fpdf import FPDF, XPos, YPos
 import sys
 import site
 import ast
@@ -49,7 +48,7 @@ except ImportError:
     print("Install with: pip install openpyxl")
 
 try:
-    from PIL import Image, ImageTk, ImageDraw
+    from PIL import Image, ImageTk, ImageDraw, ImageFilter
     pil_available = True
 except ImportError:
     Image, ImageTk, ImageDraw = None, None, None
@@ -1936,7 +1935,7 @@ class LayoverEntryDialog(tk.Toplevel):
         double_oos_entry = ttk.Entry(rooms_frame, textvariable=self.double_oos_var, width=12, justify='center'); double_oos_entry.grid(row=2, column=2, padx=5, ipady=4); self.parent_app._bind_dialog_navigation(double_oos_entry)
         
         # --- UI für Sonderzimmer ---
-        special_frame = ttk.LabelFrame(main_frame, text="Sonderzimmer (Zimmernummern, mit Komma getrennt)", padding=10)
+        special_frame = ttk.LabelFrame(main_frame, text="Sonderzimmer (Zi-Nr.n, mit Komma getrennt)", padding=10)
         special_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         special_frame.columnconfigure(1, weight=1)
         
@@ -2951,7 +2950,7 @@ class LayoverApp:
             if label in self.ui_labels:
                 container = self.ui_labels[label]
                 for widget in container.winfo_children():
-                    if isinstance(widget, ttk.Label) and " (Zimmernummer)" not in widget.cget("text"):
+                    if isinstance(widget, ttk.Label) and " (Zi-Nr.)" not in widget.cget("text"):
                         widget.destroy()
                 
                 for room_num in rooms_list:
@@ -3200,7 +3199,7 @@ class LayoverApp:
         for label in ['3 Bettzimmer', '4 Bettzimmer', 'Babybett-Zimmer']:
             col_frame = ttk.Frame(special_rooms_frame, style='AppBackground.TFrame')
             col_frame.grid(row=0, column=col_idx, sticky='nw', padx=40)
-            ttk.Label(col_frame, text=f"{label} (Zimmernummer)", font=header_font).pack(anchor='w', pady=(0, 8))
+            ttk.Label(col_frame, text=f"{label} (Zi-NR.)", font=header_font).pack(anchor='w', pady=(0, 8))
             self.ui_labels[label] = col_frame
             col_idx += 1
 
@@ -3434,7 +3433,7 @@ class NamenslistePDF(FPDF):
         def _draw_header():
             self.set_font(self.font_family, 'B', 10)
             self.set_fill_color(220, 220, 220)
-            self.cell(cw["room"],        8, "Zimmernummer",      1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
+            self.cell(cw["room"],        8, "Zi-NR.",      1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
             self.cell(cw["name"],        8, "Nachname, Vorname", 1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
             self.cell(cw["nationality"], 8, "Nationalität",      1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
             self.cell(cw["contact"],     8, "E-Mail / Telefon",  1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='C', fill=1)
@@ -3592,7 +3591,7 @@ class NamenslisteEntryDialog(tk.Toplevel):
             self.id_var.set(uuid.uuid4().hex)
 
         fields = [
-            ("Zimmernummer:", self.room_var),
+            ("Zi-NR.:", self.room_var),
             ("Name (Nachname, Vorname):", self.name_var),
             ("Nationalität:", self.nationality_var),
             ("E-Mail / Telefon:", self.contact_var),
@@ -7762,7 +7761,7 @@ class SpickzettelApp:
         self.table_container_frame.columnconfigure(0, weight=1)
 
         self.columns_configs = {
-        "zimmer": {"kategorie": {"text": "Kategorie", "width": 300}, "typ": {"text": "Typ", "width": 120}, "zimmernummern": {"text": "Zimmernummern", "width": 500}},
+        "zimmer": {"kategorie": {"text": "Kategorie", "width": 300}, "typ": {"text": "Typ", "width": 120}, "Zi-Nr.n": {"text": "Zi-Nr.", "width": 500}},
         "designs": {"nr": {"text": "Nr.", "width": 80}, "name": {"text": "Name", "width": 150}, "beschreibung": {"text": "Beschreibung", "width": 400}, "bad": {"text": "Bad", "width": 250}, "betten": {"text": "Betten", "width": 250}},
         "minibar": {"produkt": {"text": "Produkt", "width": 300}, "preis": {"text": "Preis", "width": 100}},
         "mwst": {"kategorie": {"text": "Kategorie/Satz", "width": 300}, "beschreibung": {"text": "Beschreibung/Details", "width": 500}}
@@ -8063,7 +8062,7 @@ class SpickzettelApp:
         self.app._configure_list_tab_button(button_widget, config_key, default_text, button_config_source=button_configs, image_cache_dict=self.button_images)
 
     def _create_data_files_if_not_exist(self):
-        zimmer_data = [ {"kategorie": "Allergiker (Badewanne + Dusche)", "typ": "Deluxe", "zimmernummern": "#18 bis #23"}, {"kategorie": "Rollstuhlfreundlich", "typ": "Deluxe", "zimmernummern": "#470 + #479"}, {"kategorie": "Hund", "typ": "Eco/BUS", "zimmernummern": "#401-#411"}, {"kategorie": "Hund", "typ": "Deluxe", "zimmernummern": "#475 bis #479"}, {"kategorie": "Extra lange Betten (220cm)", "typ": "Deluxe", "zimmernummern": "#702 bis #706"}, {"kategorie": "Spezielle Büro-Zimmer (Stuhl, Tisch, Lampe)", "typ": "Deluxe", "zimmernummern": "#570 bis #574"}, {"kategorie": "Hochhaus Eckzimmer", "typ": "Eco/Bus", "zimmernummern": "-10er / -11er"}, {"kategorie": "Hochhaus Fahrstuhlnähe", "typ": "Eco/Bus", "zimmernummern": "-7er"}, {"kategorie": "Silber, separates WC, Dusche + Badewanne", "typ": "Deluxe", "zimmernummern": "EG bis 2. OG"}, {"kategorie": "Beerenfarben (moderner), ein Badezimmer, nur Dusche", "typ": "Deluxe", "zimmernummern": "3. OG bis 5. OG"}, {"kategorie": "Getrennte Betten", "typ": "Deluxe", "zimmernummern": "#375 bis #379"}, {"kategorie": "Ruhig Hochhaus", "typ": "Eco/Bus", "zimmernummern": "alle"}, {"kategorie": "Ruhig Neubau", "typ": "Des", "zimmernummern": "alle"}, {"kategorie": "Ruhig Deluxe", "typ": "Deluxe", "zimmernummern": "#-70er bis #-74er"}, {"kategorie": "Ruhig Residence", "typ": "Bus DZ", "zimmernummern": "#-86er bis #-93er"}, {"kategorie": "Suite (#12, #13)", "typ": "Deluxe", "zimmernummern": "Mit offener Verbindungstür ergeben beide Zimmer die Suite"}, {"kategorie": "Suite (#16, #17)", "typ": "Deluxe", "zimmernummern": "Mit offener Verbindungstür ergeben beide Zimmer die Suite"}, ]
+        zimmer_data = [ {"kategorie": "Allergiker (Badewanne + Dusche)", "typ": "Deluxe", "Zi-Nr.n": "#18 bis #23"}, {"kategorie": "Rollstuhlfreundlich", "typ": "Deluxe", "Zi-Nr.n": "#470 + #479"}, {"kategorie": "Hund", "typ": "Eco/BUS", "Zi-Nr.n": "#401-#411"}, {"kategorie": "Hund", "typ": "Deluxe", "Zi-Nr.n": "#475 bis #479"}, {"kategorie": "Extra lange Betten (220cm)", "typ": "Deluxe", "Zi-Nr.n": "#702 bis #706"}, {"kategorie": "Spezielle Büro-Zimmer (Stuhl, Tisch, Lampe)", "typ": "Deluxe", "Zi-Nr.n": "#570 bis #574"}, {"kategorie": "Hochhaus Eckzimmer", "typ": "Eco/Bus", "Zi-Nr.n": "-10er / -11er"}, {"kategorie": "Hochhaus Fahrstuhlnähe", "typ": "Eco/Bus", "Zi-Nr.n": "-7er"}, {"kategorie": "Silber, separates WC, Dusche + Badewanne", "typ": "Deluxe", "Zi-Nr.n": "EG bis 2. OG"}, {"kategorie": "Beerenfarben (moderner), ein Badezimmer, nur Dusche", "typ": "Deluxe", "Zi-Nr.n": "3. OG bis 5. OG"}, {"kategorie": "Getrennte Betten", "typ": "Deluxe", "Zi-Nr.n": "#375 bis #379"}, {"kategorie": "Ruhig Hochhaus", "typ": "Eco/Bus", "Zi-Nr.n": "alle"}, {"kategorie": "Ruhig Neubau", "typ": "Des", "Zi-Nr.n": "alle"}, {"kategorie": "Ruhig Deluxe", "typ": "Deluxe", "Zi-Nr.n": "#-70er bis #-74er"}, {"kategorie": "Ruhig Residence", "typ": "Bus DZ", "Zi-Nr.n": "#-86er bis #-93er"}, {"kategorie": "Suite (#12, #13)", "typ": "Deluxe", "Zi-Nr.n": "Mit offener Verbindungstür ergeben beide Zimmer die Suite"}, {"kategorie": "Suite (#16, #17)", "typ": "Deluxe", "Zi-Nr.n": "Mit offener Verbindungstür ergeben beide Zimmer die Suite"}, ]
         self._write_json_if_not_exists("spickzettel_zimmerkategorien.json", zimmer_data)
         design_data = [ {"nr": "#260", "name": "Fische", "beschreibung": "Blaue Farben, Wellen", "bad": "Badewanne", "betten": "Betten trennbar"}, {"nr": "#259 VT", "name": "Löwe", "beschreibung": "Beige-braune Farben, afrikanischer Stil, viel Bambus", "bad": "Badewanne, kein Teppich", "betten": "Betten trennbar"}, {"nr": "#258 VT", "name": "Schütze", "beschreibung": "Beige-braune Farben, afrikanischer Stil, viel Bambus", "bad": "Dusche/Klappbett", "betten": ""}, {"nr": "#257 VT", "name": "Waage", "beschreibung": "Grüne Farben mit bunten Blumen", "bad": "Badewanne", "betten": "Betten trennbar"}, {"nr": "#256 VT", "name": "Zwilling", "beschreibung": "Grüne Farben mit bunten Blumen", "bad": "Dusche/Klappbett", "betten": ""}, {"nr": "#255", "name": "Skorpion", "beschreibung": "Rot-schwarze Farben", "bad": "Whirlpool Badewanne + Dusche", "betten": ""}, {"nr": "#160", "name": "Wassermann", "beschreibung": "Blaue Farbe, Dreizack am Bett, Bidet, sonst ähnlich Fische", "bad": "Badewanne, kein Teppich", "betten": ""}, {"nr": "#159 VT", "name": "Krebs", "beschreibung": "Graue Farbe", "bad": "Badewanne", "betten": ""}, {"nr": "#158 VT", "name": "Jungfrau", "beschreibung": "Graue Farbe", "bad": "Dusche / Klappbett", "betten": ""}, {"nr": "#157 VT", "name": "Stier", "beschreibung": "Rot-schwarze Farben, asiatischer Stil", "bad": "Badewanne", "betten": ""}, {"nr": "#156 VT", "name": "Steinbock", "beschreibung": "Rot-schwarze Farben, asiatischer Stil", "bad": "Dusche/Klappbett", "betten": ""}, {"nr": "#155", "name": "Widder", "beschreibung": "Rot-schwarze Farben, Sportzimmer, Fahrrad im Bad", "bad": "Badewanne", "betten": "Betten trennbar"}, ]
         self._write_json_if_not_exists("spickzettel_designs.json", design_data)
@@ -12533,13 +12532,24 @@ class KassenprotokollApp:
         
         # WICHTIG: Alle Referenzen zurücksetzen, um laufende Animationen zu unterbrechen
         self.slideshow_job_id = None
+        self.active_canvas_item = None
+
+        # Canvas-Items wirklich aus dem Canvas löschen, damit keine veralteten
+        # Bilder an falschen Positionen sichtbar bleiben (z.B. nach einer unterbrochenen Animation)
+        if hasattr(self, 'dashboard_bg_canvas') and self.dashboard_bg_canvas and self.dashboard_bg_canvas.winfo_exists():
+            for item in [self.slideshow_canvas_item, self.slideshow_canvas_item_back]:
+                if item:
+                    try:
+                        self.dashboard_bg_canvas.delete(item)
+                    except tk.TclError:
+                        pass
+
         self.slideshow_canvas_item = None
         self.slideshow_canvas_item_back = None
-        self.active_canvas_item = None
-        
+
         # ENTSCHEIDEND: Leert den Cache, um den Speicher von allen Bildobjekten freizugeben
         self.slideshow_photo_objects.clear()
-        
+
         print("Diashow gestoppt und alle Ressourcen freigegeben.")
     
     
@@ -12561,8 +12571,8 @@ class KassenprotokollApp:
                 return
 
             with Image.open(image_path) as img:
-                prepared_image = self._resize_and_crop_image(img, canvas_width, canvas_height)
-            
+                prepared_image = self._resize_and_crop_image(img, canvas_width, canvas_height, image_path)
+
             photo = ImageTk.PhotoImage(prepared_image)
             self.slideshow_photo_objects['initial'] = photo
 
@@ -12582,19 +12592,45 @@ class KassenprotokollApp:
             print(f"Fehler beim Vorbereiten des ersten Slides: {e}")
             self.slideshow_job_id = self.master.after(200, self._prepare_and_show_first_slide)
 
-    def _resize_and_crop_image(self, img, canvas_width, canvas_height):
-        """Hilfsfunktion, um ein Bild proportional zu skalieren und zuzuschneiden."""
-        img_ratio = img.width / img.height
+    def _resize_and_crop_image(self, img, canvas_width, canvas_height, image_path=None):
+        """Skaliert ein Bild für den Canvas mit Blurred-Background-Modus:
+        Das Originalbild wird vollständig (Contain) zentriert angezeigt.
+        Freie Randflächen werden mit einer verschwommenen/abgedunkelten Version gefüllt.
+        """
+        img_rgba = img.convert("RGBA")
+
+        # 1. Hintergrund: Bild auf Canvas-Größe zoomen (Cover) und stark weichzeichnen
+        bg_ratio = img_rgba.width / img_rgba.height
         canvas_ratio = canvas_width / canvas_height
-        if img_ratio > canvas_ratio:
-            new_height = canvas_height; new_width = int(new_height * img_ratio)
+        if bg_ratio > canvas_ratio:
+            bg_h = canvas_height; bg_w = int(bg_h * bg_ratio)
         else:
-            new_width = canvas_width; new_height = int(new_width / img_ratio)
-        
-        img_resized = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        
-        left, top = (new_width - canvas_width) / 2, (new_height - canvas_height) / 2
-        return img_resized.crop((left, top, left + canvas_width, top + canvas_height)).convert("RGBA")
+            bg_w = canvas_width; bg_h = int(bg_w / bg_ratio)
+        background = img_rgba.resize((bg_w, bg_h), Image.Resampling.BILINEAR)
+        left = (bg_w - canvas_width) // 2
+        top  = (bg_h - canvas_height) // 2
+        background = background.crop((left, top, left + canvas_width, top + canvas_height))
+        background = background.filter(ImageFilter.GaussianBlur(radius=18))
+        # Abdunkeln
+        darkener = Image.new("RGBA", (canvas_width, canvas_height), (0, 0, 0, 110))
+        background = Image.alpha_composite(background, darkener)
+
+        # 2. Vordergrund: Originalbild vollständig einpassen (Contain)
+        fg = img_rgba.copy()
+        # Contain mit Hochskalierung (thumbnail vergrößert nicht)
+        fg_ratio = fg.width / fg.height
+        if fg_ratio > canvas_ratio:
+            fg_w = canvas_width
+            fg_h = max(1, int(canvas_width / fg_ratio))
+        else:
+            fg_h = canvas_height
+            fg_w = max(1, int(canvas_height * fg_ratio))
+        fg = fg.resize((fg_w, fg_h), Image.Resampling.LANCZOS)
+        x = (canvas_width - fg_w) // 2
+        y = (canvas_height - fg_h) // 2
+        background.paste(fg, (x, y), fg)
+
+        return background
 
     def _animate_next_slide(self):
         """
@@ -12636,7 +12672,7 @@ class KassenprotokollApp:
             # 1. Bild laden
             with Image.open(image_path) as img:
                 img = img.convert("RGBA") # Wichtig für Stabilität
-                prepared_image = self._resize_and_crop_image(img, canvas_width, canvas_height)
+                prepared_image = self._resize_and_crop_image(img, canvas_width, canvas_height, image_path)
 
             # 2. PhotoImage erstellen
             new_photo = ImageTk.PhotoImage(prepared_image)
@@ -15234,7 +15270,7 @@ class KassenprotokollApp:
         # 1. Canvas als Hauptcontainer, der das Bild im Hintergrund hält
         self.dashboard_bg_canvas = tk.Canvas(parent_frame, borderwidth=0, highlightthickness=0)
         self.dashboard_bg_canvas.pack(fill="both", expand=True)
-        
+
         # 2. Ein Frame für den scrollbaren Inhalt, der über dem Hintergrundbild liegt
         scrollable_content = ttk.Frame(self.dashboard_bg_canvas, style='AppBackground.TFrame')
         self.dashboard_bg_canvas.create_window((0, 0), window=scrollable_content, anchor="nw", tags="widgets_frame")
@@ -19059,29 +19095,18 @@ class KassenprotokollApp:
                 return
 
             def email_callback_for_tagesabrechnung(pdf_path, recipient, subject, body):
-                success, message = False, ""
-                
-                use_outlook = platform.system() == "Windows" and win32_available
-                try:
-                    if use_outlook:
-                        win32.Dispatch('outlook.application')
-                    else:
-                        use_outlook = False
-                except Exception:
-                    use_outlook = False
-
-                if use_outlook:
+                if platform.system() == "Windows" and win32_available:
                     success, message = self._send_email_via_outlook(pdf_path, recipient, subject, body)
                 else:
                     smtp_cfg = self.current_settings.get('smtp_settings', {})
                     if all(smtp_cfg.get(k) for k in ['server', 'port', 'sender_email']):
                         success, message = self._send_email_silently(pdf_path, recipient, subject, body)
                     else:
-                        success, message = self._send_email_via_mailto(pdf_path, recipient, subject, body)
+                        success, message = False, "Outlook (pywin32) ist auf diesem System nicht verfügbar und keine SMTP-Konfiguration vorhanden."
 
                 if success:
                     self._save_tagesabrechnung_to_pdf(show_success_message=False, open_folder_after=False)
-                    
+
                 return success, message
 
             recipient = self.EMAIL_RECIPIENT_TAGESABRECHNUNG
@@ -19126,34 +19151,32 @@ class KassenprotokollApp:
     
     
     def _send_email_via_outlook(self, pdf_path, recipient, subject, body, cc=None):
-        """Sendet E-Mail via Outlook COM. Fällt auf mailto zurück wenn COM nicht verfügbar (z.B. New Outlook)."""
-        if platform.system() == "Windows" and win32_available:
-            try:
-                outlook = win32.Dispatch('Outlook.Application')
-                mail = outlook.CreateItem(0)
+        """Sendet E-Mail direkt via Outlook COM (mail.Send). Kein Compose-Fenster, kein mailto-Fallback."""
+        if not (platform.system() == "Windows" and win32_available):
+            return False, "Outlook COM (pywin32) ist auf diesem System nicht verfügbar."
+        try:
+            outlook = win32.Dispatch('Outlook.Application')
+            mail = outlook.CreateItem(0)
 
-                if isinstance(recipient, list): mail.To = "; ".join(recipient)
-                else: mail.To = str(recipient)
+            if isinstance(recipient, list): mail.To = "; ".join(recipient)
+            else: mail.To = str(recipient)
 
-                if cc:
-                    if isinstance(cc, list): mail.CC = "; ".join(cc)
-                    else: mail.CC = str(cc)
+            if cc:
+                if isinstance(cc, list): mail.CC = "; ".join(cc)
+                else: mail.CC = str(cc)
 
-                mail.Subject = subject
-                mail.Body = body
+            mail.Subject = subject
+            mail.Body = body
 
-                if pdf_path and os.path.exists(pdf_path):
-                    attachment = mail.Attachments.Add(pdf_path)
-                    if "Tagesabrechnung" in subject:
-                        attachment.DisplayName = "tagesabrechnung.pdf"
+            if pdf_path and os.path.exists(pdf_path):
+                attachment = mail.Attachments.Add(pdf_path)
+                if "Tagesabrechnung" in subject:
+                    attachment.DisplayName = "tagesabrechnung.pdf"
 
-                mail.Send()
-                return True, "E-Mail wurde erfolgreich über Outlook versendet."
-            except Exception:
-                pass  # COM nicht verfügbar (z.B. New Outlook) → mailto-Fallback
-
-        # mailto-Fallback (öffnet Outlook Compose-Fenster)
-        return self._send_email_via_mailto(pdf_path, recipient, subject, body, cc=cc)
+            mail.Send()
+            return True, "E-Mail wurde erfolgreich über Outlook versendet."
+        except Exception as e:
+            return False, f"Outlook COM Fehler: {e}"
 
     def _send_email_via_mailto(self, pdf_path, recipient, subject, body, cc=None):
         """Öffnet Outlook Compose-Fenster via mailto: (ShellExecuteW – kein Passwort nötig)."""
@@ -19576,11 +19599,9 @@ class KassenprotokollApp:
             return target_file_path 
             
         except Exception as e:
-            if show_success_message:
-                 messagebox.showerror("PDF Export Fehler", f"Fehler beim Erstellen der Tagesabrechnungs-PDF: {e}", parent=self.master)
-            print(f"PDF Export Error in _save_tagesabrechnung_to_pdf: {e}")
             import traceback
             traceback.print_exc()
+            messagebox.showerror("PDF Export Fehler", f"Fehler beim Erstellen der Tagesabrechnungs-PDF:\n{e}", parent=self.master)
             return None
 
 
@@ -29377,6 +29398,7 @@ class KassenprotokollApp:
             ttk.Button(main_menu_frame, text="...", width=3, command=browse_dashboard_icon).grid(row=row_idx, column=7, sticky='w', padx=(2, 5))
             
             row_idx += 1
+        return start_row + 1
 
     def _create_settings_home_button_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
         """Erstellt den Abschnitt für den Home-Button im Einstellungsdialog mit neuem Layout."""
@@ -29469,6 +29491,7 @@ class KassenprotokollApp:
         """Erstellt den Abschnitt für das allgemeine Button-Design der Listenansichten."""
         # KORRIGIERTER TITEL, UM DEN BETTENSTEUER-RECHNER EINZUSCHLIESSEN
         design_frame = ttk.LabelFrame(parent_frame, text="Button-Design (Listen: Weckruf, Taxi, Shuttle, Tagesabrechnung, Bettensteuer-Rechner)", style='TLabelframe')
+        design_frame.columnconfigure(1, weight=1)
         design_frame.grid(row=start_row, column=0, columnspan=4, sticky='ew', padx=5, pady=10)
         
         style_cfg = temp_settings.get('list_views_button_style', self.default_settings['list_views_button_style'].copy())
@@ -29558,37 +29581,8 @@ class KassenprotokollApp:
             start_row=1 # Startet in der nächsten Zeile
         )
 
-        return start_row + 2 # Gibt die nächste verfügbare Zeile zurück
-
-        def create_update_config_callback(k, t, txt, img, sk):
-            def update_config(*args):
-                if sk not in temp_settings: temp_settings[sk] = {}
-                if k not in temp_settings[sk]: temp_settings[sk][k] = {}
-                cfg_ref = temp_settings[sk][k]
-                cfg_ref['type'] = t.get()
-                cfg_ref['value'] = txt.get() if t.get() == 'symbol' else img.get()
-            return update_config
-
-        update_callback = create_update_config_callback(key, type_var, label_var, image_var, settings_key)
-        type_var.trace_add('write', update_callback)
-        label_var.trace_add('write', update_callback)
-        image_var.trace_add('write', update_callback)
-
-        def create_browse_callback(var):
-            def browse_icon():
-                #fpath = filedialog.askopenfilename(filetypes=[("Bilddateien", "*.png *.gif"), ("Alle Dateien", "*.*")], parent=parent_frame.winfo_toplevel())
-                
-                fpath = filedialog.askopenfilename(filetypes=[("Bilddateien", "*.png *.gif *.jpg *.avif"), ("Alle Dateien", "*.*")], parent=parent_frame.winfo_toplevel())
-
-                
-                if fpath: var.set(fpath)
-            return browse_icon
-        
-        ttk.Button(frame, text="...", width=3, command=create_browse_callback(image_var)).grid(row=4, column=2, sticky='w', padx=(2, 5))
-        
-        # vvvvv HIER IST DIE KORREKTUR vvvvv
         return start_row + 1
-        # ^^^^^ HIER ENDET DIE KORREKTUR ^^^^^
+
     
     def _create_settings_dialog_buttons_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
         """Erstellt den Abschnitt für die Konfiguration der Buttons in Eingabedialogen."""
@@ -29738,6 +29732,7 @@ class KassenprotokollApp:
             ttk.Label(frame, text=f"{labels_map[key]}:", font=("Segoe UI", 10, "bold")).grid(row=current_row, column=0, columnspan=4, sticky='w', padx=5, pady=(8,2))
             
             sub_frame = ttk.Frame(frame)
+            sub_frame.columnconfigure(1, weight=1)
             sub_frame.grid(row=current_row + 1, column=0, columnspan=4, sticky='ew', padx=20)
             
             col_idx = 0
@@ -30155,51 +30150,69 @@ class KassenprotokollApp:
     
     
     def _populate_appearance_settings_tab(self, parent_frame, temp_settings, dialog_vars):
-        """Füllt den 'Darstellung'-Tab in den Einstellungen mit Widgets. (FINAL KORRIGIERTE VERSION)"""
-        parent_frame.columnconfigure(1, weight=1)
+        """Füllt den 'Darstellung'-Tab in den Einstellungen mit Widgets. Unterteilt in Sub-Tabs zur Vermeidung des Windows-Höhenlimits."""
+        
+        # === NEU: Einbindung von Sub-Tabs, um das Windows-GDI-Höhenlimit (32.767px) zu umgehen ===
+        inner_notebook = ttk.Notebook(parent_frame)
+        inner_notebook.pack(fill='both', expand=True)
+
+        tab_general = ttk.Frame(inner_notebook, padding=10)
+        tab_buttons1 = ttk.Frame(inner_notebook, padding=10)
+        tab_buttons2 = ttk.Frame(inner_notebook, padding=10)
+        tab_modules = ttk.Frame(inner_notebook, padding=10)
+
+        inner_notebook.add(tab_general, text="Allgemeines Design")
+        inner_notebook.add(tab_buttons1, text="System & Listen-Buttons")
+        inner_notebook.add(tab_buttons2, text="Spezifische Listen-Buttons")
+        inner_notebook.add(tab_modules, text="Modul-Buttons & Layout")
+
+        # =========================================================================
+        # TAB 1: ALLGEMEINES DESIGN
+        # =========================================================================
+        tab_general.columnconfigure(1, weight=1)
         row_idx = 0
         dialog_vars['color_vars'] = {}
 
         # Theme
-        ttk.Label(parent_frame, text="Theme:").grid(row=row_idx, column=0, sticky='w', padx=5, pady=5)
+        ttk.Label(tab_general, text="Theme:").grid(row=row_idx, column=0, sticky='w', padx=5, pady=5)
         if ThemedTk and hasattr(self.master, 'get_themes'):
             _all_themes = sorted(self.master.get_themes())
         else:
             _all_themes = sorted(ttk.Style().theme_names())
         dialog_vars['selected_theme_var'] = tk.StringVar(value=temp_settings.get('selected_theme', 'alt'))
-        theme_combo = ttk.Combobox(parent_frame, textvariable=dialog_vars['selected_theme_var'], state='readonly',
+        theme_combo = ttk.Combobox(tab_general, textvariable=dialog_vars['selected_theme_var'], state='readonly',
                                    values=_all_themes)
         theme_combo.grid(row=row_idx, column=1, columnspan=3, sticky='ew', padx=5, pady=5)
         row_idx += 1
-        ttk.Label(parent_frame, text="⚠ Hinweis: Bildbasierte Themes (arc, equilux, keramik…) können die App verlangsamen.\n   Empfohlen: alt, clam, default, vista, xpnative",
+        ttk.Label(tab_general, text="⚠ Hinweis: Bildbasierte Themes (arc, equilux, keramik…) können die App verlangsamen.\n   Empfohlen: alt, clam, default, vista, xpnative",
                   foreground='#B8860B', font=("Segoe UI", 8)).grid(
             row=row_idx, column=0, columnspan=4, sticky='w', padx=5, pady=(0, 6))
         row_idx += 1
 
         # Font Sizes
-        ttk.Label(parent_frame, text="Allg. Schriftgröße:").grid(row=row_idx, column=0, sticky='w', padx=5, pady=3)
+        ttk.Label(tab_general, text="Allg. Schriftgröße:").grid(row=row_idx, column=0, sticky='w', padx=5, pady=3)
         dialog_vars['general_font_size_var'] = tk.IntVar(value=temp_settings.get('general_font_size', 11))
-        ttk.Spinbox(parent_frame, from_=8, to=20, textvariable=dialog_vars['general_font_size_var'], width=7).grid(row=row_idx, column=1, sticky='w', padx=5)
+        ttk.Spinbox(tab_general, from_=8, to=20, textvariable=dialog_vars['general_font_size_var'], width=7).grid(row=row_idx, column=1, sticky='w', padx=5)
 
-        ttk.Label(parent_frame, text="Zahlen Schriftgröße:").grid(row=row_idx, column=2, sticky='e', padx=5, pady=3)
+        ttk.Label(tab_general, text="Zahlen Schriftgröße:").grid(row=row_idx, column=2, sticky='e', padx=5, pady=3)
         dialog_vars['number_font_size_var'] = tk.IntVar(value=temp_settings.get('number_font_size', 12))
-        ttk.Spinbox(parent_frame, from_=8, to=24, textvariable=dialog_vars['number_font_size_var'], width=7).grid(row=row_idx, column=3, sticky='w', padx=5)
+        ttk.Spinbox(tab_general, from_=8, to=24, textvariable=dialog_vars['number_font_size_var'], width=7).grid(row=row_idx, column=3, sticky='w', padx=5)
         row_idx += 1
         
         # Tab Header Bold
         dialog_vars['tab_header_bold_var'] = tk.BooleanVar(value=temp_settings.get('tab_header_bold', True))
-        ttk.Checkbutton(parent_frame, text="Tab-Überschriften fett darstellen", variable=dialog_vars['tab_header_bold_var']).grid(row=row_idx, column=0, columnspan=2, sticky='w', padx=5, pady=5)
+        ttk.Checkbutton(tab_general, text="Tab-Überschriften fett darstellen", variable=dialog_vars['tab_header_bold_var']).grid(row=row_idx, column=0, columnspan=2, sticky='w', padx=5, pady=5)
         row_idx += 1
 
-        ttk.Separator(parent_frame, orient='horizontal').grid(row=row_idx, column=0, columnspan=4, sticky='ew', pady=10)
+        ttk.Separator(tab_general, orient='horizontal').grid(row=row_idx, column=0, columnspan=4, sticky='ew', pady=10)
         row_idx += 1
         
         # Allgemeine Farbeinstellungen
-        color_settings_frame = ttk.LabelFrame(parent_frame, text="Allgemeine Farbeinstellungen", style='TLabelframe')
+        color_settings_frame = ttk.LabelFrame(tab_general, text="Allgemeine Farbeinstellungen", style='TLabelframe')
         color_settings_frame.grid(row=row_idx, column=0, columnspan=4, sticky='ew', padx=5, pady=5)
         color_settings_frame.columnconfigure((1, 3), weight=1)
         
-        all_color_options = [
+        all_color_options =[
             ('dashboard_content_bg', 'Hintergrund Dashboard'),
             ('general_font_color', 'Allgemeine Schriftfarbe'),
             ('input_bg', 'Hintergrund Eingabefelder'),
@@ -30253,78 +30266,84 @@ class KassenprotokollApp:
             ttk.Button(color_settings_frame, text="Wählen...", command=create_pick_color_command(key, color_var, color_display, label_text)).grid(row=r, column=c_offset + 1, sticky='e', padx=(0,5))
             color_row_idx += 1
         
-        row_idx += (color_row_idx + 1) // 2
-        
-        row_idx = self._create_settings_dashboard_background_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_main_header_logo_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_slideshow_transition_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_restart_button_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_shuttle_overlay_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_taxibestellung_overlay_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_weckruf_overlay_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_navigation_colors_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_header_colors_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_main_menu_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_right_panel_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_system_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_home_button_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_checklist_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        
-           # vvvvv HIER DEN NEUEN AUFRUF HINZUFÜGEN vvvvv
-        row_idx = self._create_settings_shuttle_service_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        # ^^^^^ ENDE DES NEUEN AUFRUFS ^^^^^
-        
-          # vvvvv HIER DEN NEUEN AUFRUF HINZUFÜGEN vvvvv
-        row_idx = self._create_settings_shuttle_menu_tiles_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        # ^^^^^ ENDE DES NEUEN AUFRUFS ^^^^^
-        
-        row_idx = self._create_settings_shuttle_service_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_weckrufliste_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_taxibestellung_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_namensliste_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_urlaubsantraege_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_ueberstundenantrag_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_layover_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_tischreservierung_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_zimmerreservierung_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_anrufliste_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_offene_rechnungen_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_offene_rechnungen_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_auth_code_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_generic_button_config_section(parent_frame, temp_settings, dialog_vars, "Kassenprotokoll: Hero-Icon", 'kassenprotokoll_button_configs', ['KP_HeroIcon'], row_idx)
-        row_idx = self._create_generic_button_config_section(parent_frame, temp_settings, dialog_vars, "MOD-Rundgang: Button-Icons", 'mod_rundgang_button_configs', ['MOD_Save', 'MOD_Email', 'MOD_Reset', 'MOD_PDF', 'MOD_HeroIcon', 'MOD_NameIcon', 'MOD_DateIcon'], row_idx)
-        row_idx = self._create_settings_mod_rundgang_colors_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_layover_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_list_views_design_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        
-        row_idx = self._create_settings_trinkgeldliste_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_minibarliste_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-          
-         ##### HIER DIE FOLGENDE ZEILE EINFÜGEN #####
-        row_idx = self._create_settings_minibar_dialog_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-         
-         # vvvvv HIER IST DIE KORREKTUR vvvvv
-        # Der alte, fehlerhafte Aufruf wird durch den korrekten Aufruf ersetzt.
-        row_idx = self._create_settings_tagesabrechnung_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        # ^^^^^ ENDE DER KORREKTUR ^^^^^
-        
-        
-        row_idx = self._create_generic_button_config_section(parent_frame, temp_settings, dialog_vars, "Tagesabrechnung: Button-Icons", 'tagesabrechnung_button_configs', ['TA_Loeschen', 'TA_Drucken', 'TA_EMail', 'TA_Speichern', 'TA_Refresh', 'TA_Verlauf'], row_idx)
-        
-        row_idx = self._create_settings_dialog_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        
-        # vvvvv HIER IST DER KORREKTE AUFRUF vvvvv
-        row_idx = self._create_settings_backup_dialog_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        # ^^^^^ HIER ENDET DER KORREKTE AUFRUF ^^^^^
+        row_idx += 1
 
-        row_idx = self._create_settings_shift_actions_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_bettensteuer_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_spickzettel_buttons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_spickzettel_tab_icons_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_spickzettel_home_button_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_spickzettel_search_icon_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        row_idx = self._create_settings_spickzettel_sidebar_section(parent_frame, temp_settings, dialog_vars, start_row=row_idx)
-        # ^^^^^ ENDE DES NEUEN AUFRUFS ^^^^^
+        row_idx = self._create_settings_dashboard_background_section(tab_general, temp_settings, dialog_vars, start_row=row_idx)
+        row_idx = self._create_settings_main_header_logo_section(tab_general, temp_settings, dialog_vars, start_row=row_idx)
+        row_idx = self._create_settings_slideshow_transition_section(tab_general, temp_settings, dialog_vars, start_row=row_idx)
+        row_idx = self._create_settings_navigation_colors_section(tab_general, temp_settings, dialog_vars, start_row=row_idx)
+        row_idx = self._create_settings_header_colors_section(tab_general, temp_settings, dialog_vars, start_row=row_idx)
+
+        # =========================================================================
+        # TAB 2: SYSTEM & LISTEN-BUTTONS 1
+        # =========================================================================
+        tab_buttons1.columnconfigure(0, weight=1)
+        tab_buttons1.columnconfigure(1, weight=1)
+        tab_buttons1.columnconfigure(2, weight=1)
+        tab_buttons1.columnconfigure(3, weight=1)
+        row_idx_1 = 0
+
+        row_idx_1 = self._create_settings_main_menu_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+        row_idx_1 = self._create_settings_right_panel_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+        row_idx_1 = self._create_settings_system_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+        row_idx_1 = self._create_settings_home_button_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+        row_idx_1 = self._create_settings_checklist_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+        row_idx_1 = self._create_settings_weckrufliste_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+        row_idx_1 = self._create_settings_taxibestellung_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+        row_idx_1 = self._create_settings_namensliste_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+        
+        # =========================================================================
+        # TAB 3: SPEZIFISCHE LISTEN-BUTTONS 2
+        # =========================================================================
+        tab_buttons2.columnconfigure(0, weight=1)
+        tab_buttons2.columnconfigure(1, weight=1)
+        tab_buttons2.columnconfigure(2, weight=1)
+        tab_buttons2.columnconfigure(3, weight=1)
+        row_idx_2 = 0
+
+        row_idx_2 = self._create_settings_tischreservierung_buttons_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_settings_zimmerreservierung_buttons_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_settings_anrufliste_buttons_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_settings_offene_rechnungen_buttons_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_settings_offene_rechnungen_design_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_settings_auth_code_buttons_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_generic_button_config_section(tab_buttons2, temp_settings, dialog_vars, "Kassenprotokoll: Hero-Icon", 'kassenprotokoll_button_configs', ['KP_HeroIcon'], row_idx_2)
+        row_idx_2 = self._create_settings_list_views_design_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_settings_trinkgeldliste_buttons_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_settings_minibarliste_buttons_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+        row_idx_2 = self._create_settings_tagesabrechnung_buttons_section(tab_buttons2, temp_settings, dialog_vars, start_row=row_idx_2)
+
+        # =========================================================================
+        # TAB 4: MODUL-BUTTONS & LAYOUT
+        # =========================================================================
+        tab_modules.columnconfigure(0, weight=1)
+        tab_modules.columnconfigure(1, weight=1)
+        tab_modules.columnconfigure(2, weight=1)
+        tab_modules.columnconfigure(3, weight=1)
+        row_idx_m = 0
+
+        row_idx_m = self._create_settings_urlaubsantraege_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_ueberstundenantrag_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_layover_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_layover_design_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_generic_button_config_section(tab_modules, temp_settings, dialog_vars, "MOD-Rundgang: Button-Icons", 'mod_rundgang_button_configs',['MOD_Save', 'MOD_Email', 'MOD_Reset', 'MOD_PDF', 'MOD_HeroIcon', 'MOD_NameIcon', 'MOD_DateIcon'], row_idx_m)
+        row_idx_m = self._create_settings_mod_rundgang_colors_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_minibar_dialog_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_dialog_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_backup_dialog_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_shift_actions_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_bettensteuer_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_spickzettel_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_spickzettel_tab_icons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_spickzettel_home_button_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_spickzettel_search_icon_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_spickzettel_sidebar_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_shuttle_menu_tiles_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_shuttle_service_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_restart_button_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_shuttle_overlay_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_taxibestellung_overlay_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_weckruf_overlay_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
     
     
     def _create_generic_button_config_section(self, parent_frame, temp_settings, dialog_vars, section_title, settings_key, button_order, start_row):
@@ -31136,7 +31155,7 @@ class KassenprotokollApp:
         """Spaltenbreiten der Namensliste-Tabelle konfigurieren (Summe = 277 mm für A4-Querformat)."""
         TOTAL_WIDTH = 277
         COLUMNS = [
-            ('room',        "Zimmernummer"),
+            ('room',        "Zi-NR."),
             ('name',        "Nachname, Vorname"),
             ('nationality', "Nationalität"),
             ('contact',     "E-Mail / Telefon"),
@@ -31820,6 +31839,7 @@ class KassenprotokollApp:
         for key, label_text in toast_types.items():
             ttk.Label(toast_colors_frame, text=f"{label_text}:").grid(row=current_row, column=0, sticky='w', padx=5, pady=3)
             
+            color_config_frame.columnconfigure(1, weight=1)
             color_config_frame = ttk.Frame(toast_colors_frame)
             color_config_frame.grid(row=current_row, column=1, columnspan=3, sticky='ew')
 
@@ -31963,6 +31983,7 @@ class KassenprotokollApp:
     
     def _create_settings_header_icon_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
         """Erstellt den Abschnitt für die Konfiguration des Icons in der Überschrift."""
+        frame.columnconfigure(1, weight=1)
         frame = ttk.LabelFrame(parent_frame, text="Überschriften-Icon (Hauptmenü)", style='TLabelframe')
         frame.grid(row=start_row, column=0, columnspan=4, sticky='ew', padx=5, pady=10)
         
@@ -32284,57 +32305,6 @@ class KassenprotokollApp:
                     _c.configure(scrollregion=_c.bbox("all"))
 
         settings_window.after(200, _update_scrollregions_after_zoom)
-
-    def cancel_and_close_settings():
-        settings_window.destroy()
-
-        # --- UI Aufbau ---
-        button_frame_settings = ttk.Frame(main_settings_frame)
-        button_frame_settings.grid(row=0, column=0, sticky='ew', pady=(0, 10))
-        button_frame_settings.columnconfigure((0,1), weight=1)
-        ttk.Button(button_frame_settings, text="Speichern & Schließen", command=save_and_close_settings).pack(side='left', fill='x', expand=True, padx=5, ipady=4)
-        ttk.Button(button_frame_settings, text="Abbrechen", command=cancel_and_close_settings).pack(side='left', fill='x', expand=True, padx=5, ipady=4)
-        
-        canvas = tk.Canvas(main_settings_frame, borderwidth=0, highlightthickness=0)
-        vsb = ttk.Scrollbar(main_settings_frame, orient="vertical", command=canvas.yview)
-        canvas.configure(yscrollcommand=vsb.set)
-        
-        vsb.grid(row=1, column=1, sticky='ns')
-        canvas.grid(row=1, column=0, sticky='nsew')
-
-        settings_content_frame = ttk.Frame(canvas, padding=10)
-        canvas_window_id = canvas.create_window((0,0), window=settings_content_frame, anchor="nw")
-
-        def _on_frame_configure(event):
-            canvas.configure(scrollregion=canvas.bbox("all"))
-        def _on_canvas_configure(event):
-            canvas.itemconfig(canvas_window_id, width=event.width)
-
-        settings_content_frame.bind("<Configure>", _on_frame_configure)
-        canvas.bind("<Configure>", _on_canvas_configure)
-
-        settings_notebook = ttk.Notebook(settings_content_frame)
-        settings_notebook.pack(fill='both', expand=True)
-
-        tab_general = ttk.Frame(settings_notebook, padding=10)
-        tab_appearance = ttk.Frame(settings_notebook, padding=10)
-        tab_content_logic = ttk.Frame(settings_notebook, padding=10)
-        
-        settings_notebook.add(tab_general, text="Allgemein")
-        settings_notebook.add(tab_appearance, text="Darstellung")
-        settings_notebook.add(tab_content_logic, text="Inhalte & Logik")
-        
-        # HIER ERFOLGEN DIE KORREKTEN AUFRUFE
-        self._populate_general_settings_tab(tab_general, temp_settings, dialog_vars)
-        self._populate_appearance_settings_tab(tab_appearance, temp_settings, dialog_vars)
-        self._populate_content_logic_settings_tab(tab_content_logic, temp_settings, dialog_vars)
-
-        settings_window.protocol("WM_DELETE_WINDOW", cancel_and_close_settings)
-        
-        settings_window.resizable(True, True)
-        settings_window.state('zoomed')
-        settings_window.minsize(750, 650)
-    
     def _add_edit_minibar_item_dialog(self, parent_window, item=None, current_defs=None, list_name='minibar_items'):
         is_editing = item is not None
         title = "Minibar Artikel Bearbeiten" if is_editing else "Minibar Artikel Hinzufügen"
@@ -33560,11 +33530,9 @@ class KassenprotokollApp:
         """Füllt den 'Inhalte & Logik'-Tab in den Einstellungen mit Widgets."""
        
        ##### HIER DIE FOLGENDE ZEILE EINFÜGEN #####
-        row_idx = self._create_settings_sizes_section(parent_frame, temp_settings, dialog_vars, start_row=0)
-       
-       
         parent_frame.columnconfigure(1, weight=1)
         row_idx = 0
+        row_idx = self._create_settings_sizes_section(parent_frame, temp_settings, dialog_vars, start_row=0)
 
         # Starting float value
         ttk.Label(parent_frame, text="Kassen-Sollwert (€):").grid(row=row_idx, column=0, sticky='w', padx=5, pady=5)
@@ -33656,7 +33624,7 @@ class KassenprotokollApp:
     def _populate_pdf_logos_settings_tab(self, parent_frame, temp_settings, dialog_vars):
         """Füllt den 'PDF-Logos'-Tab: Für jedes PDF-Dokument kann ein eigenes Logo gewählt werden."""
 
-        PDF_DOCUMENTS = [
+        PDF_DOCUMENTS =[
             ('offene_rechnungen',   "Offene Rechnungen"),
             ('layover',             "Layover-Übersicht"),
             ('namensliste',         "Namensliste"),
@@ -33668,16 +33636,45 @@ class KassenprotokollApp:
             ('mod_rundgang',        "MOD-Rundgang"),
         ]
 
+        # Container Frame für das Scroll-Layout
+        container = ttk.Frame(parent_frame)
+        container.pack(fill="both", expand=True)
+
         # Scrollbarer Bereich
-        canvas = tk.Canvas(parent_frame, borderwidth=0, highlightthickness=0)
-        scrollbar = ttk.Scrollbar(parent_frame, orient="vertical", command=canvas.yview)
+        canvas = tk.Canvas(container, borderwidth=0, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(container, orient="vertical", command=canvas.yview)
         scroll_frame = ttk.Frame(canvas)
-        scroll_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        
+        # WICHTIG: Die Window-ID speichern, um die Breite später anzupassen
+        window_id = canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        
+        def on_frame_configure(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+            
+        def on_canvas_configure(event):
+            # Dies zwingt den inneren Frame, sich auf die volle Breite des Canvas auszudehnen
+            canvas.itemconfig(window_id, width=event.width)
+            
+        scroll_frame.bind("<Configure>", on_frame_configure)
+        canvas.bind("<Configure>", on_canvas_configure)
+        
         canvas.configure(yscrollcommand=scrollbar.set)
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
-        canvas.bind("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1 * (e.delta / 120)), "units"))
+        
+        # Mausrad-Scrollen sicherstellen
+        def _on_mousewheel(event):
+            if platform.system() == 'Windows':
+                canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+            elif platform.system() == 'Darwin':
+                canvas.yview_scroll(int(-1*event.delta), "units")
+            else:
+                if event.num == 4: canvas.yview_scroll(-1, "units")
+                elif event.num == 5: canvas.yview_scroll(1, "units")
+                
+        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        canvas.bind_all("<Button-4>", _on_mousewheel)
+        canvas.bind_all("<Button-5>", _on_mousewheel)
 
         ttk.Label(scroll_frame, text="Wählen Sie für jedes PDF-Dokument ein eigenes Logo.\nLeere Auswahl verwendet das Standard-Logo.", justify='left').grid(
             row=0, column=0, columnspan=5, sticky='w', padx=10, pady=(8, 14))
@@ -33697,7 +33694,7 @@ class KassenprotokollApp:
 
             # Pfad-Anzeige (readonly)
             display_var = tk.StringVar(value=path_var.get() or DEFAULT_LABEL)
-            entry = ttk.Entry(scroll_frame, textvariable=display_var, state='readonly', width=38)
+            entry = ttk.Entry(scroll_frame, textvariable=display_var, state='readonly')
             entry.grid(row=row_idx, column=1, sticky='ew', padx=4, pady=6)
 
             # Vorschau-Container
@@ -33735,7 +33732,7 @@ class KassenprotokollApp:
             def browse(k=key, pv=path_var, dv=display_var, rp=refresh_preview):
                 fpath = filedialog.askopenfilename(
                     title=f"Logo für '{label}' auswählen",
-                    filetypes=[("Bilddateien", "*.png *.jpg *.jpeg"), ("Alle Dateien", "*.*")],
+                    filetypes=[("Bilddateien", "*.png *.jpg *.jpeg *.avif"), ("Alle Dateien", "*.*")],
                     parent=parent_frame.winfo_toplevel()
                 )
                 if fpath:
@@ -34154,7 +34151,7 @@ class KassenprotokollApp:
         self.namensliste_tree = ttk.Treeview(tree_outer, columns=columns,
                                               show="headings", style="Namensliste.Treeview")
         col_configs = {
-            "room":        {"text": "Zimmernummer",        "width": 160},
+            "room":        {"text": "Zi-NR.",        "width": 160},
             "name":        {"text": "Nachname, Vorname",  "width": 300},
             "nationality": {"text": "Nationalität",        "width": 120},
             "contact":     {"text": "E-Mail / Telefon",    "width": 350},
