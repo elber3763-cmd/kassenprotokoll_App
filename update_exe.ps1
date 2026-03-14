@@ -3,7 +3,7 @@
 # und speichert sie nach O:\kassenprotokoll_App\
 
 $repo    = "elber3763-cmd/kassenprotokoll_App"
-$outFile = "O:\kassenprotokoll_App\kassenprotokoll.exe"
+$outFile = Join-Path $PSScriptRoot "kassenprotokoll.exe"
 
 Write-Host "Suche neueste Version auf GitHub..." -ForegroundColor Cyan
 
