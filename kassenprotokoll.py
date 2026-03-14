@@ -13191,6 +13191,13 @@ class KassenprotokollApp:
       
         'restart_button_icon_path': '', # Pfad für das Icon des Neustart-Buttons im Dashboard
         'restart_button_icon_size': 24, # Größe des Icons in Pixeln
+        'sync_button_config': {
+            'label': 'Aktualisieren',
+            'icon_path': '',
+            'icon_size': 22,
+            'bg_color': '#27AE60',
+            'fg_color': '#FFFFFF',
+        },
 
       
       'sidebar_logo_config': {
@@ -14557,21 +14564,45 @@ class KassenprotokollApp:
         self.sidebar_logo_label.pack(pady=logo_cfg.get('pady', 10), expand=True, fill='both')
         ttk.Separator(parent_frame, orient='horizontal').pack(fill='x', padx=20, pady=(5, 8))
 
-        # One-Click-Sync-Button
-        sync_btn = tk.Button(
-            parent_frame,
-            text="↺  Aktualisieren",
+        # One-Click-Sync-Button (konfigurierbar)
+        sync_cfg = self.current_settings.get('sync_button_config', self.default_settings['sync_button_config'])
+        sync_label = sync_cfg.get('label', 'Aktualisieren')
+        sync_bg    = sync_cfg.get('bg_color', '#27AE60')
+        sync_fg    = sync_cfg.get('fg_color', '#FFFFFF')
+        sync_icon_path = sync_cfg.get('icon_path', '')
+        sync_icon_size = sync_cfg.get('icon_size', 22)
+
+        sync_icon_photo = None
+        if sync_icon_path and os.path.exists(sync_icon_path) and Image and ImageTk:
+            try:
+                img = Image.open(sync_icon_path).resize((sync_icon_size, sync_icon_size), Image.Resampling.LANCZOS)
+                sync_icon_photo = ImageTk.PhotoImage(img)
+                if not hasattr(self, '_sidebar_sync_icon'):
+                    self._sidebar_sync_icon = None
+                self._sidebar_sync_icon = sync_icon_photo  # Referenz halten
+            except Exception:
+                sync_icon_photo = None
+
+        sync_btn_kwargs = dict(
             command=self._one_click_sync,
-            bg="#27AE60",
-            fg="white",
-            activebackground="#1E8449",
-            activeforeground="white",
+            bg=sync_bg,
+            fg=sync_fg,
+            activebackground=sync_bg,
+            activeforeground=sync_fg,
             font=("Segoe UI", 11, "bold"),
             relief="flat",
             cursor="hand2",
             pady=7,
-            bd=0
+            bd=0,
         )
+        if sync_icon_photo:
+            sync_btn_kwargs['image'] = sync_icon_photo
+            sync_btn_kwargs['text'] = f"  {sync_label}"
+            sync_btn_kwargs['compound'] = tk.LEFT
+        else:
+            sync_btn_kwargs['text'] = f"↺  {sync_label}"
+
+        sync_btn = tk.Button(parent_frame, **sync_btn_kwargs)
         sync_btn.pack(fill='x', padx=15, pady=(0, 10))
 
         # Scrollbarer Bereich für Menü-Items (unverändert)
@@ -29483,8 +29514,86 @@ class KassenprotokollApp:
         # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         return start_row + 1
-        
-        
+
+    def _create_settings_sync_button_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
+        """Einstellungen für den '↺ Aktualisieren'-Button in der Sidebar."""
+        cfg = temp_settings.get('sync_button_config', {}).copy()
+        if not isinstance(cfg, dict):
+            cfg = {}
+
+        def _save():
+            temp_settings['sync_button_config'] = {
+                'label':     dialog_vars['sync_label_var'].get(),
+                'icon_path': dialog_vars['sync_icon_path_var'].get(),
+                'icon_size': dialog_vars['sync_icon_size_var'].get(),
+                'bg_color':  dialog_vars['sync_bg_var'].get(),
+                'fg_color':  dialog_vars['sync_fg_var'].get(),
+            }
+
+        frame = ttk.LabelFrame(parent_frame, text="Sidebar: Aktualisieren-Button", style='TLabelframe')
+        frame.grid(row=start_row, column=0, columnspan=4, sticky='ew', padx=5, pady=10)
+        frame.columnconfigure(1, weight=1)
+
+        # Beschriftung
+        dialog_vars['sync_label_var'] = tk.StringVar(value=cfg.get('label', 'Aktualisieren'))
+        dialog_vars['sync_label_var'].trace_add('write', lambda *_: _save())
+        ttk.Label(frame, text="Beschriftung:").grid(row=0, column=0, sticky='w', padx=5, pady=4)
+        ttk.Entry(frame, textvariable=dialog_vars['sync_label_var']).grid(row=0, column=1, columnspan=3, sticky='ew', padx=5, pady=4)
+
+        # Icon-Pfad
+        dialog_vars['sync_icon_path_var'] = tk.StringVar(value=cfg.get('icon_path', ''))
+        ttk.Label(frame, text="Icon-Datei:").grid(row=1, column=0, sticky='w', padx=5, pady=4)
+        ttk.Entry(frame, textvariable=dialog_vars['sync_icon_path_var'], state='readonly').grid(row=1, column=1, sticky='ew', padx=5, pady=4)
+
+        def browse_icon():
+            filetypes = [("Bilddateien", "*.png *.jpg *.jpeg *.gif"), ("Alle Dateien", "*.*")]
+            fpath = filedialog.askopenfilename(title="Icon auswählen", filetypes=filetypes, parent=parent_frame.winfo_toplevel())
+            if fpath:
+                dialog_vars['sync_icon_path_var'].set(fpath)
+                _save()
+
+        def clear_icon():
+            dialog_vars['sync_icon_path_var'].set('')
+            _save()
+
+        ttk.Button(frame, text="Durchsuchen...", command=browse_icon).grid(row=1, column=2, padx=5, pady=4)
+        ttk.Button(frame, text="Löschen", command=clear_icon).grid(row=1, column=3, padx=5, pady=4)
+
+        # Icon-Größe
+        dialog_vars['sync_icon_size_var'] = tk.IntVar(value=cfg.get('icon_size', 22))
+        dialog_vars['sync_icon_size_var'].trace_add('write', lambda *_: _save())
+        ttk.Label(frame, text="Icon-Größe (px):").grid(row=2, column=0, sticky='w', padx=5, pady=4)
+        ttk.Spinbox(frame, from_=16, to=64, textvariable=dialog_vars['sync_icon_size_var'], width=8).grid(row=2, column=1, sticky='w', padx=5, pady=4)
+
+        # Hintergrundfarbe
+        dialog_vars['sync_bg_var'] = tk.StringVar(value=cfg.get('bg_color', '#27AE60'))
+        dialog_vars['sync_bg_var'].trace_add('write', lambda *_: _save())
+        ttk.Label(frame, text="Hintergrundfarbe:").grid(row=3, column=0, sticky='w', padx=5, pady=4)
+        ttk.Entry(frame, textvariable=dialog_vars['sync_bg_var'], width=12).grid(row=3, column=1, sticky='w', padx=5, pady=4)
+
+        def pick_bg():
+            color = colorchooser.askcolor(color=dialog_vars['sync_bg_var'].get(), parent=parent_frame.winfo_toplevel(), title="Hintergrundfarbe wählen")[1]
+            if color:
+                dialog_vars['sync_bg_var'].set(color)
+
+        ttk.Button(frame, text="Farbe wählen", command=pick_bg).grid(row=3, column=2, padx=5, pady=4)
+
+        # Textfarbe
+        dialog_vars['sync_fg_var'] = tk.StringVar(value=cfg.get('fg_color', '#FFFFFF'))
+        dialog_vars['sync_fg_var'].trace_add('write', lambda *_: _save())
+        ttk.Label(frame, text="Textfarbe:").grid(row=4, column=0, sticky='w', padx=5, pady=4)
+        ttk.Entry(frame, textvariable=dialog_vars['sync_fg_var'], width=12).grid(row=4, column=1, sticky='w', padx=5, pady=4)
+
+        def pick_fg():
+            color = colorchooser.askcolor(color=dialog_vars['sync_fg_var'].get(), parent=parent_frame.winfo_toplevel(), title="Textfarbe wählen")[1]
+            if color:
+                dialog_vars['sync_fg_var'].set(color)
+
+        ttk.Button(frame, text="Farbe wählen", command=pick_fg).grid(row=4, column=2, padx=5, pady=4)
+
+        return start_row + 1
+
+
     def _create_settings_main_menu_tiles_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
         """Erstellt den Abschnitt für die Hauptmenü-Kacheln im Einstellungsdialog."""
         main_menu_frame = ttk.LabelFrame(parent_frame, text="Hauptmenü-Kacheln", style='TLabelframe')
@@ -30482,6 +30591,7 @@ class KassenprotokollApp:
         row_idx_m = self._create_settings_shuttle_menu_tiles_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
         row_idx_m = self._create_settings_shuttle_service_buttons_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
         row_idx_m = self._create_settings_restart_button_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
+        row_idx_m = self._create_settings_sync_button_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
         row_idx_m = self._create_settings_shuttle_overlay_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
         row_idx_m = self._create_settings_taxibestellung_overlay_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
         row_idx_m = self._create_settings_weckruf_overlay_section(tab_modules, temp_settings, dialog_vars, start_row=row_idx_m)
