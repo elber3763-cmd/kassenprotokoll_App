@@ -32441,7 +32441,7 @@ class KassenprotokollApp:
             
             self.current_settings = temp_settings
             self._save_settings()
-            canvas.unbind_all("<MouseWheel>")
+            settings_window.unbind_all("<MouseWheel>")
             settings_window.destroy()
 
             self._apply_settings_to_styles()
