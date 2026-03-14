@@ -36607,7 +36607,8 @@ class SuccessToast(tk.Toplevel):
 
         # --- Größe und Position ---
         self.update_idletasks()
-        width, height = 500, 150
+        width = 500
+        height = max(150, self.winfo_reqheight())
         parent_x, parent_y = parent.winfo_x(), parent.winfo_y()
         parent_width, parent_height = parent.winfo_width(), parent.winfo_height()
         x_pos = int(parent_x + (parent_width / 2) - (width / 2))
