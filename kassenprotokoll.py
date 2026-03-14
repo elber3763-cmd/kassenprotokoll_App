@@ -24900,6 +24900,45 @@ class KassenprotokollApp:
         else:
             skipped.append("Offene Rechnungen")
 
+        # Checklisten (Früh, Spät, Nacht): State-Dateien liegen auf dem Netzlaufwerk
+        for shift_key, label in [('frueh', 'Checkliste Früh'), ('spaet', 'Checkliste Spät'), ('nacht', 'Checkliste Nacht')]:
+            try:
+                self._load_checklist_state(shift_key)
+                synced.append(label)
+            except Exception as e:
+                errors.append(f"{label}: {str(e)[:60]}")
+
+        # Namensliste
+        try:
+            self._load_namensliste_data()
+            self._load_and_display_namensliste()
+            synced.append("Namensliste")
+        except Exception as e:
+            errors.append(f"Namensliste: {str(e)[:60]}")
+
+        # MOD-Checkliste
+        mod_instance = getattr(self, 'mod_rundgang_instance', None)
+        if mod_instance:
+            try:
+                mod_instance.load_state()
+                synced.append("MOD-Checkliste")
+            except Exception as e:
+                errors.append(f"MOD-Checkliste: {str(e)[:60]}")
+        else:
+            skipped.append("MOD-Checkliste")
+
+        # Wochenendplaner
+        wp_instance = getattr(self, 'weekend_planner_instance', None)
+        if wp_instance:
+            try:
+                wp_instance.data = wp_instance._load_data()
+                wp_instance._refresh_planner_list()
+                synced.append("Wochenendplaner")
+            except Exception as e:
+                errors.append(f"Wochenendplaner: {str(e)[:60]}")
+        else:
+            skipped.append("Wochenendplaner")
+
         colors = self.current_settings.get('toast_colors')
         if errors:
             msg = "Fehler bei:\n" + "\n".join(errors)
