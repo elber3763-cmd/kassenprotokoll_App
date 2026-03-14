@@ -14555,7 +14555,24 @@ class KassenprotokollApp:
             self.sidebar_logo_label.config(text='(BWP) PREMIER', font=logo_font, fg='#FFFFFF', bg=sidebar_bg)
         
         self.sidebar_logo_label.pack(pady=logo_cfg.get('pady', 10), expand=True, fill='both')
-        ttk.Separator(parent_frame, orient='horizontal').pack(fill='x', padx=20, pady=(5, 15))
+        ttk.Separator(parent_frame, orient='horizontal').pack(fill='x', padx=20, pady=(5, 8))
+
+        # One-Click-Sync-Button
+        sync_btn = tk.Button(
+            parent_frame,
+            text="↺  Aktualisieren",
+            command=self._one_click_sync,
+            bg="#27AE60",
+            fg="white",
+            activebackground="#1E8449",
+            activeforeground="white",
+            font=("Segoe UI", 11, "bold"),
+            relief="flat",
+            cursor="hand2",
+            pady=7,
+            bd=0
+        )
+        sync_btn.pack(fill='x', padx=15, pady=(0, 10))
 
         # Scrollbarer Bereich für Menü-Items (unverändert)
         canvas = tk.Canvas(parent_frame, borderwidth=0, highlightthickness=0, background=sidebar_bg)
@@ -24809,10 +24826,84 @@ class KassenprotokollApp:
         close_btn.grid(row=0, column=2, padx=2, ipady=ipady, sticky='ew')
 
     # ^^^^^ HIER ENDET DER NEUE CODEBLOCK FÜR TAXI-BACKUPS ^^^^^
-    
+
+    def _one_click_sync(self):
+        """One-Click-Synchronisation: Stellt das neueste Backup aller Module automatisch wieder her."""
+        modules = [
+            ("Kassenprotokoll", self.kassenprotokoll_backup_dir, "kasse"),
+            ("Tagesabrechnung", self.tagesabrechnung_backup_dir, "ta"),
+            ("Trinkgeld",       self.trinkgeld_backup_dir,       "trinkgeld"),
+            ("Minibar",         self.minibar_backup_dir,         "minibar"),
+            ("Shuttle",         self.shuttle_backup_dir,         "shuttle"),
+            ("Weckruf",         self.weckruf_backup_dir,         "weckruf"),
+            ("Taxi",            self.taxi_backup_dir,            "taxi"),
+        ]
+
+        synced, skipped, errors = [], [], []
+
+        for name, backup_dir, key in modules:
+            if not os.path.exists(backup_dir):
+                skipped.append(name)
+                continue
+            files = [f for f in os.listdir(backup_dir) if f.endswith('.json')]
+            if not files:
+                skipped.append(name)
+                continue
+
+            newest = max(files, key=lambda f: os.path.getmtime(os.path.join(backup_dir, f)))
+            fp = os.path.join(backup_dir, newest)
+
+            try:
+                with open(fp, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+
+                if key == "kasse":
+                    self._apply_snapshot_to_vars(self.fruehdienst_vars, data.get('fruehdienst_data', {}), "Frühdienst")
+                    self._apply_snapshot_to_vars(self.spaetdienst_vars, data.get('spaetdienst_data', {}), "Spätdienst")
+                    self._rebuild_ui_after_settings_change()
+                elif key == "ta":
+                    self._apply_tagesabrechnung_snapshot_to_vars({"data": data})
+                elif key == "trinkgeld":
+                    self.trinkgeld_data_cache = data
+                    self._save_trinkgeld_data()
+                    self._load_and_display_trinkgeld_for_period()
+                elif key == "minibar":
+                    self.minibar_data_cache = data
+                    self._save_minibar_data()
+                    self._load_and_display_minibar_for_period()
+                elif key == "shuttle":
+                    self.shuttle_data_cache = data
+                    self._save_shuttle_data()
+                    self._load_and_display_shuttle_data('Hinfahrt')
+                    self._load_and_display_shuttle_data('Rückfahrt')
+                elif key == "weckruf":
+                    self.weckruf_data_cache = data
+                    self._save_weckruf_data()
+                    self._load_and_display_weckrufe()
+                elif key == "taxi":
+                    self.taxi_data_cache = data
+                    self._save_taxi_data()
+                    self._load_and_display_taxi_orders()
+
+                synced.append(name)
+            except Exception as e:
+                errors.append(f"{name}: {str(e)[:60]}")
+
+        colors = self.current_settings.get('toast_colors')
+        if errors:
+            msg = "Fehler bei:\n" + "\n".join(errors)
+            if synced:
+                msg += f"\n\nErfolgreich: {', '.join(synced)}"
+            SuccessToast(self.master, title="Sync – Fehler", message=msg, toast_type='error', colors=colors)
+        elif not synced:
+            SuccessToast(self.master, title="Synchronisation", message="Keine Backups gefunden.", toast_type='warning', colors=colors)
+        else:
+            msg = f"Folgende Module wurden aktualisiert:\n{', '.join(synced)}"
+            if skipped:
+                msg += f"\n(Keine Backups: {', '.join(skipped)})"
+            SuccessToast(self.master, title="Synchronisation erfolgreich", message=msg, toast_type='success', colors=colors)
 
 
-    
 # ERSETZEN Sie die komplette Methode _schedule_periodic_backup.
 
     def _schedule_periodic_backup(self):
