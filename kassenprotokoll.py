@@ -24862,10 +24862,8 @@ class KassenprotokollApp:
         """One-Click-Synchronisation: Stellt das neueste Backup aller Module automatisch wieder her."""
         modules = [
             ("Kassenprotokoll", self.kassenprotokoll_backup_dir, "kasse"),
-            ("Tagesabrechnung", self.tagesabrechnung_backup_dir, "ta"),
             ("Trinkgeld",       self.trinkgeld_backup_dir,       "trinkgeld"),
             ("Minibar",         self.minibar_backup_dir,         "minibar"),
-            ("Shuttle",         self.shuttle_backup_dir,         "shuttle"),
             ("Weckruf",         self.weckruf_backup_dir,         "weckruf"),
             ("Taxi",            self.taxi_backup_dir,            "taxi"),
         ]
@@ -24892,8 +24890,6 @@ class KassenprotokollApp:
                     self._apply_snapshot_to_vars(self.fruehdienst_vars, data.get('fruehdienst_data', {}), "Frühdienst")
                     self._apply_snapshot_to_vars(self.spaetdienst_vars, data.get('spaetdienst_data', {}), "Spätdienst")
                     self._rebuild_ui_after_settings_change()
-                elif key == "ta":
-                    self._apply_tagesabrechnung_snapshot_to_vars({"data": data})
                 elif key == "trinkgeld":
                     self.trinkgeld_data_cache = data
                     self._save_trinkgeld_data()
@@ -24902,11 +24898,6 @@ class KassenprotokollApp:
                     self.minibar_data_cache = data
                     self._save_minibar_data()
                     self._load_and_display_minibar_for_period()
-                elif key == "shuttle":
-                    self.shuttle_data_cache = data
-                    self._save_shuttle_data()
-                    self._load_and_display_shuttle_data('Hinfahrt')
-                    self._load_and_display_shuttle_data('Rückfahrt')
                 elif key == "weckruf":
                     self.weckruf_data_cache = data
                     self._save_weckruf_data()
@@ -24930,22 +24921,6 @@ class KassenprotokollApp:
                 errors.append(f"Offene Rechnungen: {str(e)[:60]}")
         else:
             skipped.append("Offene Rechnungen")
-
-        # Checklisten (Früh, Spät, Nacht): State-Dateien liegen auf dem Netzlaufwerk
-        for shift_key, label in [('frueh', 'Checkliste Früh'), ('spaet', 'Checkliste Spät'), ('nacht', 'Checkliste Nacht')]:
-            try:
-                self._load_checklist_state(shift_key)
-                synced.append(label)
-            except Exception as e:
-                errors.append(f"{label}: {str(e)[:60]}")
-
-        # Namensliste
-        try:
-            self._load_namensliste_data()
-            self._load_and_display_namensliste()
-            synced.append("Namensliste")
-        except Exception as e:
-            errors.append(f"Namensliste: {str(e)[:60]}")
 
         # MOD-Checkliste
         mod_instance = getattr(self, 'mod_rundgang_instance', None)
