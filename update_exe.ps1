@@ -3,7 +3,7 @@
 # und speichert sie im aktuellen Verzeichnis.
 
 $repo    = "elber3763-cmd/kassenprotokoll_App"
-$outFile = Join-Path $PSScriptRoot "kassenprotokoll.exe"
+$outFile = "O:\kassenprotokoll_App\kassenprotokoll.exe"
 
 # GitHub Personal Access Token (benoetigt fuer private Repos)
 # Token erstellen: https://github.com/settings/tokens (Scope: repo)
