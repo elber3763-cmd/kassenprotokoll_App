@@ -24889,6 +24889,17 @@ class KassenprotokollApp:
             except Exception as e:
                 errors.append(f"{name}: {str(e)[:60]}")
 
+        # Offene Rechnungen: kein Backup-Verzeichnis, Daten direkt vom Netzlaufwerk neu laden
+        or_instance = getattr(self, 'offene_rechnungen_app_instance', None)
+        if or_instance and not getattr(or_instance, 'is_destroyed', True):
+            try:
+                or_instance.load_data()
+                synced.append("Offene Rechnungen")
+            except Exception as e:
+                errors.append(f"Offene Rechnungen: {str(e)[:60]}")
+        else:
+            skipped.append("Offene Rechnungen")
+
         colors = self.current_settings.get('toast_colors')
         if errors:
             msg = "Fehler bei:\n" + "\n".join(errors)
