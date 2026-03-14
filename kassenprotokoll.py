@@ -24963,7 +24963,9 @@ class KassenprotokollApp:
         if wp_instance:
             try:
                 wp_instance.data = wp_instance._load_data()
-                wp_instance._refresh_planner_list()
+                # scrollable_frame existiert nur, wenn der Planer-Tab bereits geöffnet wurde
+                if hasattr(wp_instance, 'scrollable_frame') and wp_instance.scrollable_frame is not None:
+                    wp_instance._refresh_planner_list()
                 synced.append("Wochenendplaner")
             except Exception as e:
                 errors.append(f"Wochenendplaner: {str(e)[:60]}")
