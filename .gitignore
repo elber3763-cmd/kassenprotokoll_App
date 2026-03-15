@@ -16,7 +16,6 @@ backups/
 
 # Build / Dist
 build/
-dist/
 *.spec
 *.egg-info/
 

@@ -24859,13 +24859,11 @@ class KassenprotokollApp:
     # ^^^^^ HIER ENDET DER NEUE CODEBLOCK FÜR TAXI-BACKUPS ^^^^^
 
     def _one_click_sync(self):
-        """One-Click-Synchronisation: Stellt das neueste Backup aller Module automatisch wieder her."""
+        """One-Click-Synchronisation: Stellt das neueste Backup ausgewählter Module wieder her."""
         modules = [
             ("Kassenprotokoll", self.kassenprotokoll_backup_dir, "kasse"),
             ("Trinkgeld",       self.trinkgeld_backup_dir,       "trinkgeld"),
             ("Minibar",         self.minibar_backup_dir,         "minibar"),
-            ("Weckruf",         self.weckruf_backup_dir,         "weckruf"),
-            ("Taxi",            self.taxi_backup_dir,            "taxi"),
         ]
 
         synced, skipped, errors = [], [], []
@@ -24898,20 +24896,12 @@ class KassenprotokollApp:
                     self.minibar_data_cache = data
                     self._save_minibar_data()
                     self._load_and_display_minibar_for_period()
-                elif key == "weckruf":
-                    self.weckruf_data_cache = data
-                    self._save_weckruf_data()
-                    self._load_and_display_weckrufe()
-                elif key == "taxi":
-                    self.taxi_data_cache = data
-                    self._save_taxi_data()
-                    self._load_and_display_taxi_orders()
 
                 synced.append(name)
             except Exception as e:
                 errors.append(f"{name}: {str(e)[:60]}")
 
-        # Offene Rechnungen: kein Backup-Verzeichnis, Daten direkt vom Netzlaufwerk neu laden
+        # Offene Rechnungen: Daten direkt vom Netzlaufwerk neu laden
         or_instance = getattr(self, 'offene_rechnungen_app_instance', None)
         if or_instance and not getattr(or_instance, 'is_destroyed', True):
             try:
@@ -24921,31 +24911,6 @@ class KassenprotokollApp:
                 errors.append(f"Offene Rechnungen: {str(e)[:60]}")
         else:
             skipped.append("Offene Rechnungen")
-
-        # MOD-Checkliste
-        mod_instance = getattr(self, 'mod_rundgang_instance', None)
-        if mod_instance:
-            try:
-                mod_instance.load_state()
-                synced.append("MOD-Checkliste")
-            except Exception as e:
-                errors.append(f"MOD-Checkliste: {str(e)[:60]}")
-        else:
-            skipped.append("MOD-Checkliste")
-
-        # Wochenendplaner
-        wp_instance = getattr(self, 'weekend_planner_instance', None)
-        if wp_instance:
-            try:
-                wp_instance.data = wp_instance._load_data()
-                # scrollable_frame existiert nur, wenn der Planer-Tab bereits geöffnet wurde
-                if hasattr(wp_instance, 'scrollable_frame') and wp_instance.scrollable_frame is not None:
-                    wp_instance._refresh_planner_list()
-                synced.append("Wochenendplaner")
-            except Exception as e:
-                errors.append(f"Wochenendplaner: {str(e)[:60]}")
-        else:
-            skipped.append("Wochenendplaner")
 
         colors = self.current_settings.get('toast_colors')
         if errors:
