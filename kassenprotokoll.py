@@ -13195,7 +13195,7 @@ class KassenprotokollApp:
             'label': 'Aktualisieren',
             'icon_path': '',
             'icon_size': 22,
-            'bg_color': '#27AE60',
+            'bg_color': '#E65100',
             'fg_color': '#FFFFFF',
         },
 
@@ -14564,11 +14564,18 @@ class KassenprotokollApp:
         self.sidebar_logo_label.pack(pady=logo_cfg.get('pady', 10), expand=True, fill='both')
         ttk.Separator(parent_frame, orient='horizontal').pack(fill='x', padx=20, pady=(5, 8))
 
-        # One-Click-Sync-Button (konfigurierbar)
-        sync_cfg = self.current_settings.get('sync_button_config', self.default_settings['sync_button_config'])
-        sync_label = sync_cfg.get('label', 'Aktualisieren')
-        sync_bg    = sync_cfg.get('bg_color', '#27AE60')
-        sync_fg    = sync_cfg.get('fg_color', '#FFFFFF')
+        # ---------- One-Click-Sync-Button (Premium Animated Button) ----------
+        import math as _math
+        import tkinter.font as _tkfont
+
+        sync_cfg       = self.current_settings.get('sync_button_config', self.default_settings['sync_button_config'])
+        sync_label     = sync_cfg.get('label', 'Aktualisieren')
+        sync_base_bg   = sync_cfg.get('bg_color', '#E65100')
+        # Migration: Alte/unelegante Farben automatisch ersetzen
+        _legacy_colors = {'#27ae60','#2ecc71','#52be80','#0c2461','#0d47a1','#4f46e5','#c0392b'}
+        if sync_base_bg.lower() in _legacy_colors:
+            sync_base_bg = '#E65100'
+        sync_fg        = sync_cfg.get('fg_color', '#FFFFFF')
         sync_icon_path = sync_cfg.get('icon_path', '')
         sync_icon_size = sync_cfg.get('icon_size', 22)
 
@@ -14577,33 +14584,143 @@ class KassenprotokollApp:
             try:
                 img = Image.open(sync_icon_path).resize((sync_icon_size, sync_icon_size), Image.Resampling.LANCZOS)
                 sync_icon_photo = ImageTk.PhotoImage(img)
-                if not hasattr(self, '_sidebar_sync_icon'):
-                    self._sidebar_sync_icon = None
-                self._sidebar_sync_icon = sync_icon_photo  # Referenz halten
+                self._sidebar_sync_icon = sync_icon_photo
             except Exception:
                 sync_icon_photo = None
 
-        sync_btn_kwargs = dict(
-            command=self._one_click_sync,
-            bg=sync_bg,
-            fg=sync_fg,
-            activebackground=sync_bg,
-            activeforeground=sync_fg,
-            font=("Segoe UI", 11, "bold"),
-            relief="flat",
-            cursor="hand2",
-            pady=7,
-            bd=0,
-        )
-        if sync_icon_photo:
-            sync_btn_kwargs['image'] = sync_icon_photo
-            sync_btn_kwargs['text'] = f"  {sync_label}"
-            sync_btn_kwargs['compound'] = tk.LEFT
-        else:
-            sync_btn_kwargs['text'] = f"↺  {sync_label}"
+        _BTN_H  = 54
+        _RADIUS = 13
 
-        sync_btn = tk.Button(parent_frame, **sync_btn_kwargs)
-        sync_btn.pack(fill='x', padx=15, pady=(0, 10))
+        def _lc(hx, f):
+            hx = hx.lstrip('#')
+            r2,g2,b2 = int(hx[0:2],16), int(hx[2:4],16), int(hx[4:6],16)
+            return '#{:02x}{:02x}{:02x}'.format(min(255,int(r2+(255-r2)*f)), min(255,int(g2+(255-g2)*f)), min(255,int(b2+(255-b2)*f)))
+
+        def _dc(hx, f):
+            hx = hx.lstrip('#')
+            r2,g2,b2 = int(hx[0:2],16), int(hx[2:4],16), int(hx[4:6],16)
+            return '#{:02x}{:02x}{:02x}'.format(max(0,int(r2*(1-f))), max(0,int(g2*(1-f))), max(0,int(b2*(1-f))))
+
+        def _rrect(cv, x1, y1, x2, y2, r, **kw):
+            pts = [x1+r,y1, x2-r,y1, x2,y1, x2,y1+r, x2,y2-r, x2,y2, x2-r,y2, x1+r,y2, x1,y2, x1,y2-r, x1,y1+r, x1,y1]
+            return cv.create_polygon(pts, smooth=True, **kw)
+
+        def _draw_refresh_icon(cv, cx, cy, r, col, lw=2):
+            cv.create_arc(cx-r, cy-r, cx+r, cy+r, start=80, extent=-300, style='arc', outline=col, width=lw)
+            ea = _math.radians(140)
+            ex, ey = cx + r*_math.cos(ea), cy - r*_math.sin(ea)
+            tx, ty = _math.sin(ea), _math.cos(ea)
+            ar = r*0.65; px, py = -ty, tx
+            cv.create_polygon(
+                ex+tx*ar,                    ey+ty*ar,
+                ex-tx*ar*0.35+px*ar*0.55,   ey-ty*ar*0.35+py*ar*0.55,
+                ex-tx*ar*0.35-px*ar*0.55,   ey-ty*ar*0.35-py*ar*0.55,
+                fill=col, outline='')
+
+        def _draw_btn_frame(glow_t, pressed=False):
+            """glow_t: 0.0 (normal) … 1.0 (full hover glow)"""
+            sync_canvas.delete("all")
+            w = sync_canvas.winfo_width()
+            if w < 10:
+                return
+            off = 2 if pressed else 0
+
+            body   = _dc(sync_base_bg, 0.18) if pressed else _lc(sync_base_bg, glow_t * 0.12)
+            gloss  = _lc(sync_base_bg, 0.22 + glow_t * 0.08)
+            shadow = _dc(sync_base_bg, 0.62)
+            border = _lc(sync_base_bg, 0.40 + glow_t * 0.30)
+
+            # Schlagschatten (tief, 5 px)
+            _rrect(sync_canvas, 5, 6, w-1, _BTN_H, _RADIUS, fill=shadow, outline='')
+
+            # Äußerer Glow-Ring (animiert, mehrschichtig)
+            if glow_t > 0.01:
+                _rrect(sync_canvas, -2, -1, w+2, _BTN_H+2, _RADIUS+5,
+                       fill='', outline=_lc(sync_base_bg, 0.28 + glow_t*0.20), width=5)
+                _rrect(sync_canvas,  0,  0, w,   _BTN_H,   _RADIUS+2,
+                       fill='', outline=_lc(sync_base_bg, 0.45 + glow_t*0.25), width=3)
+
+            # Haupt-Body
+            _rrect(sync_canvas, 1, 1, w-5, _BTN_H-4, _RADIUS, fill=body, outline='')
+
+            # Glanz-Streifen oben (25% Höhe, subtil)
+            if not pressed:
+                _rrect(sync_canvas, 2, 2, w-6, int(_BTN_H*0.28), _RADIUS,
+                       fill=gloss, outline='')
+                sync_canvas.create_line(_RADIUS+2, 3, w-_RADIUS-7, 3,
+                                        fill=_lc(sync_base_bg, 0.55), width=1)
+
+            # Akzent-Rahmen
+            _rrect(sync_canvas, 1, 1, w-5, _BTN_H-4, _RADIUS,
+                   fill='', outline=border, width=1)
+
+            # Inhalt zentriert
+            cy  = _BTN_H // 2 - 1 + off
+            fnt = _tkfont.Font(family="Segoe UI", size=13, weight="bold")
+            if sync_icon_photo:
+                gap = 8; tw = fnt.measure(sync_label)
+                total = sync_icon_size + gap + tw
+                sx = max(10, (w - total) // 2) + off
+                sync_canvas.create_image(sx + sync_icon_size//2, cy, image=sync_icon_photo, anchor='center')
+                sync_canvas.create_text(sx + sync_icon_size + gap, cy, text=sync_label,
+                                        fill=sync_fg, font=("Segoe UI", 13, "bold"), anchor='w')
+            else:
+                ir = 10; gap = 10; tw = fnt.measure(sync_label)
+                total = (ir*2+4) + gap + tw
+                sx  = max(10, (w - total) // 2) + off
+                _draw_refresh_icon(sync_canvas, sx + ir + 2, cy, ir, sync_fg, lw=2)
+                sync_canvas.create_text(sx + (ir*2+4) + gap, cy, text=sync_label,
+                                        fill=sync_fg, font=("Segoe UI", 13, "bold"), anchor='w')
+
+        # Animationszustand
+        _glow     = [0.0]
+        _target   = [0.0]
+        _anim_job = [None]
+        _pressed  = [False]
+
+        def _animate():
+            cur = _glow[0]; tgt = _target[0]
+            if abs(cur - tgt) < 0.04:
+                _glow[0] = tgt
+                _draw_btn_frame(tgt, _pressed[0])
+                return
+            step = 0.14 if tgt > cur else -0.14
+            _glow[0] = max(0.0, min(1.0, cur + step))
+            _draw_btn_frame(_glow[0], _pressed[0])
+            _anim_job[0] = sync_canvas.after(16, _animate)
+
+        def _start_anim(target, pressed=False):
+            if _anim_job[0]:
+                sync_canvas.after_cancel(_anim_job[0])
+            _target[0]  = target
+            _pressed[0] = pressed
+            _animate()
+
+        sync_canvas = tk.Canvas(parent_frame, height=_BTN_H, bg=sidebar_bg,
+                                highlightthickness=0, bd=0, cursor="hand2")
+        sync_canvas.pack(fill='x', padx=8, pady=(6, 20))
+
+        def _on_sync_configure(e):
+            sync_canvas.after_idle(lambda: _draw_btn_frame(_glow[0], _pressed[0]))
+
+        def _on_sync_enter(e):
+            _start_anim(1.0, False)
+
+        def _on_sync_leave(e):
+            _start_anim(0.0, False)
+
+        def _on_sync_press(e):
+            _start_anim(0.0, True)
+
+        def _on_sync_release(e):
+            _start_anim(1.0, False)
+            self._one_click_sync()
+
+        sync_canvas.bind('<Configure>',       _on_sync_configure)
+        sync_canvas.bind('<Enter>',           _on_sync_enter)
+        sync_canvas.bind('<Leave>',           _on_sync_leave)
+        sync_canvas.bind('<ButtonPress-1>',   _on_sync_press)
+        sync_canvas.bind('<ButtonRelease-1>', _on_sync_release)
 
         # Scrollbarer Bereich für Menü-Items (unverändert)
         canvas = tk.Canvas(parent_frame, borderwidth=0, highlightthickness=0, background=sidebar_bg)

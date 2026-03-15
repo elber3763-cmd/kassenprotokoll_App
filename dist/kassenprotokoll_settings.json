@@ -1,1704 +1,1587 @@
 {
-    "window_width": 1150,
-    "window_height": 1000,
-    "data_storage_path": "",
-    "selected_theme": "alt",
-    "overall_header_bg": "#6C6CFF",
-    "overall_header_fg": "#FFFFFF",
-    "overall_header_font_size": 17,
-    "header_logo_path": "O:/kassenprotokoll_App/PH_BILD.png",
-    "namensliste_col_widths": {
-        "room": 20,
-        "name": 50,
-        "nationality": 25,
-        "contact": 87,
-        "car": 35,
-        "signature": 42
+  "window_width": 1250,
+  "window_height": 500,
+  "data_storage_path": "",
+  "selected_theme": "arc",
+  "overall_header_bg": "#2E3440",
+  "overall_header_fg": "#ECEFF4",
+  "overall_header_font_size": 14,
+  "header_logo_path": "",
+  "namensliste_col_widths": {
+    "room": 38,
+    "name": 50,
+    "nationality": 25,
+    "contact": 87,
+    "car": 35,
+    "signature": 42
+  },
+  "pdf_logo_paths": {
+    "offene_rechnungen": "",
+    "layover": "",
+    "namensliste": "",
+    "urlaubsantrag": "",
+    "ueberstundenantrag": "",
+    "weckruf": "",
+    "taxi": "",
+    "zimmerreservierung": "",
+    "mod_rundgang": ""
+  },
+  "general_font_size": 14,
+  "number_font_size": 14,
+  "general_font_color": "#D8DEE9",
+  "sum_font_size": 20,
+  "dashboard_input_field_font_size": 20,
+  "number_elements_fg_color": "#E5E9F0",
+  "sum_bg": "#3B4252",
+  "header_bg": "#434C5E",
+  "input_bg": "#4C566A",
+  "label_bg": "#2E3440",
+  "input_highlight_color": "#FFFFE0",
+  "notes_area_bg": "#FEEAE6",
+  "notes_title_fg_color": "#FF0000",
+  "diff_positive_fg": "#008000",
+  "diff_negative_fg": "#FF0000",
+  "card_diff_show_all_non_zero_as_red": false,
+  "tab_header_bold": true,
+  "tab_colors": {
+    "Frühdienst": "#E0E8F0",
+    "Spätdienst": "#F0E0E0",
+    "Trinkgeldliste": "#E0F0E8",
+    "Minibarliste": "#F0F0E0",
+    "Tagesabrechnung": "#E8E0F0"
+  },
+  "main_menu_button_style": {
+    "bg": "#FFFFFF",
+    "fg": "#333333",
+    "hover_bg": "#EAF2F8",
+    "hover_fg": "#2874A6",
+    "relief": "solid",
+    "borderwidth": 1,
+    "font_size": 16,
+    "font_weight": "normal",
+    "icon_size": 56,
+    "ipadx": 20,
+    "ipady": 15,
+    "pady": 15
+  },
+  "main_menu_buttons": {
+    "AbrechnungFinanzen": {
+      "label": "Abrechnungen & Finanzen",
+      "sidebar_icon": "📈",
+      "dashboard_icon": "C:\\Users\\Roger\\AppData\\Local\\Temp\\_MEI379802\\icons/abrechnung.png",
+      "is_active": true
     },
-    "pdf_logo_paths": {
-        "offene_rechnungen": "",
-        "layover": "",
-        "namensliste": "O:/kassenprotokoll_App/Icons/bwp_logo2.png",
-        "urlaubsantrag": "",
-        "ueberstundenantrag": "",
-        "weckruf": "",
-        "taxi": "",
-        "zimmerreservierung": "",
-        "mod_rundgang": ""
+    "DienstplanungAufgaben": {
+      "label": "Dienstplanung & Aufgaben",
+      "sidebar_icon": "📋",
+      "dashboard_icon": "C:\\Users\\Roger\\AppData\\Local\\Temp\\_MEI379802\\icons/dienstplanung.png",
+      "is_active": true
     },
-    "general_font_size": 14,
-    "number_font_size": 14,
-    "general_font_color": "#000000",
-    "sum_font_size": 20,
-    "dashboard_input_field_font_size": 14,
-    "number_elements_fg_color": "#000000",
-    "sum_bg": "#C4FFFF",
-    "header_bg": "#DCDCDC",
-    "input_bg": "#FFFFFF",
-    "label_bg": "#FAFAFA",
-    "input_highlight_color": "#FFFFE0",
-    "notes_area_bg": "#FEEAE6",
-    "notes_title_fg_color": "#FF0000",
-    "diff_positive_fg": "#008000",
-    "diff_negative_fg": "#FF0000",
-    "card_diff_show_all_non_zero_as_red": true,
-    "tab_header_bold": true,
-    "tab_colors": {
-        "Fr\u00fchdienst": "#E0E8F0",
-        "Sp\u00e4tdienst": "#F0E0E0",
-        "Trinkgeldliste": "#E0F0E8",
-        "Minibarliste": "#F0F0E0",
-        "Tagesabrechnung": "#E8E0F0"
+    "WeckrufServices": {
+      "label": "Weckruf & Services",
+      "sidebar_icon": "🚌",
+      "dashboard_icon": "C:\\Users\\Roger\\AppData\\Local\\Temp\\_MEI379802\\icons/weckruf.png",
+      "is_active": true
     },
-    "main_menu_button_style": {
-        "bg": "#FFFFFF",
-        "fg": "#333333",
-        "hover_bg": "#EAF2F8",
-        "hover_fg": "#2874A6",
+    "Vorlagen": {
+      "label": "Vorlagen",
+      "sidebar_icon": "📄",
+      "dashboard_icon": "C:\\Users\\Roger\\AppData\\Local\\Temp\\_MEI379802\\icons/dienstplanung.png",
+      "is_active": true
+    }
+  },
+  "restart_button_icon_path": "",
+  "restart_button_icon_size": 24,
+  "sync_button_config": {
+    "label": "Aktualisieren",
+    "icon_path": "",
+    "icon_size": 22,
+    "bg_color": "#E65100",
+    "fg_color": "#FFFFFF"
+  },
+  "sidebar_logo_config": {
+    "logo_type": "text",
+    "text": "(BWP) PREMIER",
+    "font_family": "Segoe UI",
+    "font_size": 20,
+    "font_weight": "bold",
+    "foreground": "#FFFFFF",
+    "background": "#2E3440",
+    "sidebar_nav_bg": "#2E3440"
+  },
+  "sidebar_style_config": {
+    "header_fg": "#ECEFF4",
+    "header_bg": "#2E3440",
+    "header_hover_bg": "#3B4252",
+    "link_fg": "#D8DEE9",
+    "link_bg": "#2E3440",
+    "link_hover_fg": "#FFFFFF",
+    "link_hover_bg": "#4C566A"
+  },
+  "section_header_colors": {
+    "cash_section": "#434C5E",
+    "stamps_section": "#434C5E",
+    "cards_section": "#434C5E",
+    "notes_section": "#434C5E"
+  },
+  "toast_colors": {
+    "success": {
+      "bg": "#FFFACD",
+      "border": "#F7C948",
+      "title_fg": "#333333",
+      "message_fg": "#555555"
+    },
+    "warning": {
+      "bg": "#FFEBEB",
+      "border": "#E57373",
+      "title_fg": "#333333",
+      "message_fg": "#555555"
+    },
+    "error": {
+      "bg": "#FFD2D2",
+      "border": "#D32F2F",
+      "title_fg": "#333333",
+      "message_fg": "#555555"
+    },
+    "info": {
+      "bg": "#E3F2FD",
+      "border": "#64B5F6",
+      "title_fg": "#333333",
+      "message_fg": "#555555"
+    },
+    "neutral": {
+      "bg": "#E8F5E9",
+      "border": "#81C784",
+      "title_fg": "#333333",
+      "message_fg": "#555555"
+    }
+  },
+  "spickzettel_sidebar_color": "#2c3e50",
+  "spickzettel_home_button": {
+    "type": "text",
+    "value": "🏠 Hauptmenü",
+    "icon_size": 18,
+    "ipady": 5
+  },
+  "spickzettel_search_icon_path": "",
+  "navigation_colors": {
+    "AbrechnungFinanzen": "#2F65C3",
+    "DienstplanungAufgaben": "#2F65C3",
+    "WeckrufServices": "#2F65C3",
+    "Vorlagen": "#2F65C3"
+  },
+  "auth_code_button_configs": {
+    "AuthCode_ClearAll": {
+      "type": "symbol",
+      "value": "Alles löschen",
+      "is_active": true
+    },
+    "AuthCode_HideDB": {
+      "type": "symbol",
+      "value": "Datenbank ausblenden",
+      "is_active": true
+    },
+    "AuthCode_ShowDB": {
+      "type": "symbol",
+      "value": "Datenbank einblenden",
+      "is_active": true
+    },
+    "AuthCode_Insert": {
+      "type": "symbol",
+      "value": "Einfügen",
+      "is_active": true
+    },
+    "AuthCode_Edit": {
+      "type": "symbol",
+      "value": "Bearbeiten",
+      "is_active": true
+    },
+    "AuthCode_Delete": {
+      "type": "symbol",
+      "value": "Löschen",
+      "is_active": true
+    },
+    "AuthCode_Import": {
+      "type": "symbol",
+      "value": "Importieren",
+      "is_active": true
+    },
+    "AuthCode_History": {
+      "type": "symbol",
+      "value": "Verlauf",
+      "is_active": true
+    }
+  },
+  "spickzettel_button_configs": {
+    "Spickzettel_Add": {
+      "type": "symbol",
+      "value": "➕ Hinzufügen",
+      "is_active": true
+    },
+    "Spickzettel_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Spickzettel_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
+    },
+    "Spickzettel_Reset": {
+      "type": "symbol",
+      "value": "🔄 Reset",
+      "is_active": true
+    }
+  },
+  "shuttle_main_menu_button_configs": {
+    "Shuttle Hinfahrt": {
+      "label": "Shuttle Hinfahrt",
+      "type": "symbol",
+      "value": "🚐💨",
+      "is_active": true,
+      "frame_style": {
         "relief": "solid",
         "borderwidth": 1,
-        "font_size": 16,
-        "font_weight": "normal",
-        "icon_size": 100,
-        "ipadx": 20,
-        "ipady": 15,
-        "pady": 15
+        "bordercolor": "#888888"
+      }
     },
-    "main_menu_buttons": {
-        "AbrechnungFinanzen": {
-            "label": "Abrechnungen & Finanzen",
-            "sidebar_icon": "\ud83d\udcc8",
-            "dashboard_icon": "O:/kassenprotokoll_App/Finanzen.png",
-            "is_active": true,
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Finanzen.png",
-            "frame_style": {},
-            "custom_sidebar_icon": "O:/kassenprotokoll_App/Finanzen.png"
-        },
-        "DienstplanungAufgaben": {
-            "label": "Dienstplanung & Aufgaben",
-            "sidebar_icon": "\ud83d\udccb",
-            "dashboard_icon": "O:/kassenprotokoll_App/Aufgaben.png",
-            "is_active": true,
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Aufgaben.png",
-            "frame_style": {},
-            "custom_sidebar_icon": "O:/kassenprotokoll_App/Aufgaben.png"
-        },
-        "WeckrufServices": {
-            "label": "Weckruf & Services",
-            "sidebar_icon": "\ud83d\ude8c",
-            "dashboard_icon": "O:/kassenprotokoll_App/Shuttle.png",
-            "is_active": true,
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Shuttle.png",
-            "frame_style": {},
-            "custom_sidebar_icon": "O:/kassenprotokoll_App/Shuttle.png"
-        },
-        "Vorlagen": {
-            "label": "Vorlagen",
-            "sidebar_icon": "\ud83d\udcc4",
-            "dashboard_icon": "O:/kassenprotokoll_App/Vorlagen.png",
-            "is_active": true,
-            "frame_style": {}
-        }
+    "Shuttle Rückfahrt": {
+      "label": "Shuttle Rückfahrt",
+      "type": "symbol",
+      "value": "🏠🚐",
+      "is_active": true,
+      "frame_style": {
+        "relief": "ridge",
+        "borderwidth": 2,
+        "bordercolor": "#A9A9A9"
+      }
+    }
+  },
+  "button_configs": {
+    "Löschen": {
+      "type": "symbol",
+      "value": "🗑️",
+      "is_active": true
     },
-    "restart_button_icon_path": "O:/kassenprotokoll_App/Beenden.png",
-    "restart_button_icon_size": 48,
-    "sidebar_logo_config": {
-        "logo_type": "image",
-        "text": "",
-        "font_family": "Segoe UI",
-        "font_size": 72,
-        "font_weight": "bold",
-        "foreground": "#4F4FFF",
-        "background": "#5151FF",
-        "sidebar_nav_bg": "#D5D5FF",
-        "logo_image_path": "O:/kassenprotokoll_App/bwp_logo.png",
-        "logo_image_width": 200,
-        "logo_image_height": 40,
-        "frame_height": 70,
-        "pady": 10
+    "Als PDF speichern": {
+      "type": "symbol",
+      "value": "📄",
+      "is_active": true
     },
-    "sidebar_style_config": {
-        "header_fg": "#EAECEE",
-        "header_bg": "#343A40",
-        "header_hover_bg": "#495057",
-        "link_fg": "#005ea6",
-        "link_bg": "#F8F9FA",
-        "link_hover_fg": "#FFFFFF",
-        "link_hover_bg": "#005ea6"
+    "Daten aktualisieren": {
+      "type": "symbol",
+      "value": "🔄",
+      "is_active": true
     },
-    "section_header_colors": {
-        "cash_section": "#BBBBFF",
-        "stamps_section": "#BBBBFF",
-        "cards_section": "#BBBBFF",
-        "notes_section": "#BBBBFF"
+    "Manuelles Backup": {
+      "type": "symbol",
+      "value": "💾 Man. Backup",
+      "is_active": true
     },
-    "toast_colors": {
-        "success": {
-            "bg": "#FFFACD",
-            "border": "#F7C948",
-            "title_fg": "#333333",
-            "message_fg": "#555555"
-        },
-        "warning": {
-            "bg": "#FFEBEB",
-            "border": "#E57373",
-            "title_fg": "#333333",
-            "message_fg": "#555555"
-        },
-        "error": {
-            "bg": "#FFD2D2",
-            "border": "#D32F2F",
-            "title_fg": "#333333",
-            "message_fg": "#555555"
-        },
-        "info": {
-            "bg": "#E3F2FD",
-            "border": "#64B5F6",
-            "title_fg": "#333333",
-            "message_fg": "#555555"
-        },
-        "neutral": {
-            "bg": "#E8F5E9",
-            "border": "#81C784",
-            "title_fg": "#333333",
-            "message_fg": "#555555"
-        }
+    "Backups verwalten": {
+      "type": "symbol",
+      "value": "🗃️ Backups",
+      "is_active": true
     },
-    "spickzettel_sidebar_color": "#0063C6",
-    "spickzettel_home_button": {
-        "type": "image",
-        "value": "O:/kassenprotokoll_App/Home.png",
-        "icon_size": 50,
-        "ipady": 0
+    "Rest": {
+      "type": "symbol",
+      "value": "🗓️",
+      "is_active": true
     },
-    "spickzettel_search_icon_path": "O:/kassenprotokoll_App/Lupe.png",
-    "navigation_colors": {
-        "AbrechnungFinanzen": "#0000AA",
-        "DienstplanungAufgaben": "#0000AA",
-        "WeckrufServices": "#0000AA",
-        "Vorlagen": "#0000AA",
-        "Einstellungen": "#0000AA"
+    "Alles Ein-/Ausklappen": {
+      "type": "symbol",
+      "value": "⇅",
+      "is_active": true
     },
-    "auth_code_button_configs": {
-        "AuthCode_ClearAll": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "AuthCode_HideDB": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Ausblenden.png",
-            "is_active": true
-        },
-        "AuthCode_ShowDB": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Einblenden.png",
-            "is_active": true
-        },
-        "AuthCode_Insert": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "AuthCode_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "AuthCode_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "AuthCode_Import": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Import.png",
-            "is_active": true
-        },
-        "AuthCode_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        }
+    "Verlauf": {
+      "type": "symbol",
+      "value": "🕰️",
+      "is_active": true
     },
-    "spickzettel_button_configs": {
-        "Spickzettel_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Spickzettel_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Spickzettel_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Spickzettel_Reset": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/reset.png",
-            "is_active": true
-        }
+    "Admin": {
+      "type": "symbol",
+      "value": "👤",
+      "is_active": true
     },
-    "shuttle_main_menu_button_configs": {
-        "Shuttle Hinfahrt": {
-            "label": "Shuttle Hinfahrt",
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Shuttle Hinfahrt.png",
-            "is_active": true,
-            "frame_style": {
-                "relief": "solid",
-                "borderwidth": 1,
-                "bordercolor": "#888888"
-            }
-        },
-        "Shuttle R\u00fcckfahrt": {
-            "label": "Shuttle R\u00fcckfahrt",
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Shuttle R\u00fcckfahrt.png",
-            "is_active": true,
-            "frame_style": {
-                "relief": "ridge",
-                "borderwidth": 2,
-                "bordercolor": "#A9A9A9"
-            }
-        },
-        "AbrechnungFinanzen": {
-            "label": "Abrechnung & \nFinanzen"
-        }
+    "Einstellungen": {
+      "type": "symbol",
+      "value": "⚙️",
+      "is_active": true
     },
-    "button_configs": {
-        "L\u00f6schen": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Als PDF speichern": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "Daten aktualisieren": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Refesh.png",
-            "is_active": true
-        },
-        "Manuelles Backup": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Backup.png",
-            "is_active": true
-        },
-        "Backups verwalten": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Recovery.png",
-            "is_active": true
-        },
-        "Rest": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Refresh2.png",
-            "is_active": true
-        },
-        "Alles Ein-/Ausklappen": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Ausklappen.png",
-            "is_active": true
-        },
-        "Verlauf": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "Admin": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Logout.png",
-            "is_active": true
-        },
-        "Einstellungen": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/setting.png",
-            "is_active": true
-        },
-        "Info": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Info.png",
-            "is_active": true
-        },
-        "Beenden": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Beenden.png",
-            "is_active": true
-        }
+    "Info": {
+      "type": "symbol",
+      "value": "ℹ️",
+      "is_active": true
     },
-    "checklist_button_configs": {
-        "Checklist_Save": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true,
-            "label": "Speichern"
-        },
-        "Checklist_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true,
-            "label": "Verlauf"
-        },
-        "Checklist_DeleteAll": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true,
-            "label": "Alle K\u00fcrzel l\u00f6schen"
-        },
-        "Checklist_HideCompleted": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Ausblenden.png",
-            "is_active": true,
-            "label": "Ausblenden"
-        },
-        "Checklist_ShowAll": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Einblenden.png",
-            "is_active": true,
-            "label": "Einblenden"
-        }
+    "Beenden": {
+      "type": "symbol",
+      "value": " ❌",
+      "is_active": true
+    }
+  },
+  "checklist_button_configs": {
+    "Checklist_Save": {
+      "type": "symbol",
+      "value": "💾 Speichern",
+      "is_active": true
     },
-    "layover_button_configs": {
-        "Layover_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Layover_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "Layover_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "Layover_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        }
+    "Checklist_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
     },
-    "layover_icon_path": "O:/kassenprotokoll_App/bearbeiten.png",
-    "anrufliste_button_configs": {
-        "List_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "List_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "List_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Anrufliste_Email": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Email.png",
-            "is_active": true
-        },
-        "List_SaveWord": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "List_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        }
+    "Checklist_DeleteAll": {
+      "type": "symbol",
+      "value": "🗑️ Alle Kürzel löschen",
+      "is_active": true
     },
-    "anrufliste_email_recipients": {
-        "Bankett": "bankett@kronsberg.bestwestern.de",
-        "Verkauf": "verkauf@kronsberg.bestwestern.de",
-        "Reservierung": "reservierung@kronsberg.bestwestern.de",
-        "Triebsch": "triebsch@kronsberg.bestwestern.de",
-        "sebastian": "sebastian.bock@kronsberg.bestwestern.de",
-        "ferdinand": "ferdinand.bock@kronsberg.bestwestern.de",
-        "ursula": "ursula.bock@kronsberg.bestwestern.de",
-        "buchhaltung": "buchhaltung@kronsberg.bestwestern.de",
-        "haustechnik": "haustechnik@kronsberg.bestwestern.de",
-        "jessica": "jessica.bock@kronsberg.bestwestern.de"
+    "Checklist_HideCompleted": {
+      "type": "symbol",
+      "value": "🙈 Ausblenden",
+      "is_active": true
     },
-    "layover_design_configs": {
-        "icon_size": 50,
-        "ipady": 0,
-        "pady": 0
+    "Checklist_ShowAll": {
+      "type": "symbol",
+      "value": "🐵 Einblenden",
+      "is_active": true
+    }
+  },
+  "layover_button_configs": {
+    "Layover_Edit": {
+      "type": "symbol",
+      "value": "Daten bearbeiten...",
+      "is_active": true
     },
-    "checklist_highlight_color": "#DFF0D8",
-    "tagesabrechnung_button_configs": {
-        "TA_Loeschen": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "TA_Drucken": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        },
-        "TA_EMail": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Email.png",
-            "is_active": true
-        },
-        "TA_Speichern": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "TA_Refresh": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Refesh.png",
-            "is_active": true
-        },
-        "TA_Verlauf": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "TA_ManualBackup": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Backup.png",
-            "is_active": true
-        },
-        "TA_ManageBackups": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Recovery.png",
-            "is_active": true
-        }
+    "Layover_SavePDF": {
+      "type": "symbol",
+      "value": "Als PDF speichern",
+      "is_active": true
     },
-    "list_tab_button_configs": {
-        "List_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "List_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "List_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "List_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "List_Refresh": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Refresh2.png",
-            "is_active": true
-        },
-        "List_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        }
+    "Layover_History": {
+      "type": "symbol",
+      "value": "Verlauf",
+      "is_active": true
     },
-    "trinkgeldliste_button_configs": {
-        "List_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "List_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "List_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "List_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "List_Refresh": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Refresh2.png",
-            "is_active": true
-        },
-        "List_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "List_ManualBackup": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Backup.png",
-            "is_active": true
-        },
-        "List_ManageBackups": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Recovery.png",
-            "is_active": true
-        }
+    "Layover_Delete": {
+      "type": "symbol",
+      "value": "Alle Daten löschen",
+      "is_active": true
+    }
+  },
+  "layover_icon_path": "",
+  "anrufliste_button_configs": {
+    "List_Add": {
+      "type": "symbol",
+      "value": "Neu",
+      "is_active": true
     },
-    "minibarliste_button_configs": {
-        "List_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "List_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "List_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "List_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "List_Refresh": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Refresh2.png",
-            "is_active": true
-        },
-        "List_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "List_ManualBackup": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Backup.png",
-            "is_active": true
-        },
-        "List_ManageBackups": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Recovery.png",
-            "is_active": true
-        }
+    "List_Edit": {
+      "type": "symbol",
+      "value": "Bearbeiten",
+      "is_active": true
     },
-    "minibar_dialog_button_configs": {
-        "Minibar_SaveCont": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Weiter.png",
-            "is_active": true
-        },
-        "Minibar_SaveClose": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/EXIT.png",
-            "is_active": true
-        },
-        "Minibar_Cancel": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Abbrechen.png",
-            "is_active": true
-        }
+    "List_Delete": {
+      "type": "symbol",
+      "value": "Löschen",
+      "is_active": true
     },
-    "list_views_button_style": {
-        "icon_size": 40,
-        "ipady": 0,
-        "pady": 0
+    "Anrufliste_Email": {
+      "type": "symbol",
+      "value": "📧 E-Mail senden",
+      "is_active": true
     },
-    "zimmerreservierung_button_configs": {
-        "Zimmerreservierung_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Zimmerreservierung_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Zimmerreservierung_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Zimmerreservierung_Email": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Email.png",
-            "is_active": true
-        },
-        "Zimmerreservierung_Print": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        }
+    "List_SaveWord": {
+      "type": "symbol",
+      "value": "Als Word speichern",
+      "is_active": true
     },
-    "zimmerreservierung_email_recipients": {
-        "Reservierung": "elber3763@gmail.com",
-        "Verkauf": "shadow336@protonmail.com"
+    "List_History": {
+      "type": "symbol",
+      "value": "Verlauf",
+      "is_active": true
+    }
+  },
+  "anrufliste_email_recipients": {
+    "Bankett": "bankett@hotel-beispiel.de",
+    "Verkauf": "verkauf@hotel-beispiel.de",
+    "Reservierung": "reservierung@hotel-beispiel.de",
+    "Direktion": "elber3763@gmail.com"
+  },
+  "layover_design_configs": {
+    "icon_size": 24,
+    "ipady": 8,
+    "pady": 15
+  },
+  "checklist_highlight_color": "#DFF0D8",
+  "tagesabrechnung_button_configs": {
+    "TA_Loeschen": {
+      "type": "symbol",
+      "value": "Löschen",
+      "is_active": true
     },
-    "mod_checkliste_email_recipients": {
-        "Direktion": "ferdinand.bock@kronsberg.bestwestern.de"
+    "TA_Drucken": {
+      "type": "symbol",
+      "value": "Drucken",
+      "is_active": true
     },
-    "mod_checkliste_cc_email": "haustechnik@kronsberg.bestwestern.de",
-    "tischreservierung_button_configs": {
-        "List_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "List_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "List_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "List_Print": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        },
-        "List_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        }
+    "TA_EMail": {
+      "type": "symbol",
+      "value": "E-Mail",
+      "is_active": true
     },
-    "offene_rechnungen_design_configs": {
-        "icon_size": 50,
-        "ipady": 0,
-        "pady": 0
+    "TA_Speichern": {
+      "type": "symbol",
+      "value": "Speichern",
+      "is_active": true
     },
-    "right_panel_button_style": {
-        "icon_size": 50,
-        "ipady": 0,
-        "pady": 0
+    "TA_Refresh": {
+      "type": "symbol",
+      "value": "Refresh",
+      "is_active": true
     },
-    "weckrufliste_button_configs": {
-        "Weckruf_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Weckruf_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Weckruf_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Weckruf_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "Weckruf_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "Weckruf_Print": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        },
-        "Weckruf_Overlay": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Info-Fenster.jpg",
-            "is_active": true
-        },
-        "Weckruf_ManualBackup": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Backup.png",
-            "is_active": true
-        },
-        "Weckruf_ManageBackups": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Recovery.png",
-            "is_active": true
-        }
+    "TA_Verlauf": {
+      "type": "symbol",
+      "value": "Verlauf",
+      "is_active": true
     },
-    "shuttle_button_configs": {
-        "Shuttle_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Shuttle_Add_Next": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Shuttle_Dialog_Done": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/EXIT.png",
-            "is_active": true
-        },
-        "Shuttle_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Shuttle_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Shuttle_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "Shuttle_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "Shuttle_Print": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        },
-        "Shuttle_Overlay": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Info-Fenster.jpg",
-            "is_active": true
-        },
-        "Shuttle_ManualBackup": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Backup.png",
-            "is_active": true
-        },
-        "Shuttle_ManageBackups": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Recovery.png",
-            "is_active": true
-        },
-        "Shuttle_DeleteDone": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/abhacken.jpg",
-            "is_active": true
-        }
+    "TA_ManualBackup": {
+      "type": "symbol",
+      "value": "Man. Backup",
+      "is_active": true
     },
-    "mod_rundgang_button_configs": {
-        "MOD_Save": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "MOD_Email": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Email.png",
-            "is_active": true
-        },
-        "MOD_Reset": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "MOD_PDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/PDF-Export.png",
-            "is_active": true
-        },
-        "MOD_HeroIcon": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Geb\u00e4ude.png",
-            "is_active": true
-        },
-        "MOD_NameIcon": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/MOD-USER.png",
-            "is_active": true
-        },
-        "MOD_DateIcon": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Planer.png",
-            "is_active": true
-        }
+    "TA_ManageBackups": {
+      "type": "symbol",
+      "value": "Backups",
+      "is_active": true
+    }
+  },
+  "list_tab_button_configs": {
+    "List_Add": {
+      "type": "symbol",
+      "value": "➕ Neu",
+      "is_active": true
     },
-    "mod_rundgang_colors": {
-        "header_from": "#1E3A5F",
-        "header_to": "#2980B9",
-        "actionbar_bg": "#1E2D40",
-        "progress_from": "#00B09B",
-        "progress_to": "#4CAF50",
-        "task_done_bg": "#E8F5E9",
-        "card_bg": "#FFFFFF",
-        "page_bg": "#F0F4F8",
-        "shadow_color": "#B0BEC5",
-        "warning_fg": "#C0392B"
+    "List_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
     },
-    "taxibestellung_button_configs": {
-        "Taxi_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Taxi_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Taxi_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Taxi_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "Taxi_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "Taxi_Print": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        },
-        "Taxi_Overlay": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Info-Fenster.jpg",
-            "is_active": true
-        },
-        "Taxi_ManualBackup": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Backup.png",
-            "is_active": true
-        },
-        "Taxi_ManageBackups": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Recovery.png",
-            "is_active": true
-        }
+    "List_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
     },
-    "bettensteuer_button_configs": {
-        "Bettensteuer_Calc": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Berechnen.png",
-            "is_active": true
-        },
-        "Bettensteuer_Exit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Home.png",
-            "is_active": true
-        }
+    "List_SavePDF": {
+      "type": "symbol",
+      "value": "📄 PDF",
+      "is_active": true
     },
-    "bettensteuer_design_configs": {
-        "icon_size": 100,
-        "ipady": 0,
-        "pady": 0
+    "List_Refresh": {
+      "type": "symbol",
+      "value": "🔄 Refresh",
+      "is_active": true
     },
-    "dialog_button_icon_size": 35,
-    "offene_rechnungen_button_configs": {
-        "OR_AddRow": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "OR_Import": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Import.png",
-            "is_active": true
-        },
-        "OR_DeleteAll": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "OR_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "OR_Kommentar": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Icons/png-transparent-note-taking-reading-writing-taking-miscellaneous-angle-text.png",
-            "is_active": true
-        },
-        "OR_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "OR_Email": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Email.png",
-            "is_active": true
-        },
-        "OR_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "OR_Cleanup": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/7.png",
-            "is_active": true
-        }
+    "List_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
+    }
+  },
+  "trinkgeldliste_button_configs": {
+    "List_Add": {
+      "type": "symbol",
+      "value": "➕ Neu",
+      "is_active": true
     },
-    "kassenprotokoll_button_configs": {
-        "KP_HeroIcon": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Tip.png",
-            "is_active": true
-        }
+    "List_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
     },
-    "namensliste_button_configs": {
-        "Namensliste_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Namensliste_BulkAdd": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Liste einf\u00fcgen.png",
-            "is_active": true
-        },
-        "Namensliste_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Namensliste_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Namensliste_Prepare": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Liste Aufarbeiten.png",
-            "is_active": true
-        },
-        "Namensliste_CheckDups": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Icons/Doplikate.jpg",
-            "is_active": true
-        },
-        "Namensliste_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "Namensliste_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "Namensliste_Print": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        },
-        "NL_FirmIcon": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Firmenlogo.png",
-            "is_active": true
-        },
-        "NL_InfoIcon": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Info-Fenster.jpg",
-            "is_active": true
-        },
-        "NL_DateIcon": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Schicht.png",
-            "is_active": true
-        }
+    "List_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
     },
-    "adressbuch_button_configs": {
-        "Adressbuch_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Adressbuch_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Adressbuch_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Adressbuch_Import": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Import.png",
-            "is_active": true
-        },
-        "Adressbuch_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        }
+    "List_SavePDF": {
+      "type": "symbol",
+      "value": "📄 PDF",
+      "is_active": true
     },
-    "urlaubsantraege_button_configs": {
-        "Urlaubsantrag_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Urlaubsantrag_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Urlaubsantrag_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Urlaubsantrag_Print": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        },
-        "Urlaubsantrag_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        }
+    "List_Refresh": {
+      "type": "symbol",
+      "value": "🔄 Refresh",
+      "is_active": true
     },
-    "ueberstundenantrag_button_configs": {
-        "Ueberstundenantrag_Add": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/hinzuf\u00fcgen.png",
-            "is_active": true
-        },
-        "Ueberstundenantrag_Edit": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/bearbeiten.png",
-            "is_active": true
-        },
-        "Ueberstundenantrag_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Ueberstundenantrag_Print": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Drucker.png",
-            "is_active": true
-        },
-        "Ueberstundenantrag_SavePDF": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "Ueberstundenantrag_History": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        }
+    "List_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
     },
-    "spickzettel_tab_icons": {
-        "zimmer": "O:/kassenprotokoll_App/Kat.png",
-        "designs": "O:/kassenprotokoll_App/Design.png",
-        "minibar": "O:/kassenprotokoll_App/Coctail.png",
-        "mwst": "O:/kassenprotokoll_App/TAX.png"
+    "List_ManualBackup": {
+      "type": "symbol",
+      "value": "💾 Man. Backup",
+      "is_active": true
     },
-    "spickzettel_sidebar_hover_color": "#B05800",
-    "spickzettel_tab_icon_size": 50,
-    "offene_rechnungen_icon_path": "",
-    "taxi_settings": {
-        "phone_numbers": [
-            "",
-            ""
-        ]
+    "List_ManageBackups": {
+      "type": "symbol",
+      "value": "🗃️ Backups",
+      "is_active": true
+    }
+  },
+  "minibarliste_button_configs": {
+    "List_Add": {
+      "type": "symbol",
+      "value": "➕ Neu",
+      "is_active": true
     },
-    "dialog_button_ipady": 20,
-    "dialog_button_configs": {
-        "Dialog_Update": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Refresh2.png",
-            "is_active": true
-        },
-        "Dialog_Save": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Save.png",
-            "is_active": true
-        },
-        "Dialog_Cancel": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Abbrechen.png",
-            "is_active": true
-        },
-        "Dialog_Restore": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Verlauf.png",
-            "is_active": true
-        },
-        "Dialog_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Dialog_Final": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Final.png",
-            "is_active": true
-        }
+    "List_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
     },
-    "backup_dialog_button_configs": {
-        "Dialog_Restore": {
-            "type": "symbol",
-            "value": "Wiederherstellen",
-            "is_active": true
-        },
-        "Dialog_Delete": {
-            "type": "symbol",
-            "value": "L\u00f6schen",
-            "is_active": true
-        },
-        "Dialog_Cancel": {
-            "type": "symbol",
-            "value": "Schlie\u00dfen",
-            "is_active": true
-        },
-        "Backup_Restore": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Recovery.png",
-            "is_active": true
-        },
-        "Backup_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Papierkorb.png",
-            "is_active": true
-        },
-        "Backup_Close": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Abbrechen.png",
-            "is_active": true
-        }
+    "List_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
     },
-    "shift_action_button_configs": {
-        "Fruehdienst_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Trash.png",
-            "is_active": true
-        },
-        "Spaetdienst_Delete": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Trash.png",
-            "is_active": true
-        }
+    "List_SavePDF": {
+      "type": "symbol",
+      "value": "📄 PDF",
+      "is_active": true
     },
-    "shift_action_button_icon_size": 50,
-    "shift_action_button_ipady": 2,
-    "home_button_config": {
-        "is_visible": true,
-        "type": "image",
-        "text": "",
-        "image_path": "O:/kassenprotokoll_App/Home.png",
-        "icon_size": 50,
-        "ipady": 0
+    "List_Refresh": {
+      "type": "symbol",
+      "value": "🔄 Refresh",
+      "is_active": true
     },
-    "custom_buttons": [],
-    "admin_password": "admin123",
-    "auto_backup_enabled": true,
-    "auto_backup_interval_hours": 10,
-    "auto_backup_trinkgeld_enabled": true,
-    "auto_backup_trinkgeld_interval_hours": 10,
-    "auto_backup_minibar_enabled": true,
-    "auto_backup_minibar_interval_hours": 10,
-    "auto_backup_shuttle_enabled": true,
-    "auto_backup_shuttle_interval_hours": 10,
-    "auto_backup_tagesabrechnung_enabled": true,
-    "auto_backup_tagesabrechnung_interval_hours": 10,
-    "auto_backup_weckruf_enabled": true,
-    "auto_backup_weckruf_interval_hours": 10,
-    "auto_backup_taxi_enabled": true,
-    "auto_backup_taxi_interval_hours": 10,
-    "alarm_enabled": true,
-    "alarm_sound_path": "O:/kassenprotokoll_App/wecker.mp3",
-    "hover_sound_enabled": false,
-    "hover_sound_path": "O:/kassenprotokoll_App/hover.wav",
-    "trinkgeld_kuerzel_list": [
-        "DH",
-        "SS",
-        "TB",
-        "CG",
-        "SC",
-        "JH",
-        "PT",
-        "TL",
-        "NA",
-        "STS",
-        "JK",
-        "AZU",
-        "TA",
-        "MZ"
-    ],
-    "checkliste_kuerzel_list": [
-        "DH",
-        "SS",
-        "TB",
-        "CG",
-        "SC",
-        "JH",
-        "PT",
-        "TL",
-        "NA",
-        "STS",
-        "JK",
-        "AZU",
-        "TA",
-        "MZ"
-    ],
-    "smtp_settings": {
-        "server": "",
-        "port": 587,
-        "sender_email": "",
-        "username": "",
-        "password": ""
+    "List_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
     },
-    "cash_denominations": [
-        {
-            "value": 200.0,
-            "is_active": true
-        },
-        {
-            "value": 100.0,
-            "is_active": true
-        },
-        {
-            "value": 50.0,
-            "is_active": true
-        },
-        {
-            "value": 20.0,
-            "is_active": true
-        },
-        {
-            "value": 10.0,
-            "is_active": true
-        },
-        {
-            "value": 5.0,
-            "is_active": true
-        },
-        {
-            "value": 2.0,
-            "is_active": true
-        },
-        {
-            "value": 1.0,
-            "is_active": true
-        },
-        {
-            "value": 0.5,
-            "is_active": true
-        },
-        {
-            "value": 0.2,
-            "is_active": true
-        },
-        {
-            "value": 0.1,
-            "is_active": true
-        },
-        {
-            "value": 0.05,
-            "is_active": true
-        },
-        {
-            "value": 0.02,
-            "is_active": true
-        },
-        {
-            "value": 0.01,
-            "is_active": true
-        }
-    ],
-    "stamp_definitions": [
-        {
-            "price": 1.6,
-            "label": "Brief 1,60",
-            "is_active": true
-        },
-        {
-            "label": "Brief 1,45",
-            "price": 1.45,
-            "is_active": true
-        },
-        {
-            "label": "Brief 1,10",
-            "price": 1.1,
-            "is_active": true
-        },
-        {
-            "label": "Brief 0,95",
-            "price": 0.95,
-            "is_active": true
-        },
-        {
-            "label": "Brief 0,80",
-            "price": 0.8,
-            "is_active": true
-        },
-        {
-            "label": "Brief 0,70",
-            "price": 0.7,
-            "is_active": true
-        },
-        {
-            "label": "Brief 0,60",
-            "price": 0.6,
-            "is_active": true
-        },
-        {
-            "label": "Brief 0,15",
-            "price": 0.15,
-            "is_active": true
-        },
-        {
-            "label": "Brief 0,10",
-            "price": 0.1,
-            "is_active": true
-        },
-        {
-            "label": "Brief 0,05",
-            "price": 0.05,
-            "is_active": true
-        }
-    ],
-    "card_types": [
-        {
-            "key": "Mastercard",
-            "label": "Mastercard",
-            "is_active": true
-        },
-        {
-            "key": "VisaVPAY",
-            "label": "Visa/VPAY",
-            "is_active": true
-        },
-        {
-            "key": "Amex",
-            "label": "Amex",
-            "is_active": true
-        },
-        {
-            "key": "Maestro",
-            "label": "Maestro",
-            "is_active": true
-        }
-    ],
-    "minibar_items": [
-        {
-            "name": "Bickensohler",
-            "price": 7.0,
-            "is_active": true
-        },
-        {
-            "name": "Cola",
-            "price": 3.6,
-            "is_active": true
-        },
-        {
-            "name": "Apoli",
-            "price": 3.6,
-            "is_active": true
-        },
-        {
-            "name": "Schokoriegel",
-            "price": 2.0,
-            "is_active": true
-        },
-        {
-            "name": "NicNac's",
-            "price": 2.0,
-            "is_active": true
-        },
-        {
-            "name": "Apfelsaft",
-            "price": 3.6,
-            "is_active": true
-        }
-    ],
-    "starting_float_value": 800.0,
-    "use_quantity_combobox": false,
-    "quantity_combobox_max_value": 100,
-    "quantity_combobox_default_value": 0,
-    "reception_fields_count": 3,
-    "dashboard_icon_configs": {
-        "schicht": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Schicht.png"
-        },
-        "umsatz_frueh": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Umsatz.png"
-        },
-        "umsatz_spaet": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Umsatz.png"
-        },
-        "umsatz_total": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Umsatz.png"
-        },
-        "quittung_1": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Quittung.png"
-        },
-        "quittung_2": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Quittung.png"
-        },
-        "quittung_3": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Quittung.png"
-        },
-        "diverses": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Diverses.png"
-        },
-        "summe_posten": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Summe.png"
-        },
-        "soll_display": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/SOLL.png"
-        },
-        "kasse_total": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Kasse.png"
-        },
-        "tip": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Tip.png"
-        },
-        "entnahme": {
-            "type": "image",
-            "value": "O:/kassenprotokoll_App/Entnahme.png"
-        },
-        "minibar_umsatz": {
-            "type": "image",
-            "value": ""
-        }
+    "List_ManualBackup": {
+      "type": "symbol",
+      "value": "💾 Man. Backup",
+      "is_active": true
     },
-    "dashboard_content_bg": "#D7D7FF",
-    "dashboard_content_fg": "#040509",
-    "dashboard_border_color": "#DDDDFF",
-    "dashboard_border_width": 10,
-    "dashboard_relief": "ridge",
-    "dashboard_input_field_width": 12,
-    "dashboard_input_field_ipady": 1,
-    "dashboard_highlight_non_default_fields": true,
-    "dashboard_header_icon_path": "O:/kassenprotokoll_App/Verwaltung.png",
-    "dashboard_background_image_path": "O:/kassenprotokoll_App/images/slideshow/Food.jpg",
-    "dashboard_background_image_alpha": 0.9477766287487074,
-    "dashboard_background_scaling_mode": "stretch",
-    "dashboard_background_mode": "slideshow",
-    "slideshow_transition_effect": "flip",
-    "dashboard_header_icon_config": {
-        "icon_size": 0,
-        "padding_vertical": 0,
-        "margin_vertical": 0
+    "List_ManageBackups": {
+      "type": "symbol",
+      "value": "🗃️ Backups",
+      "is_active": true
+    }
+  },
+  "minibar_dialog_button_configs": {
+    "Minibar_SaveCont": {
+      "type": "symbol",
+      "value": "Speichern & Weiter",
+      "is_active": true
     },
-    "kassenabschluss_zeilen_definitionen": [
-        {
-            "key": "QUITTUNG_1",
-            "label": "Quittung 1:",
-            "typ": "EINGABE",
-            "formel_string": "",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 0,
-            "aktiv": true,
-            "style": "normal_input"
-        },
-        {
-            "key": "QUITTUNG_2",
-            "label": "Quittung 2:",
-            "typ": "EINGABE",
-            "formel_string": "",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 1,
-            "aktiv": true,
-            "style": "normal_input"
-        },
-        {
-            "key": "QUITTUNG_3",
-            "label": "Quittung 3:",
-            "typ": "EINGABE",
-            "formel_string": "",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 2,
-            "aktiv": true,
-            "style": "normal_input"
-        },
-        {
-            "key": "DIVERSES",
-            "label": "Diverses:",
-            "typ": "EINGABE",
-            "formel_string": "",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 3,
-            "aktiv": true,
-            "style": "normal_input"
-        },
-        {
-            "key": "MINIBAR_UMSATZ_TOTAL",
-            "label": "Minibar Umsatz:",
-            "typ": "FORMEL",
-            "formel_string": "_MINIBAR_UMSATZ_MONAT",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 4,
-            "aktiv": true,
-            "style": "sum_display"
-        },
-        {
-            "key": "SUMME_POSTEN",
-            "label": "Summe Posten:",
-            "typ": "FORMEL",
-            "formel_string": "_SUMME_BARGELD + _SUMME_BRIEFMARKEN + QUITTUNG_1 + QUITTUNG_2 + QUITTUNG_3 + DIVERSES",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 10,
-            "aktiv": true,
-            "style": "sum_display"
-        },
-        {
-            "key": "SOLL",
-            "label": "Soll:",
-            "typ": "FESTWERT_AUS_EINSTELLUNG",
-            "formel_string": "_STARTING_FLOAT_VALUE",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 11,
-            "aktiv": true,
-            "style": "bold_display"
-        },
-        {
-            "key": "UMSATZ_FRUEH",
-            "label": "Umsatz Fr\u00fch:",
-            "typ": "EINGABE_KERN",
-            "formel_string": "",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 12,
-            "aktiv": true,
-            "style": "normal_input"
-        },
-        {
-            "key": "UMSATZ_SPAET",
-            "label": "Umsatz Sp\u00e4t:",
-            "typ": "EINGABE_KERN",
-            "formel_string": "",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 13,
-            "aktiv": true,
-            "style": "normal_input",
-            "is_active": true
-        },
-        {
-            "key": "UMSATZ_TOTAL",
-            "label": "Umsatz Total:",
-            "typ": "FORMEL",
-            "formel_string": "UMSATZ_FRUEH + UMSATZ_SPAET",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 14,
-            "aktiv": true,
-            "style": "diff_display_auto"
-        },
-        {
-            "key": "KASSE_TOTAL",
-            "label": "Kasse Total:",
-            "typ": "FORMEL",
-            "formel_string": "UMSATZ_FRUEH + UMSATZ_SPAET + SOLL",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 15,
-            "aktiv": true,
-            "style": "diff_display_auto"
-        },
-        {
-            "key": "TIP",
-            "label": "Tip:",
-            "typ": "FORMEL",
-            "formel_string": "SUMME_POSTEN - KASSE_TOTAL",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 16,
-            "aktiv": true,
-            "style": "diff_display_auto"
-        },
-        {
-            "key": "ENTNAHME",
-            "label": "Entnahme:",
-            "typ": "FORMEL",
-            "formel_string": "SUMME_POSTEN - SOLL",
-            "initialwert_eingabe": 0.0,
-            "reihenfolge": 17,
-            "aktiv": true,
-            "style": "diff_display_auto"
-        }
-    ],
-    "shuttle_overlay_colors": {
-        "title_bar_bg": "#FFFF80",
-        "title_bar_fg": "#FF0000"
+    "Minibar_SaveClose": {
+      "type": "symbol",
+      "value": "Speichern & Schließen",
+      "is_active": true
     },
-    "configurable_sizes": {
-        "weckrufliste": {
-            "font_size": 16,
-            "entry_width": 30
-        },
-        "taxibestellung": {
-            "font_size": 16,
-            "entry_width": 30
-        },
-        "shuttle_service": {
-            "font_size": 16,
-            "entry_width": 30
-        },
-        "minibarliste": {
-            "font_size": 15,
-            "entry_width": 20
-        },
-        "trinkgeldliste": {
-            "font_size": 12,
-            "entry_width": 20
-        },
-        "tagesabrechnung": {
-            "entry_font_size": 14,
-            "sum_font_size": 14
-        },
-        "dialog_buttons": {
-            "font_size": 12
-        }
+    "Minibar_Cancel": {
+      "type": "symbol",
+      "value": "Abbrechen",
+      "is_active": true
+    }
+  },
+  "list_views_button_style": {
+    "icon_size": 24,
+    "ipady": 5,
+    "pady": 5
+  },
+  "zimmerreservierung_button_configs": {
+    "Zimmerreservierung_Add": {
+      "type": "symbol",
+      "value": "➕ Neu",
+      "is_active": true
     },
-    "right_panel_button_icon_size": 50,
-    "right_panel_button_ipady": 2,
-    "right_panel_button_pady": 2,
-    "sidebar_background_color": "#5353FF",
-    "list_tab_button_icon_size": 24,
-    "list_tab_button_ipady": 5,
-    "tab_colors_Fr\u00fchdienst": "#E0E8F0",
-    "tab_colors_Sp\u00e4tdienst": "#F0E0E0",
-    "tab_colors_Trinkgeldliste": "#E0F0E8",
-    "tab_colors_Minibarliste": "#F0F0E0",
-    "tab_colors_Tagesabrechnung": "#E8E0F0"
+    "Zimmerreservierung_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Zimmerreservierung_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
+    },
+    "Zimmerreservierung_Email": {
+      "type": "symbol",
+      "value": "📧 E-Mail senden",
+      "is_active": true
+    },
+    "Zimmerreservierung_Print": {
+      "type": "symbol",
+      "value": "📄 Drucken/PDF",
+      "is_active": true
+    }
+  },
+  "zimmerreservierung_email_recipients": {
+    "Reservierung": "elber3763@gmail.com",
+    "Verkauf": "shadow336@protonmail.com"
+  },
+  "mod_checkliste_email_recipients": {
+    "Direktion": "ferdinand.bock@kronsberg.bestwestern.de",
+    "Haustechnik": "haustechnik@kronsberg.bestwestern.de"
+  },
+  "mod_checkliste_cc_email": "haustechnik@kronsberg.bestwestern.de",
+  "tischreservierung_button_configs": {
+    "List_Add": {
+      "type": "symbol",
+      "value": "Hinzufügen",
+      "is_active": true
+    },
+    "List_Edit": {
+      "type": "symbol",
+      "value": "Bearbeiten",
+      "is_active": true
+    },
+    "List_Delete": {
+      "type": "symbol",
+      "value": "Löschen",
+      "is_active": true
+    },
+    "List_Print": {
+      "type": "symbol",
+      "value": "Drucken",
+      "is_active": true
+    },
+    "List_History": {
+      "type": "symbol",
+      "value": "Verlauf",
+      "is_active": true
+    }
+  },
+  "offene_rechnungen_design_configs": {
+    "icon_size": 24,
+    "ipady": 8,
+    "pady": 5
+  },
+  "right_panel_button_style": {
+    "icon_size": 30,
+    "ipady": 2,
+    "pady": 2
+  },
+  "weckrufliste_button_configs": {
+    "Weckruf_Add": {
+      "type": "symbol",
+      "value": "➕ Hinzufügen",
+      "is_active": true
+    },
+    "Weckruf_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Weckruf_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
+    },
+    "Weckruf_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
+    },
+    "Weckruf_SavePDF": {
+      "type": "symbol",
+      "value": "📄 PDF Speichern",
+      "is_active": true
+    },
+    "Weckruf_Print": {
+      "type": "symbol",
+      "value": "🖨️ Drucken",
+      "is_active": true
+    },
+    "Weckruf_Overlay": {
+      "type": "symbol",
+      "value": "👁️ Info-Fenster",
+      "is_active": true
+    },
+    "Weckruf_ManualBackup": {
+      "type": "symbol",
+      "value": "💾 Man. Backup",
+      "is_active": true
+    },
+    "Weckruf_ManageBackups": {
+      "type": "symbol",
+      "value": "🗃️ Backups",
+      "is_active": true
+    }
+  },
+  "shuttle_button_configs": {
+    "Shuttle_Add": {
+      "type": "symbol",
+      "value": "➕ Buchen",
+      "is_active": true
+    },
+    "Shuttle_Add_Next": {
+      "type": "symbol",
+      "value": "➕ Hinzufügen",
+      "is_active": true
+    },
+    "Shuttle_Dialog_Done": {
+      "type": "symbol",
+      "value": "✅ Fertig",
+      "is_active": true
+    },
+    "Shuttle_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Shuttle_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Stornieren",
+      "is_active": true
+    },
+    "Shuttle_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
+    },
+    "Shuttle_SavePDF": {
+      "type": "symbol",
+      "value": "📄 PDF",
+      "is_active": true
+    },
+    "Shuttle_Print": {
+      "type": "symbol",
+      "value": "🖨️ Drucken",
+      "is_active": true
+    },
+    "Shuttle_Overlay": {
+      "type": "symbol",
+      "value": "👁️ Info-Fenster",
+      "is_active": true
+    },
+    "Shuttle_ManualBackup": {
+      "type": "symbol",
+      "value": "💾 Man. Backup",
+      "is_active": true
+    },
+    "Shuttle_ManageBackups": {
+      "type": "symbol",
+      "value": "🗃️ Backups",
+      "is_active": true
+    },
+    "Shuttle_DeleteDone": {
+      "type": "symbol",
+      "value": "🗑️ Erledigte löschen",
+      "is_active": true
+    }
+  },
+  "mod_rundgang_button_configs": {
+    "MOD_Save": {
+      "type": "symbol",
+      "value": "💾 Speichern",
+      "is_active": true
+    },
+    "MOD_Email": {
+      "type": "symbol",
+      "value": "📧 E-Mail senden",
+      "is_active": true
+    },
+    "MOD_Reset": {
+      "type": "symbol",
+      "value": "🗑️ Zurücksetzen",
+      "is_active": true
+    },
+    "MOD_PDF": {
+      "type": "symbol",
+      "value": "📄 PDF exportieren",
+      "is_active": true
+    },
+    "MOD_HeroIcon": {
+      "type": "symbol",
+      "value": "🏨",
+      "is_active": true
+    },
+    "MOD_NameIcon": {
+      "type": "symbol",
+      "value": "👤",
+      "is_active": true
+    },
+    "MOD_DateIcon": {
+      "type": "symbol",
+      "value": "📅",
+      "is_active": true
+    }
+  },
+  "mod_rundgang_colors": {
+    "header_from": "#1E3A5F",
+    "header_to": "#2980B9",
+    "actionbar_bg": "#1E2D40",
+    "progress_from": "#00B09B",
+    "progress_to": "#4CAF50",
+    "task_done_bg": "#E8F5E9",
+    "card_bg": "#FFFFFF",
+    "page_bg": "#F0F4F8",
+    "shadow_color": "#B0BEC5",
+    "warning_fg": "#C0392B"
+  },
+  "taxibestellung_button_configs": {
+    "Taxi_Add": {
+      "type": "symbol",
+      "value": "➕ Neu",
+      "is_active": true
+    },
+    "Taxi_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Taxi_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
+    },
+    "Taxi_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
+    },
+    "Taxi_SavePDF": {
+      "type": "symbol",
+      "value": "📄 PDF Speichern",
+      "is_active": true
+    },
+    "Taxi_Print": {
+      "type": "symbol",
+      "value": "🖨️ Drucken",
+      "is_active": true
+    },
+    "Taxi_Overlay": {
+      "type": "symbol",
+      "value": "👁️ Info-Fenster",
+      "is_active": true
+    },
+    "Taxi_ManualBackup": {
+      "type": "symbol",
+      "value": "💾 Man. Backup",
+      "is_active": true
+    },
+    "Taxi_ManageBackups": {
+      "type": "symbol",
+      "value": "🗃️ Backups",
+      "is_active": true
+    }
+  },
+  "bettensteuer_button_configs": {
+    "Bettensteuer_Calc": {
+      "type": "symbol",
+      "value": "✏️ Berechnen",
+      "is_active": true
+    },
+    "Bettensteuer_Exit": {
+      "type": "symbol",
+      "value": "✏️ Beenden",
+      "is_active": true
+    }
+  },
+  "bettensteuer_design_configs": {
+    "icon_size": 22,
+    "ipady": 5,
+    "pady": 8
+  },
+  "dialog_button_icon_size": 20,
+  "offene_rechnungen_button_configs": {
+    "OR_AddRow": {
+      "type": "symbol",
+      "value": "➕ Zeile hinzufügen",
+      "is_active": true
+    },
+    "OR_Import": {
+      "type": "symbol",
+      "value": "📥 Import",
+      "is_active": true
+    },
+    "OR_DeleteAll": {
+      "type": "symbol",
+      "value": "🗑️ Papierkorb",
+      "is_active": true
+    },
+    "OR_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "OR_Kommentar": {
+      "type": "symbol",
+      "value": "💬 Kommentar",
+      "is_active": true
+    },
+    "OR_SavePDF": {
+      "type": "symbol",
+      "value": "💾 PDF Speichern",
+      "is_active": true
+    },
+    "OR_Email": {
+      "type": "symbol",
+      "value": "📧 E-Mail",
+      "is_active": true
+    },
+    "OR_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
+    }
+  },
+  "kassenprotokoll_button_configs": {
+    "KP_HeroIcon": {
+      "type": "symbol",
+      "value": "💰",
+      "is_active": true
+    }
+  },
+  "namensliste_button_configs": {
+    "Namensliste_Add": {
+      "type": "symbol",
+      "value": "➕ Neuer Eintrag",
+      "is_active": true
+    },
+    "Namensliste_BulkAdd": {
+      "type": "symbol",
+      "value": "📋 Liste einfügen",
+      "is_active": true
+    },
+    "Namensliste_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Namensliste_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
+    },
+    "Namensliste_Prepare": {
+      "type": "symbol",
+      "value": "✨ Liste aufbereiten",
+      "is_active": true
+    },
+    "Namensliste_CheckDups": {
+      "type": "symbol",
+      "value": "🔍 Duplikate prüfen",
+      "is_active": true
+    },
+    "Namensliste_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
+    },
+    "Namensliste_SavePDF": {
+      "type": "symbol",
+      "value": "📄 Als PDF speichern",
+      "is_active": true
+    },
+    "Namensliste_Print": {
+      "type": "symbol",
+      "value": "🖨️ Drucken",
+      "is_active": true
+    },
+    "NL_FirmIcon": {
+      "type": "symbol",
+      "value": "🏢",
+      "is_active": true
+    },
+    "NL_InfoIcon": {
+      "type": "symbol",
+      "value": "ℹ️",
+      "is_active": true
+    },
+    "NL_DateIcon": {
+      "type": "symbol",
+      "value": "📅",
+      "is_active": true
+    }
+  },
+  "adressbuch_button_configs": {
+    "Adressbuch_Add": {
+      "type": "symbol",
+      "value": "👤 Neuer Kontakt",
+      "is_active": true
+    },
+    "Adressbuch_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Adressbuch_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
+    },
+    "Adressbuch_Import": {
+      "type": "symbol",
+      "value": "📥 Import (Excel)",
+      "is_active": true
+    },
+    "Adressbuch_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
+    }
+  },
+  "urlaubsantraege_button_configs": {
+    "Urlaubsantrag_Add": {
+      "type": "symbol",
+      "value": "➕ Hinzufügen",
+      "is_active": true
+    },
+    "Urlaubsantrag_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Urlaubsantrag_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
+    },
+    "Urlaubsantrag_Print": {
+      "type": "symbol",
+      "value": "🖨️ Drucken",
+      "is_active": true
+    },
+    "Urlaubsantrag_SavePDF": {
+      "type": "symbol",
+      "value": "📄 Als PDF speichern",
+      "is_active": true
+    }
+  },
+  "ueberstundenantrag_button_configs": {
+    "Ueberstundenantrag_Add": {
+      "type": "symbol",
+      "value": "➕ Hinzufügen",
+      "is_active": true
+    },
+    "Ueberstundenantrag_Edit": {
+      "type": "symbol",
+      "value": "✏️ Bearbeiten",
+      "is_active": true
+    },
+    "Ueberstundenantrag_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Löschen",
+      "is_active": true
+    },
+    "Ueberstundenantrag_Print": {
+      "type": "symbol",
+      "value": "🖨️ Drucken",
+      "is_active": true
+    },
+    "Ueberstundenantrag_SavePDF": {
+      "type": "symbol",
+      "value": "📄 Als PDF speichern",
+      "is_active": true
+    },
+    "Ueberstundenantrag_History": {
+      "type": "symbol",
+      "value": "🕰️ Verlauf",
+      "is_active": true
+    }
+  },
+  "spickzettel_tab_icons": {
+    "zimmer": "",
+    "designs": "",
+    "minibar": "",
+    "mwst": ""
+  },
+  "spickzettel_sidebar_hover_color": "#34495e",
+  "spickzettel_tab_icon_size": 20,
+  "offene_rechnungen_icon_path": "",
+  "taxi_settings": {
+    "phone_numbers": [
+      "0511 / 824444",
+      "0511 / 3811"
+    ]
+  },
+  "dialog_button_ipady": 3,
+  "dialog_button_configs": {
+    "Dialog_Update": {
+      "type": "symbol",
+      "value": "Aktualisieren",
+      "is_active": true
+    },
+    "Dialog_Save": {
+      "type": "symbol",
+      "value": "✔ Speichern",
+      "is_active": true
+    },
+    "Dialog_Cancel": {
+      "type": "symbol",
+      "value": "Abbrechen",
+      "is_active": true
+    },
+    "Dialog_Restore": {
+      "type": "symbol",
+      "value": "Wiederherstellen",
+      "is_active": true
+    },
+    "Dialog_Delete": {
+      "type": "symbol",
+      "value": "Löschen",
+      "is_active": true
+    },
+    "Dialog_Final": {
+      "type": "symbol",
+      "value": "Final",
+      "is_active": true
+    }
+  },
+  "backup_dialog_button_configs": {
+    "Dialog_Restore": {
+      "type": "symbol",
+      "value": "Wiederherstellen",
+      "is_active": true
+    },
+    "Dialog_Delete": {
+      "type": "symbol",
+      "value": "Löschen",
+      "is_active": true
+    },
+    "Dialog_Cancel": {
+      "type": "symbol",
+      "value": "Schließen",
+      "is_active": true
+    }
+  },
+  "shift_action_button_configs": {
+    "Fruehdienst_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Frühdienst-Daten löschen",
+      "is_active": true
+    },
+    "Spaetdienst_Delete": {
+      "type": "symbol",
+      "value": "🗑️ Spätdienst-Daten löschen",
+      "is_active": true
+    }
+  },
+  "shift_action_button_icon_size": 20,
+  "shift_action_button_ipady": 2,
+  "home_button_config": {
+    "is_visible": true,
+    "type": "text",
+    "text": "< Hauptmenü",
+    "image_path": "",
+    "icon_size": 18,
+    "ipady": 2
+  },
+  "custom_buttons": [],
+  "admin_password": "admin123",
+  "auto_backup_enabled": true,
+  "auto_backup_interval_hours": 24,
+  "auto_backup_trinkgeld_enabled": true,
+  "auto_backup_trinkgeld_interval_hours": 24,
+  "auto_backup_minibar_enabled": true,
+  "auto_backup_minibar_interval_hours": 24,
+  "auto_backup_shuttle_enabled": true,
+  "auto_backup_shuttle_interval_hours": 24,
+  "auto_backup_tagesabrechnung_enabled": true,
+  "auto_backup_tagesabrechnung_interval_hours": 24,
+  "auto_backup_weckruf_enabled": true,
+  "auto_backup_weckruf_interval_hours": 24,
+  "auto_backup_taxi_enabled": true,
+  "auto_backup_taxi_interval_hours": 24,
+  "alarm_enabled": true,
+  "alarm_sound_path": "",
+  "hover_sound_enabled": true,
+  "hover_sound_path": "sounds/hover.wav",
+  "trinkgeld_kuerzel_list": [
+    "DH",
+    "SS",
+    "TB",
+    "CG",
+    "SC",
+    "JH",
+    "PT",
+    "TL",
+    "NA",
+    "STS",
+    "JK"
+  ],
+  "checkliste_kuerzel_list": [
+    "DH",
+    "SS",
+    "TB",
+    "CG",
+    "SC",
+    "JH",
+    "PT",
+    "TL",
+    "NA",
+    "STS",
+    "JK"
+  ],
+  "smtp_settings": {
+    "server": "",
+    "port": 587,
+    "sender_email": "",
+    "username": "",
+    "password": ""
+  },
+  "cash_denominations": [
+    {
+      "value": 200.0,
+      "is_active": true
+    },
+    {
+      "value": 100.0,
+      "is_active": true
+    },
+    {
+      "value": 50.0,
+      "is_active": true
+    },
+    {
+      "value": 20.0,
+      "is_active": true
+    },
+    {
+      "value": 10.0,
+      "is_active": true
+    },
+    {
+      "value": 5.0,
+      "is_active": true
+    },
+    {
+      "value": 2.0,
+      "is_active": true
+    },
+    {
+      "value": 1.0,
+      "is_active": true
+    },
+    {
+      "value": 0.5,
+      "is_active": true
+    },
+    {
+      "value": 0.2,
+      "is_active": true
+    },
+    {
+      "value": 0.1,
+      "is_active": true
+    },
+    {
+      "value": 0.05,
+      "is_active": true
+    },
+    {
+      "value": 0.02,
+      "is_active": true
+    },
+    {
+      "value": 0.01,
+      "is_active": true
+    }
+  ],
+  "stamp_definitions": [
+    {
+      "price": 1.6,
+      "label": "Brief 1,60",
+      "is_active": true
+    },
+    {
+      "price": 0.95,
+      "label": "Brief 0,95",
+      "is_active": true
+    }
+  ],
+  "card_types": [
+    {
+      "key": "Mastercard",
+      "label": "Mastercard",
+      "is_active": true
+    },
+    {
+      "key": "VisaVPAY",
+      "label": "Visa/VPAY",
+      "is_active": true
+    },
+    {
+      "key": "Amex",
+      "label": "Amex",
+      "is_active": true
+    },
+    {
+      "key": "Maestro",
+      "label": "Maestro",
+      "is_active": true
+    }
+  ],
+  "minibar_items": [
+    {
+      "name": "Bickensohler",
+      "price": 7.0,
+      "is_active": true
+    },
+    {
+      "name": "Cola",
+      "price": 3.6,
+      "is_active": true
+    },
+    {
+      "name": "Apoli",
+      "price": 3.6,
+      "is_active": true
+    },
+    {
+      "name": "Schokoriegel",
+      "price": 2.0,
+      "is_active": true
+    },
+    {
+      "name": "NicNac's",
+      "price": 2.0,
+      "is_active": true
+    },
+    {
+      "name": "Apfelsaft",
+      "price": 3.6,
+      "is_active": true
+    }
+  ],
+  "starting_float_value": 800.0,
+  "use_quantity_combobox": false,
+  "quantity_combobox_max_value": 100,
+  "quantity_combobox_default_value": 0,
+  "reception_fields_count": 3,
+  "dashboard_icon_configs": {
+    "schicht": {
+      "type": "char",
+      "value": "📅"
+    },
+    "umsatz_frueh": {
+      "type": "char",
+      "value": "📊"
+    },
+    "umsatz_spaet": {
+      "type": "char",
+      "value": "📊"
+    },
+    "umsatz_total": {
+      "type": "char",
+      "value": "📈"
+    },
+    "quittung_1": {
+      "type": "char",
+      "value": "🧾"
+    },
+    "quittung_2": {
+      "type": "char",
+      "value": "🧾"
+    },
+    "quittung_3": {
+      "type": "char",
+      "value": "🧾"
+    },
+    "diverses": {
+      "type": "char",
+      "value": "⚙️"
+    },
+    "summe_posten": {
+      "type": "char",
+      "value": "∑"
+    },
+    "soll_display": {
+      "type": "char",
+      "value": "🎯"
+    },
+    "kasse_total": {
+      "type": "char",
+      "value": "💰"
+    },
+    "tip": {
+      "type": "char",
+      "value": "🎁"
+    },
+    "entnahme": {
+      "type": "char",
+      "value": "📤"
+    }
+  },
+  "dashboard_content_bg": "#2E3440",
+  "dashboard_content_fg": "#D8DEE9",
+  "dashboard_border_color": "#4C566A",
+  "dashboard_border_width": 2,
+  "dashboard_relief": "sunken",
+  "dashboard_input_field_width": 12,
+  "dashboard_input_field_ipady": 1,
+  "dashboard_highlight_non_default_fields": true,
+  "dashboard_header_icon_path": "",
+  "dashboard_background_image_path": "",
+  "dashboard_background_image_alpha": 0.2,
+  "dashboard_background_scaling_mode": "fill",
+  "dashboard_background_mode": "slideshow",
+  "slideshow_transition_effect": "curtain",
+  "dashboard_header_icon_config": {
+    "icon_size": 40,
+    "padding_vertical": 0,
+    "margin_vertical": 0
+  },
+  "kassenabschluss_zeilen_definitionen": [
+    {
+      "key": "QUITTUNG_1",
+      "label": "Quittung 1:",
+      "typ": "EINGABE",
+      "formel_string": "",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 0,
+      "aktiv": true,
+      "style": "normal_input"
+    },
+    {
+      "key": "QUITTUNG_2",
+      "label": "Quittung 2:",
+      "typ": "EINGABE",
+      "formel_string": "",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 1,
+      "aktiv": true,
+      "style": "normal_input"
+    },
+    {
+      "key": "QUITTUNG_3",
+      "label": "Quittung 3:",
+      "typ": "EINGABE",
+      "formel_string": "",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 2,
+      "aktiv": true,
+      "style": "normal_input"
+    },
+    {
+      "key": "DIVERSES",
+      "label": "Diverses:",
+      "typ": "EINGABE",
+      "formel_string": "",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 3,
+      "aktiv": true,
+      "style": "normal_input"
+    },
+    {
+      "key": "SUMME_POSTEN",
+      "label": "Summe Posten:",
+      "typ": "FORMEL",
+      "formel_string": "_SUMME_BARGELD + _SUMME_BRIEFMARKEN + QUITTUNG_1 + QUITTUNG_2 + QUITTUNG_3 + DIVERSES",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 10,
+      "aktiv": true,
+      "style": "sum_display"
+    },
+    {
+      "key": "SOLL",
+      "label": "Soll:",
+      "typ": "FESTWERT_AUS_EINSTELLUNG",
+      "formel_string": "_STARTING_FLOAT_VALUE",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 11,
+      "aktiv": true,
+      "style": "sum_display"
+    },
+    {
+      "key": "UMSATZ_FRUEH",
+      "label": "Umsatz Früh:",
+      "typ": "EINGABE_KERN",
+      "formel_string": "",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 12,
+      "aktiv": true,
+      "style": "normal_input"
+    },
+    {
+      "key": "UMSATZ_SPAET",
+      "label": "Umsatz Spät:",
+      "typ": "EINGABE_KERN",
+      "formel_string": "",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 13,
+      "aktiv": true,
+      "style": "normal_input"
+    },
+    {
+      "key": "UMSATZ_TOTAL",
+      "label": "Umsatz Total:",
+      "typ": "FORMEL",
+      "formel_string": "UMSATZ_FRUEH + UMSATZ_SPAET",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 14,
+      "aktiv": true,
+      "style": "diff_display_auto"
+    },
+    {
+      "key": "KASSE_TOTAL",
+      "label": "Kasse Total:",
+      "typ": "FORMEL",
+      "formel_string": "UMSATZ_FRUEH + UMSATZ_SPAET + SOLL",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 15,
+      "aktiv": true,
+      "style": "diff_display_auto"
+    },
+    {
+      "key": "TIP",
+      "label": "Tip:",
+      "typ": "FORMEL",
+      "formel_string": "SUMME_POSTEN - KASSE_TOTAL",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 16,
+      "aktiv": true,
+      "style": "diff_display_auto"
+    },
+    {
+      "key": "ENTNAHME",
+      "label": "Entnahme:",
+      "typ": "FORMEL",
+      "formel_string": "SUMME_POSTEN - SOLL",
+      "initialwert_eingabe": 0.0,
+      "reihenfolge": 17,
+      "aktiv": true,
+      "style": "diff_display_auto"
+    }
+  ],
+  "shuttle_overlay_colors": {
+    "title_bar_bg": "#434C5E",
+    "title_bar_fg": "#FFFFFF"
+  },
+  "configurable_sizes": {
+    "weckrufliste": {
+      "font_size": 11,
+      "entry_width": 30
+    },
+    "taxibestellung": {
+      "font_size": 11,
+      "entry_width": 30
+    },
+    "shuttle_service": {
+      "font_size": 14,
+      "entry_width": 30
+    },
+    "minibarliste": {
+      "font_size": 16,
+      "entry_width": 25
+    },
+    "trinkgeldliste": {
+      "font_size": 11,
+      "entry_width": 20
+    },
+    "tagesabrechnung": {
+      "entry_font_size": 14,
+      "sum_font_size": 14
+    },
+    "dialog_buttons": {
+      "font_size": 12
+    }
+  }
 }

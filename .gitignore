@@ -23,8 +23,9 @@ build/
 *.json
 *.log
 
-# Ausnahme: Einstellungsdatei soll mit EXE zusammen versioniert werden
+# Ausnahmen: Diese Dateien sollen mit EXE zusammen versioniert werden
 !dist/kassenprotokoll_settings.json
+!dist/app_path_config.json
 
 # Office Temp-Dateien
 ~$*
