@@ -8077,6 +8077,16 @@ class SpickzettelApp:
             try:
                 with open(filepath, 'w', encoding='utf-8') as f: json.dump(data, f, indent=4, ensure_ascii=False)
             except IOError as e: print(f"Konnte die initiale Datendatei '{filename}' nicht erstellen: {e}")
+        elif filename == "spickzettel_zimmerkategorien.json":
+            # Migration: alter Schlüssel "zimmernummern" → "Zi-Nr.n"
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f: entries = json.load(f)
+                if any('zimmernummern' in e for e in entries):
+                    for e in entries:
+                        if 'zimmernummern' in e:
+                            e['Zi-Nr.n'] = e.pop('zimmernummern')
+                    with open(filepath, 'w', encoding='utf-8') as f: json.dump(entries, f, indent=4, ensure_ascii=False)
+            except Exception: pass
 
     def destroy(self):
         """Bricht alle laufenden 'after'-Jobs ab, um einen sauberen Neustart zu ermöglichen."""
@@ -34483,6 +34493,73 @@ class KassenprotokollApp:
         self.namensliste_tree.bind("<Double-1>", self._edit_namensliste_entry)
         self._setupTreeViewCellNavigation(self.namensliste_tree,
                                           edit_command_func=self._edit_namensliste_entry)
+
+        # ---------- Drag-and-Drop für Zeilen ----------
+        self._dnd_drag_item   = None
+        self._dnd_indicator   = None
+
+        def _dnd_start(event):
+            item = self.namensliste_tree.identify_row(event.y)
+            if item:
+                self._dnd_drag_item = item
+                self.namensliste_tree.selection_set(item)
+                self.namensliste_tree.config(cursor="fleur")
+
+        def _dnd_motion(event):
+            if not self._dnd_drag_item:
+                return
+            target = self.namensliste_tree.identify_row(event.y)
+            # Indikator-Linie: alle Tags zurücksetzen, dann Ziel markieren
+            for it in self.namensliste_tree.get_children():
+                tags = [t for t in self.namensliste_tree.item(it, 'tags')
+                        if t not in ('dnd_target', 'oddrow', 'evenrow')]
+                idx = self.namensliste_tree.index(it)
+                tags.append('oddrow' if idx % 2 == 0 else 'evenrow')
+                self.namensliste_tree.item(it, tags=tags)
+            if target and target != self._dnd_drag_item:
+                self.namensliste_tree.tag_configure('dnd_target', background='#AED6F1')
+                cur_tags = list(self.namensliste_tree.item(target, 'tags'))
+                cur_tags = [t for t in cur_tags if t not in ('oddrow', 'evenrow')]
+                cur_tags.append('dnd_target')
+                self.namensliste_tree.item(target, tags=cur_tags)
+
+        def _dnd_drop(event):
+            if not self._dnd_drag_item:
+                return
+            target = self.namensliste_tree.identify_row(event.y)
+            drag_id = self._dnd_drag_item
+            self._dnd_drag_item = None
+            self.namensliste_tree.config(cursor="")
+
+            if not target or target == drag_id:
+                self._load_and_display_namensliste()
+                return
+
+            # Reihenfolge im data_cache anpassen
+            drag_entry = next((e for e in self.namensliste_data_cache
+                               if str(e.get('id')) == str(drag_id)), None)
+            tgt_entry  = next((e for e in self.namensliste_data_cache
+                               if str(e.get('id')) == str(target)), None)
+            if drag_entry is None or tgt_entry is None:
+                self._load_and_display_namensliste()
+                return
+
+            self.namensliste_data_cache.remove(drag_entry)
+            tgt_idx = self.namensliste_data_cache.index(tgt_entry)
+            # Einfügen: oberhalb des Ziels wenn von oben gezogen, unterhalb sonst
+            drag_pos_before = self.namensliste_tree.index(drag_id) \
+                if drag_id in self.namensliste_tree.get_children() else 0
+            tgt_pos = self.namensliste_tree.index(target)
+            insert_idx = tgt_idx if drag_pos_before < tgt_pos else tgt_idx
+            self.namensliste_data_cache.insert(insert_idx, drag_entry)
+
+            self._save_namensliste_data()
+            self._load_and_display_namensliste()
+            self.namensliste_tree.selection_set(drag_id)
+
+        self.namensliste_tree.bind("<ButtonPress-1>",   _dnd_start)
+        self.namensliste_tree.bind("<B1-Motion>",       _dnd_motion)
+        self.namensliste_tree.bind("<ButtonRelease-1>", _dnd_drop)
 
         self._load_and_display_namensliste()
    
