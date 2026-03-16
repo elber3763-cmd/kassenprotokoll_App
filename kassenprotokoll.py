@@ -3461,6 +3461,147 @@ class NamenslistePDF(FPDF):
             fill = not fill
 
 
+class DoppelZimmerListePDF(FPDF):
+    """
+    Erstellt eine druckfertige, leere Doppelzimmer-Namensliste.
+    Pro Zimmer werden zwei leere Zeilen (1. Person / 2. Person) gedruckt.
+    Gäste tragen die Namen manuell ein.
+    """
+    def __init__(self, orientation='L', unit='mm', format='A4',
+                 firmenname="", extra_infos="", logo_path=None, datum_str=""):
+        super().__init__(orientation, unit, format)
+        self.firmenname = firmenname
+        self.extra_infos = extra_infos
+        self.datum_str = datum_str if datum_str else datetime.date.today().strftime("%d.%m.%Y")
+
+        self.processed_logo_path = None
+        self.temp_logo_to_delete = None
+        self.logo_render_h = 0
+
+        source_logo_path = logo_path
+        if not source_logo_path or not os.path.exists(source_logo_path):
+            try:
+                default_logo = resource_path("icons/bwp_logo.png")
+                if os.path.exists(default_logo):
+                    source_logo_path = default_logo
+            except Exception:
+                source_logo_path = None
+
+        if source_logo_path and 'Image' in globals() and Image:
+            try:
+                with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+                    self.temp_logo_to_delete = tmp.name
+                img = Image.open(source_logo_path).convert("RGBA")
+                iw, ih = img.size
+                if iw > 0:
+                    self.logo_render_h = 40 * ih / iw
+                bg = Image.new("RGBA", img.size, (255, 255, 255))
+                bg.paste(img, (0, 0), img)
+                bg.convert("RGB").save(self.temp_logo_to_delete, "PNG")
+                self.processed_logo_path = self.temp_logo_to_delete
+            except Exception as e:
+                print(f"DoppelZimmerListePDF Logo-Fehler: {e}")
+
+        self.font_family = "Helvetica"
+        try:
+            font_dir = resource_path('fonts')
+            p = os.path.join(font_dir, "DejaVuSans.ttf")
+            pb = os.path.join(font_dir, "DejaVuSans-Bold.ttf")
+            if os.path.exists(p) and os.path.exists(pb):
+                self.add_font("DejaVuSans", "", p)
+                self.add_font("DejaVuSans", "B", pb)
+                self.font_family = "DejaVuSans"
+        except Exception:
+            pass
+
+    def header(self):
+        logo_w = 40
+        if self.processed_logo_path and os.path.exists(self.processed_logo_path):
+            self.image(self.processed_logo_path, x=(self.w - logo_w) / 2, y=8, w=logo_w)
+        self.set_font(self.font_family, '', 12)
+        self.cell(0, 10, self.datum_str, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='R')
+        min_y = 8 + self.logo_render_h + 3
+        if self.get_y() < min_y:
+            self.set_y(min_y)
+        else:
+            self.ln(3)
+        self.set_font(self.font_family, 'B', 11)
+        self.cell(0, 7, f"Firmenname: {self.firmenname}",
+                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+        self.set_font(self.font_family, '', 11)
+        self.cell(0, 7, f"Extra-Infos: {self.extra_infos}",
+                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
+        self.ln(4)
+        # Titel
+        self.set_font(self.font_family, 'B', 14)
+        self.cell(0, 9, "Namensliste \u2013 Doppelzimmer",
+                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
+        self.set_font(self.font_family, '', 10)
+        self.cell(0, 6, "Bitte pro Zimmer beide Personen eintragen.",
+                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
+        self.ln(4)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font(self.font_family, '', 8)
+        self.cell(0, 10, f'Seite {self.page_no()}', 0, align='C')
+
+    def close(self):
+        if self.temp_logo_to_delete and os.path.exists(self.temp_logo_to_delete):
+            try:
+                os.remove(self.temp_logo_to_delete)
+            except OSError:
+                pass
+        self.temp_logo_to_delete = None
+
+    def __del__(self):
+        self.close()
+
+    def create_table(self, rooms, num_empty_rooms=5, col_widths=None):
+        """
+        Erzeugt die leere Doppelzimmer-Tabelle.
+        Spalten: Zi. | 1. Pax | 2. Pax | E-Mail/Telefon | PKW | Unterschrift
+        col_widths: dict mit Schlüsseln room/p1/p2/contact/car/sign (in mm).
+        """
+        defaults = {"room": 20, "p1": 60, "p2": 60, "contact": 82, "car": 25, "sign": 30}
+        CW = {**defaults, **(col_widths or {})}
+        HDR_H = 10   # Kopfzeilen-Höhe
+        ROW_H = 16   # Datenzeilen-Höhe (Platz für Handschrift)
+
+        def _draw_header():
+            self.set_font(self.font_family, 'B', 9)
+            self.set_fill_color(220, 220, 220)
+            self.cell(CW["room"],    HDR_H, "Zi.",             1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["p1"],      HDR_H, "1. Pax",          1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["p2"],      HDR_H, "2. Pax",          1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["contact"], HDR_H, "E-Mail / Telefon",1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["car"],     HDR_H, "PKW",             1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["sign"],    HDR_H, "Unterschrift",    1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C', fill=1)
+
+        _draw_header()
+        self.set_font(self.font_family, '', 10)
+        all_rooms = list(rooms) + ([""] * num_empty_rooms)
+        fill = False
+
+        for room in all_rooms:
+            if self.get_y() > (self.h - self.b_margin - ROW_H - 5):
+                self.add_page()
+                _draw_header()
+                self.set_font(self.font_family, '', 10)
+
+            bg = (245, 245, 245) if fill else (255, 255, 255)
+            self.set_fill_color(*bg)
+
+            self.cell(CW["room"],    ROW_H, room, 1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["p1"],      ROW_H, '',   1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='L', fill=1)
+            self.cell(CW["p2"],      ROW_H, '',   1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='L', fill=1)
+            self.cell(CW["contact"], ROW_H, '',   1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='L', fill=1)
+            self.cell(CW["car"],     ROW_H, '',   1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='L', fill=1)
+            self.cell(CW["sign"],    ROW_H, '',   1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L', fill=1)
+
+            fill = not fill
+
+
 class NameSplitDialog(tk.Toplevel):
     """
     Dialog zum manuellen Festlegen des Trennpunkts zwischen Vorname und Nachname
@@ -3647,8 +3788,190 @@ class NamenslisteEntryDialog(tk.Toplevel):
     def show(self):
         self.wait_window(self)
         return self.result
-    
-    
+
+
+class AddRoomDialog(tk.Toplevel):
+    """
+    Dialogfenster zum Hinzufügen eines Zimmers mit zwei Personen.
+    Erstellt pro Zimmer zwei Einträge mit identischer Zimmernummer.
+    """
+    def __init__(self, parent, app_ref):
+        super().__init__(parent)
+        self.transient(parent)
+        self.grab_set()
+        self.parent_app = app_ref
+        self.results = None
+        self.title("Neues Zimmer (2 Personen)")
+
+        main_frame = ttk.Frame(self, padding=15)
+        main_frame.pack(expand=True, fill="both")
+        main_frame.columnconfigure(1, weight=1)
+        main_frame.columnconfigure(2, weight=1)
+
+        dialog_font = ("Segoe UI", 12)
+        entry_ipady = 5
+
+        # Zimmernummer (geteilt)
+        ttk.Label(main_frame, text="Zi-NR.:", font=dialog_font).grid(
+            row=0, column=0, sticky="w", padx=5, pady=4)
+        self.room_var = tk.StringVar()
+        room_entry = ttk.Entry(main_frame, textvariable=self.room_var, font=dialog_font, width=20)
+        room_entry.grid(row=0, column=1, columnspan=2, sticky="ew", padx=5, pady=4, ipady=entry_ipady)
+        self.parent_app._bind_dialog_navigation(room_entry)
+        room_entry.focus_set()
+
+        # Spaltenüberschriften
+        ttk.Label(main_frame, text="1. Person", font=("Segoe UI", 11, "bold")).grid(
+            row=1, column=1, pady=(8, 2), padx=5)
+        ttk.Label(main_frame, text="2. Person", font=("Segoe UI", 11, "bold")).grid(
+            row=1, column=2, pady=(8, 2), padx=5)
+
+        # Felder für beide Personen
+        field_labels = [
+            "Name (Nachname, Vorname):",
+            "Nationalität:",
+            "E-Mail / Telefon:",
+            "PKW:",
+        ]
+        self.p1_vars = [tk.StringVar() for _ in field_labels]
+        self.p2_vars = [tk.StringVar() for _ in field_labels]
+
+        for i, label_text in enumerate(field_labels):
+            row = i + 2
+            ttk.Label(main_frame, text=label_text, font=dialog_font).grid(
+                row=row, column=0, sticky="w", padx=5, pady=3)
+            e1 = ttk.Entry(main_frame, textvariable=self.p1_vars[i], font=dialog_font, width=30)
+            e1.grid(row=row, column=1, sticky="ew", padx=5, pady=3, ipady=entry_ipady)
+            self.parent_app._bind_dialog_navigation(e1)
+            e2 = ttk.Entry(main_frame, textvariable=self.p2_vars[i], font=dialog_font, width=30)
+            e2.grid(row=row, column=2, sticky="ew", padx=5, pady=3, ipady=entry_ipady)
+            self.parent_app._bind_dialog_navigation(e2)
+
+        # Buttons
+        button_frame = ttk.Frame(main_frame)
+        button_frame.grid(row=len(field_labels) + 2, column=0, columnspan=3,
+                          pady=(15, 0), sticky="ew")
+        button_frame.columnconfigure((0, 1), weight=1)
+
+        ipady = self.parent_app.current_settings.get('dialog_button_ipady', 5)
+
+        save_btn = ttk.Button(button_frame, text="Speichern", command=self.on_save)
+        self.parent_app._configure_dialog_button(save_btn, 'Dialog_Save', 'Speichern')
+        save_btn.grid(row=0, column=0, padx=5, ipady=ipady, sticky="ew")
+
+        cancel_btn = ttk.Button(button_frame, text="Abbrechen", command=self.on_cancel)
+        self.parent_app._configure_dialog_button(cancel_btn, 'Dialog_Cancel', 'Abbrechen')
+        cancel_btn.grid(row=0, column=1, padx=5, ipady=ipady, sticky="ew")
+
+        self.protocol("WM_DELETE_WINDOW", self.on_cancel)
+
+    def on_save(self):
+        name1 = self.p1_vars[0].get().strip()
+        name2 = self.p2_vars[0].get().strip()
+        if not name1 and not name2:
+            messagebox.showerror("Fehler", "Mindestens eine Person muss eingetragen werden.", parent=self)
+            return
+
+        room = self.room_var.get().strip()
+        self.results = []
+        if name1:
+            self.results.append({
+                "id": uuid.uuid4().hex,
+                "room": room,
+                "name": name1,
+                "nationality": self.p1_vars[1].get().strip(),
+                "contact": self.p1_vars[2].get().strip(),
+                "car": self.p1_vars[3].get().strip(),
+            })
+        if name2:
+            self.results.append({
+                "id": uuid.uuid4().hex,
+                "room": room,
+                "name": name2,
+                "nationality": self.p2_vars[1].get().strip(),
+                "contact": self.p2_vars[2].get().strip(),
+                "car": self.p2_vars[3].get().strip(),
+            })
+        self.destroy()
+
+    def on_cancel(self):
+        self.results = None
+        self.destroy()
+
+    def show(self):
+        self.wait_window(self)
+        return self.results
+
+
+class DoppelZimmerDialog(tk.Toplevel):
+    """
+    Dialog zum Hinzufügen oder Bearbeiten einer Zimmernummer für die
+    Doppelzimmer-Liste. Die Tabelle wird leer gedruckt – Gäste tragen
+    Namen manuell ein.
+    """
+    def __init__(self, parent, app_ref, entry_data=None):
+        super().__init__(parent)
+        self.transient(parent)
+        self.grab_set()
+        self.parent_app = app_ref
+        self.result = None
+        self.is_editing = entry_data is not None
+        self.title("Zimmer bearbeiten" if self.is_editing else "Zimmer hinzufügen")
+
+        main_frame = ttk.Frame(self, padding=20)
+        main_frame.pack(expand=True, fill="both")
+        main_frame.columnconfigure(1, weight=1)
+
+        dialog_font = ("Segoe UI", 12)
+
+        ttk.Label(main_frame, text="Zi-NR.:", font=dialog_font).grid(
+            row=0, column=0, sticky="w", padx=5, pady=8)
+        self.room_var = tk.StringVar()
+        room_entry = ttk.Entry(main_frame, textvariable=self.room_var,
+                               font=dialog_font, width=25)
+        room_entry.grid(row=0, column=1, sticky="ew", padx=5, pady=8, ipady=6)
+        self.parent_app._bind_dialog_navigation(room_entry)
+        room_entry.focus_set()
+
+        if self.is_editing and entry_data:
+            self.room_var.set(entry_data.get('room', ''))
+            self._entry_id = entry_data.get('id', uuid.uuid4().hex)
+        else:
+            self._entry_id = uuid.uuid4().hex
+
+        button_frame = ttk.Frame(main_frame)
+        button_frame.grid(row=1, column=0, columnspan=2, pady=(15, 0), sticky="ew")
+        button_frame.columnconfigure((0, 1), weight=1)
+
+        ipady = self.parent_app.current_settings.get('dialog_button_ipady', 5)
+
+        save_btn = ttk.Button(button_frame, text="Speichern", command=self.on_save)
+        self.parent_app._configure_dialog_button(save_btn, 'Dialog_Save', 'Speichern')
+        save_btn.grid(row=0, column=0, padx=5, ipady=ipady, sticky="ew")
+
+        cancel_btn = ttk.Button(button_frame, text="Abbrechen", command=self.on_cancel)
+        self.parent_app._configure_dialog_button(cancel_btn, 'Dialog_Cancel', 'Abbrechen')
+        cancel_btn.grid(row=0, column=1, padx=5, ipady=ipady, sticky="ew")
+
+        self.protocol("WM_DELETE_WINDOW", self.on_cancel)
+
+    def on_save(self):
+        room = self.room_var.get().strip()
+        if not room:
+            messagebox.showerror("Fehler", "Bitte eine Zimmernummer eingeben.", parent=self)
+            return
+        self.result = {"id": self._entry_id, "room": room}
+        self.destroy()
+
+    def on_cancel(self):
+        self.result = None
+        self.destroy()
+
+    def show(self):
+        self.wait_window(self)
+        return self.result
+
+
 class UrlaubsantragPDF(FPDF):
     """
     Erstellt eine PDF-Datei für den Urlaubsantrag mit einem Layout,
@@ -13057,8 +13380,8 @@ class KassenprotokollApp:
         
         
         self.namensliste_data_file = os.path.join(self.effective_data_root, 'namensliste_data.json')
-        
-        
+        self.namensliste_doppel_data_file = os.path.join(self.effective_data_root, 'namensliste_doppel_data.json')
+
         # HIER BEGINNT DIE KORREKTUR FÜR DAS ADRESSBUCH
         self.adressbuch_data_file = os.path.join(self.effective_data_root, 'adressbuch_data.json')
         self.adressbuch_data_cache = []
@@ -13083,13 +13406,17 @@ class KassenprotokollApp:
         self.namensliste_data_cache = []
         self.namensliste_firmenname_var = tk.StringVar()
         self.namensliste_extra_infos_var = tk.StringVar()
-        
+
          # vvvvv HIER DIE NEUE ZEILE EINFÜGEN vvvvv
         self.namensliste_datum_var = tk.StringVar(value=datetime.date.today().strftime("%d.%m.%Y"))
         # ^^^^^ ENDE DER NEUEN ZEILE ^^^^^
-        
+
         self.namensliste_tree = None
         self.namensliste_count_label = None
+
+        # Doppelzimmer-Namensliste
+        self.namensliste_doppel_data_cache = []
+        self.namensliste_doppel_tree = None
 
         self.shuttle_history_file = os.path.join(self.effective_data_root, 'shuttle_history.json')
         self.checkliste_fruehdienst_state_file = os.path.join(self.ZIELORDNER_CHECKLISTEN, 'checkliste_fruehdienst_state.json')
@@ -13656,6 +13983,14 @@ class KassenprotokollApp:
               # vvvvv HIER DEN NEUEN BLOCK EINFÜGEN vvvvv
             'kassenprotokoll_button_configs': {
                 'KP_HeroIcon': {'type': 'symbol', 'value': '💰', 'is_active': True},
+            },
+            'doppel_pdf_col_widths': {
+                'room':    20,
+                'p1':      60,
+                'p2':      60,
+                'contact': 82,
+                'car':     25,
+                'sign':    30,
             },
             'namensliste_button_configs': {
                 'Namensliste_Add': {'type': 'symbol', 'value': '➕ Neuer Eintrag', 'is_active': True},
@@ -14395,6 +14730,8 @@ class KassenprotokollApp:
         elif page_name == "Namensliste":
             self._load_namensliste_data()
             self._load_and_display_namensliste()
+            self._load_namensliste_doppel_data()
+            self._load_and_display_namensliste_doppel()
         elif page_name == "Adressbuch":
             self._load_adressbuch_data()
             self._load_and_display_adressbuch()
@@ -32577,23 +32914,68 @@ class KassenprotokollApp:
         tab_appearance_frame, canvas_app, content_appearance = _make_scrollable_tab()
         tab_logic_frame,      canvas_log, content_logic      = _make_scrollable_tab()
         tab_pdf_frame,        canvas_pdf, content_pdf        = _make_scrollable_tab()
+        tab_nl_frame,         canvas_nl,  content_nl         = _make_scrollable_tab()
 
         settings_notebook.add(tab_general_frame,    text="Allgemein")
         settings_notebook.add(tab_appearance_frame, text="Darstellung")
         settings_notebook.add(tab_logic_frame,      text="Inhalte & Logik")
         settings_notebook.add(tab_pdf_frame,        text="PDF-Logos")
+        settings_notebook.add(tab_nl_frame,         text="Namensliste")
 
         self._populate_general_settings_tab(content_general, temp_settings, dialog_vars)
         self._populate_appearance_settings_tab(content_appearance, temp_settings, dialog_vars)
         self._populate_content_logic_settings_tab(content_logic, temp_settings, dialog_vars)
         self._populate_pdf_logos_settings_tab(content_pdf, temp_settings, dialog_vars)
 
+        # ── Namensliste Tab: Doppelzimmer-PDF Spaltenbreiten ─────────────────
+        ttk.Label(content_nl, text="Doppelzimmer-PDF — Spaltenbreiten (mm)",
+                  font=("Segoe UI", 11, "bold")).pack(anchor='w', pady=(10, 4))
+        ttk.Label(content_nl,
+                  text="Gesamtbreite A4-Querformat nutzbar: ca. 277 mm.\n"
+                       "Die Summe aller Spalten sollte 277 mm ergeben.",
+                  foreground='gray').pack(anchor='w', pady=(0, 10))
+
+        doppel_col_labels = {
+            "room":    "Zi. (Zimmernummer)",
+            "p1":      "1. Pax",
+            "p2":      "2. Pax",
+            "contact": "E-Mail / Telefon",
+            "car":     "PKW",
+            "sign":    "Unterschrift",
+        }
+        default_cw = self.default_settings['doppel_pdf_col_widths']
+        current_cw = temp_settings.get('doppel_pdf_col_widths', default_cw)
+        doppel_cw_vars = {}
+        grid_f = ttk.Frame(content_nl)
+        grid_f.pack(anchor='w', padx=10)
+        for row_i, (key, label) in enumerate(doppel_col_labels.items()):
+            ttk.Label(grid_f, text=label, width=26, anchor='w').grid(
+                row=row_i, column=0, sticky='w', pady=3)
+            var = tk.IntVar(value=current_cw.get(key, default_cw[key]))
+            doppel_cw_vars[key] = var
+            sb = ttk.Spinbox(grid_f, textvariable=var, from_=5, to=200, width=6)
+            sb.grid(row=row_i, column=1, padx=(8, 4), pady=3)
+            ttk.Label(grid_f, text="mm").grid(row=row_i, column=2, sticky='w')
+
+        def _update_doppel_col_widths():
+            temp_settings['doppel_pdf_col_widths'] = {k: v.get() for k, v in doppel_cw_vars.items()}
+        # patch save_and_close to capture these vars
+        _orig_save = save_and_close_settings
+        def _patched_save():
+            _update_doppel_col_widths()
+            _orig_save()
+        # rebind buttons
+        for w in button_frame_settings.winfo_children():
+            if isinstance(w, ttk.Button) and "Speichern" in str(w.cget("text")):
+                w.config(command=_patched_save)
+                break
+
         # Force correct scrollregion after all widgets are created
         settings_window.update_idletasks()
-        for _c in [canvas_gen, canvas_app, canvas_log, canvas_pdf]:
+        for _c in [canvas_gen, canvas_app, canvas_log, canvas_pdf, canvas_nl]:
             _c.configure(scrollregion=_c.bbox("all"))
 
-        _canvases = [canvas_gen, canvas_app, canvas_log, canvas_pdf]
+        _canvases = [canvas_gen, canvas_app, canvas_log, canvas_pdf, canvas_nl]
         _active_canvas = [canvas_gen]
 
         def _on_tab_changed(event):
@@ -32620,7 +33002,7 @@ class KassenprotokollApp:
 
         def _update_scrollregions_after_zoom():
             settings_window.update_idletasks()
-            for _c in [canvas_gen, canvas_app, canvas_log, canvas_pdf]:
+            for _c in [canvas_gen, canvas_app, canvas_log, canvas_pdf, canvas_nl]:
                 if _c.winfo_exists():
                     _c.configure(scrollregion=_c.bbox("all"))
 
@@ -34270,8 +34652,8 @@ class KassenprotokollApp:
             ('Namensliste_CheckDups', "Duplikate prüfen",   self._check_namensliste_duplicates),
             (None, None, None),
             ('Namensliste_History',   "Verlauf",            self._open_namensliste_history_dialog),
-            ('Namensliste_SavePDF',   "Als PDF speichern",  self._save_namensliste_as_pdf),
-            ('Namensliste_Print',     "Drucken",            self._print_namensliste),
+            ('Namensliste_SavePDF',   "Als PDF speichern",  self._save_namensliste_pdf_dispatch),
+            ('Namensliste_Print',     "Drucken",            self._print_namensliste_dispatch),
         ]
 
         for key, default_text, command in button_definitions:
@@ -34445,10 +34827,21 @@ class KassenprotokollApp:
         # Dummy-Label für Rückwärtskompatibilität (wird nicht angezeigt)
         self.namensliste_count_label = tk.Label(_count_canvas)
 
-        # ── TREEVIEW ───────────────────────────────────────────────────────────
-        tree_outer = tk.Frame(parent_frame, bg='#FFFFFF',
+        # ── SUB-NOTEBOOK (Einzelbelegung / Doppelzimmer) ─────────────────────
+        nl_notebook = ttk.Notebook(parent_frame)
+        self.namensliste_notebook = nl_notebook
+        nl_notebook.pack(fill='both', expand=True, padx=15, pady=(0, 12))
+
+        tab_einzel = ttk.Frame(nl_notebook)
+        nl_notebook.add(tab_einzel, text="  Einzelbelegung (1 Person)  ")
+
+        tab_doppel = ttk.Frame(nl_notebook)
+        nl_notebook.add(tab_doppel, text="  Doppelzimmer (2 Personen)  ")
+
+        # ── TAB 1: EINZELBELEGUNG ──────────────────────────────────────────────
+        tree_outer = tk.Frame(tab_einzel, bg='#FFFFFF',
                               highlightthickness=1, highlightbackground='#CBD5E0')
-        tree_outer.pack(fill='both', expand=True, padx=15, pady=(0, 12))
+        tree_outer.pack(fill='both', expand=True)
 
         heading_font = tkFont.Font(family=base_font_family, size=13, weight="bold")
         self.style.configure("Namensliste.Treeview",
@@ -34562,8 +34955,84 @@ class KassenprotokollApp:
         self.namensliste_tree.bind("<ButtonRelease-1>", _dnd_drop)
 
         self._load_and_display_namensliste()
-   
-   
+
+        # ── TAB 2: DOPPELZIMMER ────────────────────────────────────────────────
+        doppel_btn_bar = tk.Frame(tab_doppel, bg=C_BAR, pady=6)
+        doppel_btn_bar.pack(fill='x')
+
+        tk.Button(doppel_btn_bar, text="➕  Neues Zimmer",
+                  command=self._add_namensliste_doppel_entry,
+                  bg=C_BAR, fg='white',
+                  activebackground=_lighten(C_BAR, 22), activeforeground='white',
+                  relief='flat', bd=0, highlightthickness=0,
+                  cursor='hand2', font=("Segoe UI", 10)
+                  ).pack(side='left', padx=8)
+
+        tk.Button(doppel_btn_bar, text="✏️  Bearbeiten",
+                  command=self._edit_namensliste_doppel_entry,
+                  bg=C_BAR, fg='white',
+                  activebackground=_lighten(C_BAR, 22), activeforeground='white',
+                  relief='flat', bd=0, highlightthickness=0,
+                  cursor='hand2', font=("Segoe UI", 10)
+                  ).pack(side='left', padx=4)
+
+        tk.Button(doppel_btn_bar, text="🗑️  Löschen",
+                  command=self._delete_namensliste_doppel_entry,
+                  bg=C_BAR, fg='white',
+                  activebackground=_lighten(C_BAR, 22), activeforeground='white',
+                  relief='flat', bd=0, highlightthickness=0,
+                  cursor='hand2', font=("Segoe UI", 10)
+                  ).pack(side='left', padx=4)
+
+
+        doppel_tree_outer = tk.Frame(tab_doppel, bg='#FFFFFF',
+                                     highlightthickness=1, highlightbackground='#CBD5E0')
+        doppel_tree_outer.pack(fill='both', expand=True)
+
+        self.style.configure("Doppel.Treeview",
+                             rowheight=44,
+                             font=tkFont.Font(family=base_font_family, size=12),
+                             background='#FFFFFF', fieldbackground='#FFFFFF',
+                             foreground='#1A202C')
+        self.style.configure("Doppel.Treeview.Heading",
+                             font=tkFont.Font(family=base_font_family, size=13, weight="bold"),
+                             background=C_HDR2, foreground='white',
+                             relief='flat', padding=(8, 6))
+        self.style.map("Doppel.Treeview.Heading",
+                       background=[('active', C_HDR2), ('!active', C_HDR2)],
+                       foreground=[('active', 'white'), ('!active', 'white')])
+        self.style.map("Doppel.Treeview",
+                       background=[('selected', '#DBEAFE')],
+                       foreground=[('selected', '#1565C0')])
+
+        doppel_cols = ("room", "p1", "p2", "contact", "car", "sign")
+        self.namensliste_doppel_tree = ttk.Treeview(
+            doppel_tree_outer, columns=doppel_cols, show="headings", style="Doppel.Treeview")
+        doppel_col_cfg = {
+            "room":    {"text": "Zimmer",                      "width": 90},
+            "p1":      {"text": "1. Person (Name eintragen)",  "width": 260},
+            "p2":      {"text": "2. Person (Name eintragen)",  "width": 260},
+            "contact": {"text": "E-Mail / Telefon",            "width": 200},
+            "car":     {"text": "PKW",                         "width": 90},
+            "sign":    {"text": "Unterschrift",                "width": 110},
+        }
+        for col_id, cfg in doppel_col_cfg.items():
+            self.namensliste_doppel_tree.heading(col_id, text=cfg["text"])
+            self.namensliste_doppel_tree.column(col_id, width=cfg["width"], anchor="w", stretch=tk.YES)
+
+        self.namensliste_doppel_tree.tag_configure('doppel_odd',  background='#F0F4F8')
+        self.namensliste_doppel_tree.tag_configure('doppel_even', background='#FFFFFF')
+
+        doppel_vsb = ttk.Scrollbar(doppel_tree_outer, orient="vertical",
+                                   command=self.namensliste_doppel_tree.yview)
+        self.namensliste_doppel_tree.configure(yscrollcommand=doppel_vsb.set)
+        self.namensliste_doppel_tree.pack(side='left', fill='both', expand=True)
+        doppel_vsb.pack(side='right', fill='y')
+
+        self.namensliste_doppel_tree.bind("<Double-1>", self._edit_namensliste_doppel_entry)
+
+        self._load_and_display_namensliste_doppel()
+
 
     def _save_namensliste_data(self):
         try:
@@ -34571,6 +35040,119 @@ class KassenprotokollApp:
             with open(self.namensliste_data_file, 'w', encoding='utf-8') as f:
                 json.dump(self.namensliste_data_cache, f, indent=2, ensure_ascii=False)
         except Exception as e: print(f"Fehler beim Speichern der Namensliste: {e}")
+
+    def _save_namensliste_doppel_data(self):
+        try:
+            os.makedirs(os.path.dirname(self.namensliste_doppel_data_file), exist_ok=True)
+            with open(self.namensliste_doppel_data_file, 'w', encoding='utf-8') as f:
+                json.dump(self.namensliste_doppel_data_cache, f, indent=2, ensure_ascii=False)
+        except Exception as e: print(f"Fehler beim Speichern der Doppelzimmer-Namensliste: {e}")
+
+    def _load_namensliste_doppel_data(self):
+        if os.path.exists(self.namensliste_doppel_data_file):
+            try:
+                with open(self.namensliste_doppel_data_file, 'r', encoding='utf-8') as f:
+                    self.namensliste_doppel_data_cache = json.load(f)
+                    if not isinstance(self.namensliste_doppel_data_cache, list):
+                        self.namensliste_doppel_data_cache = []
+            except (json.JSONDecodeError, IOError):
+                self.namensliste_doppel_data_cache = []
+        else:
+            self.namensliste_doppel_data_cache = []
+
+    def _load_and_display_namensliste_doppel(self):
+        if not self.namensliste_doppel_tree or not self.namensliste_doppel_tree.winfo_exists():
+            return
+        for item in self.namensliste_doppel_tree.get_children():
+            self.namensliste_doppel_tree.delete(item)
+        for i, entry in enumerate(self.namensliste_doppel_data_cache):
+            tag = 'doppel_odd' if i % 2 == 0 else 'doppel_even'
+            self.namensliste_doppel_tree.insert("", "end", iid=entry.get('id', ''),
+                values=(entry.get('room', ''), '', '', '', '', ''),
+                tags=(tag,))
+
+    def _add_namensliste_doppel_entry(self):
+        dialog = DoppelZimmerDialog(self.master, self)
+        result = dialog.show()
+        if result:
+            self.namensliste_doppel_data_cache.append(result)
+            self._save_namensliste_doppel_data()
+            self._load_and_display_namensliste_doppel()
+
+    def _edit_namensliste_doppel_entry(self, event=None):
+        selected_ids = self.namensliste_doppel_tree.selection()
+        if not selected_ids:
+            return
+        room_id = selected_ids[0]
+        entry = next((e for e in self.namensliste_doppel_data_cache
+                      if e.get('id') == room_id), None)
+        if not entry:
+            return
+        dialog = DoppelZimmerDialog(self.master, self, entry_data=entry)
+        result = dialog.show()
+        if result:
+            idx = self.namensliste_doppel_data_cache.index(entry)
+            self.namensliste_doppel_data_cache[idx] = result
+            self._save_namensliste_doppel_data()
+            self._load_and_display_namensliste_doppel()
+
+    def _delete_namensliste_doppel_entry(self):
+        selected_ids = self.namensliste_doppel_tree.selection()
+        if not selected_ids:
+            messagebox.showinfo("Hinweis", "Bitte zuerst einen Eintrag auswählen.", parent=self.master)
+            return
+        room_id = selected_ids[0]
+        entry = next((e for e in self.namensliste_doppel_data_cache
+                      if e.get('id') == room_id), None)
+        if not entry:
+            return
+        room_label = entry.get('room', '?')
+        if messagebox.askyesno("Löschen", f"Zimmer {room_label} wirklich löschen?", parent=self.master):
+            self.namensliste_doppel_data_cache.remove(entry)
+            self._save_namensliste_doppel_data()
+            self._load_and_display_namensliste_doppel()
+
+    def _save_doppel_namensliste_as_pdf(self):
+        save_path = filedialog.asksaveasfilename(
+            parent=self.master,
+            title="Doppelzimmer-Namensliste speichern",
+            defaultextension=".pdf",
+            filetypes=[("PDF-Datei", "*.pdf")],
+            initialfile=f"Doppelzimmer_Namensliste_{datetime.date.today().strftime('%Y-%m-%d')}.pdf"
+        )
+        if not save_path:
+            return
+
+        try:
+            firmenname = self.namensliste_firmenname_var.get().strip()
+            extra_infos = self.namensliste_extra_infos_var.get().strip()
+            datum_str   = self.namensliste_datum_var.get().strip()
+            logo_path   = self.current_settings.get('logo_path', '')
+
+            rooms = [e.get('room', '') for e in self.namensliste_doppel_data_cache]
+
+            pdf = DoppelZimmerListePDF(
+                orientation='L', unit='mm', format='A4',
+                firmenname=firmenname,
+                extra_infos=extra_infos,
+                logo_path=logo_path,
+                datum_str=datum_str,
+            )
+            col_widths = self.current_settings.get(
+                'doppel_pdf_col_widths',
+                self.default_settings['doppel_pdf_col_widths'])
+            pdf.add_page()
+            pdf.create_table(rooms, num_empty_rooms=5, col_widths=col_widths)
+            pdf.output(save_path)
+            pdf.close()
+
+            messagebox.showinfo("Gespeichert",
+                                f"Doppelzimmer-Namensliste gespeichert:\n{save_path}",
+                                parent=self.master)
+        except Exception as e:
+            messagebox.showerror("Fehler",
+                                 f"PDF konnte nicht erstellt werden:\n{e}",
+                                 parent=self.master)
 
     def _load_and_display_namensliste(self):
         if not self.namensliste_tree or not self.namensliste_tree.winfo_exists(): return
@@ -34588,7 +35170,7 @@ class KassenprotokollApp:
                 entry.get('nationality', ''),
                 entry.get('contact', ''),
                 entry.get('car', ''),
-                '' # Signature is empty in the list
+                ''  # Unterschrift bleibt leer
             )
             self.namensliste_tree.insert("", "end", values=values, iid=entry.get('id'), tags=(tag,))
 
@@ -34688,7 +35270,7 @@ class KassenprotokollApp:
         if new_entry_data:
             self.namensliste_data_cache.append(new_entry_data)
             self._save_namensliste_data()
-            self._save_namensliste_to_history("Eintrag hinzugefügt") # <-- Zeile hinzufügen
+            self._save_namensliste_to_history("Eintrag hinzugefügt")
             self._load_and_display_namensliste()
 
     def _edit_namensliste_entry(self, event=None):
@@ -34975,6 +35557,71 @@ class KassenprotokollApp:
         
             
 
+    def _ask_namensliste_table_type(self):
+        """
+        Zeigt eine Auswahlmaske: Welche Tabelle soll verwendet werden?
+        Gibt 1 (Einzelbelegung) oder 2 (Doppelzimmer) zurück, oder None bei Abbruch.
+        """
+        dlg = tk.Toplevel(self.master)
+        dlg.title("Tabellenauswahl")
+        dlg.transient(self.master)
+        dlg.grab_set()
+        dlg.resizable(False, False)
+
+        result = [None]
+
+        tk.Label(dlg, text="Welche Tabelle möchten Sie verwenden?",
+                 font=("Segoe UI", 11, "bold"), pady=12, padx=20).pack()
+
+        btn_frame = tk.Frame(dlg, pady=10)
+        btn_frame.pack(fill='x', padx=20)
+
+        def _pick(val):
+            result[0] = val
+            dlg.destroy()
+
+        tk.Button(btn_frame,
+                  text="1 Person pro Zimmer\n(Einzelbelegung)",
+                  font=("Segoe UI", 10), width=26, height=3,
+                  bg="#2B6CB0", fg="white", activebackground="#2C5282",
+                  activeforeground="white", relief="flat", cursor="hand2",
+                  command=lambda: _pick(1)).pack(side='left', padx=(0, 8))
+
+        tk.Button(btn_frame,
+                  text="2 Personen pro Zimmer\n(Doppelzimmer)",
+                  font=("Segoe UI", 10), width=26, height=3,
+                  bg="#276749", fg="white", activebackground="#22543D",
+                  activeforeground="white", relief="flat", cursor="hand2",
+                  command=lambda: _pick(2)).pack(side='left')
+
+        tk.Button(dlg, text="Abbrechen", command=dlg.destroy,
+                  font=("Segoe UI", 9), relief="flat", pady=6).pack(pady=(0, 10))
+
+        dlg.update_idletasks()
+        w, h = dlg.winfo_width(), dlg.winfo_height()
+        x = self.master.winfo_rootx() + (self.master.winfo_width() - w) // 2
+        y = self.master.winfo_rooty() + (self.master.winfo_height() - h) // 2
+        dlg.geometry(f"+{x}+{y}")
+
+        self.master.wait_window(dlg)
+        return result[0]
+
+    def _save_namensliste_pdf_dispatch(self):
+        """Fragt welche Tabelle gespeichert werden soll, dann speichert als PDF."""
+        choice = self._ask_namensliste_table_type()
+        if choice == 1:
+            self._save_namensliste_as_pdf()
+        elif choice == 2:
+            self._save_doppel_namensliste_as_pdf()
+
+    def _print_namensliste_dispatch(self):
+        """Fragt welche Tabelle gedruckt werden soll, dann druckt."""
+        choice = self._ask_namensliste_table_type()
+        if choice == 1:
+            self._print_namensliste()
+        elif choice == 2:
+            self._print_doppel_namensliste()
+
     def _save_namensliste_as_pdf(self):
         """
         Speichert die aktuelle Namensliste als PDF-Datei, nachdem das Logo
@@ -35055,6 +35702,45 @@ class KassenprotokollApp:
 
 
    
+
+    def _print_doppel_namensliste(self):
+        """Erstellt eine temporäre Doppelzimmer-PDF und öffnet sie zum Drucken."""
+        pdf_instance = None
+        try:
+            firmenname = self.namensliste_firmenname_var.get()
+            extra_infos = self.namensliste_extra_infos_var.get()
+            datum_str   = self.namensliste_datum_var.get().strip()
+            rooms = [e.get('room', '') for e in self.namensliste_doppel_data_cache]
+            col_widths = self.current_settings.get(
+                'doppel_pdf_col_widths', self.default_settings['doppel_pdf_col_widths'])
+
+            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+                temp_pdf_path = tmp.name
+
+            pdf_instance = DoppelZimmerListePDF(
+                orientation='L', unit='mm', format='A4',
+                firmenname=firmenname, extra_infos=extra_infos,
+                logo_path=_get_pdf_logo_path(self.current_settings, 'namensliste'),
+                datum_str=datum_str)
+            pdf_instance.add_page()
+            pdf_instance.create_table(rooms, num_empty_rooms=5, col_widths=col_widths)
+            pdf_instance.output(temp_pdf_path)
+
+            if platform.system() == "Windows":
+                os.startfile(temp_pdf_path)
+            else:
+                opener = "open" if platform.system() == "Darwin" else "xdg-open"
+                subprocess.run([opener, temp_pdf_path], check=True)
+
+            self._schedule_temp_file_cleanup(temp_pdf_path)
+
+        except Exception as e:
+            messagebox.showerror("Druckfehler",
+                                 f"Fehler beim Öffnen der Druckvorschau:\n{e}",
+                                 parent=self.master)
+        finally:
+            if pdf_instance and hasattr(pdf_instance, 'close'):
+                pdf_instance.close()
 
     def _load_zimmerreservierung_data(self):
         if not hasattr(self, 'zimmerreservierung_data_file'):

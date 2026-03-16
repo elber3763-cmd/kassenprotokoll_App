@@ -1,10 +1,11 @@
-fpdf
+fpdf2
 python-docx
 openpyxl
-pygame
-pywin32
+pygame-ce
+# pywin32 not supported on Python 3.13t (optional, Outlook-Feature)
 asteval
 Pillow
 ttkthemes
 PyMuPDF
 pyinstaller
+pillow-avif-plugin
