@@ -3531,15 +3531,7 @@ class DoppelZimmerListePDF(FPDF):
         self.set_font(self.font_family, '', 11)
         self.cell(0, 7, f"Extra-Infos: {self.extra_infos}",
                   new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L')
-        self.ln(4)
-        # Titel
-        self.set_font(self.font_family, 'B', 14)
-        self.cell(0, 9, "Namensliste \u2013 Doppelzimmer",
-                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
-        self.set_font(self.font_family, '', 10)
-        self.cell(0, 6, "Bitte pro Zimmer beide Personen eintragen.",
-                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C')
-        self.ln(4)
+        self.ln(5)
 
     def footer(self):
         self.set_y(-15)
@@ -3563,20 +3555,20 @@ class DoppelZimmerListePDF(FPDF):
         Spalten: Zi. | 1. Pax | 2. Pax | E-Mail/Telefon | PKW | Unterschrift
         col_widths: dict mit Schlüsseln room/p1/p2/contact/car/sign (in mm).
         """
-        defaults = {"room": 20, "p1": 60, "p2": 60, "contact": 82, "car": 25, "sign": 30}
+        defaults = {"room": 38, "p1": 50, "p2": 25, "contact": 87, "car": 35, "sign": 42}
         CW = {**defaults, **(col_widths or {})}
-        HDR_H = 10   # Kopfzeilen-Höhe
-        ROW_H = 16   # Datenzeilen-Höhe (Platz für Handschrift)
+        HDR_H = 8    # Kopfzeilen-Höhe (wie Einzelzimmer)
+        ROW_H = 10   # Datenzeilen-Höhe (wie Einzelzimmer)
 
         def _draw_header():
-            self.set_font(self.font_family, 'B', 9)
+            self.set_font(self.font_family, 'B', 10)
             self.set_fill_color(220, 220, 220)
-            self.cell(CW["room"],    HDR_H, "Zi.",             1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
-            self.cell(CW["p1"],      HDR_H, "1. Pax",          1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
-            self.cell(CW["p2"],      HDR_H, "2. Pax",          1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
-            self.cell(CW["contact"], HDR_H, "E-Mail / Telefon",1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
-            self.cell(CW["car"],     HDR_H, "PKW",             1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
-            self.cell(CW["sign"],    HDR_H, "Unterschrift",    1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C', fill=1)
+            self.cell(CW["room"],    HDR_H, "Zi-NR.",          1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["p1"],      HDR_H, "1. Person",        1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["p2"],      HDR_H, "2. Person",        1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["contact"], HDR_H, "E-Mail / Telefon", 1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["car"],     HDR_H, "PKW",              1, new_x=XPos.RIGHT,   new_y=YPos.TOP,  align='C', fill=1)
+            self.cell(CW["sign"],    HDR_H, "Unterschrift",     1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='C', fill=1)
 
         _draw_header()
         self.set_font(self.font_family, '', 10)
@@ -3584,7 +3576,7 @@ class DoppelZimmerListePDF(FPDF):
         fill = False
 
         for room in all_rooms:
-            if self.get_y() > (self.h - self.b_margin - ROW_H - 5):
+            if self.get_y() > (self.h - self.b_margin - 15):
                 self.add_page()
                 _draw_header()
                 self.set_font(self.font_family, '', 10)
@@ -13985,12 +13977,12 @@ class KassenprotokollApp:
                 'KP_HeroIcon': {'type': 'symbol', 'value': '💰', 'is_active': True},
             },
             'doppel_pdf_col_widths': {
-                'room':    20,
-                'p1':      60,
-                'p2':      60,
-                'contact': 82,
-                'car':     25,
-                'sign':    30,
+                'room':    38,
+                'p1':      50,
+                'p2':      25,
+                'contact': 87,
+                'car':     35,
+                'sign':    42,
             },
             'namensliste_button_configs': {
                 'Namensliste_Add': {'type': 'symbol', 'value': '➕ Neuer Eintrag', 'is_active': True},
