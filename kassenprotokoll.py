@@ -35109,7 +35109,7 @@ class KassenprotokollApp:
         Zeigt einen Dialog mit +/- Buttons zur Auswahl der leeren Seiten.
         Gibt die Anzahl der leeren Zeilen (Seiten × 5) zurück oder -1 bei Abbruch.
         """
-        ROWS_PER_PAGE = 5
+        ROWS_PER_PAGE = 13
         result = [-1]
 
         dlg = tk.Toplevel(self.master)
