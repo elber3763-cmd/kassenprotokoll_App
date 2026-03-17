@@ -35112,7 +35112,78 @@ class KassenprotokollApp:
             self._save_namensliste_doppel_data()
             self._load_and_display_namensliste_doppel()
 
+    def _ask_doppel_extra_pages(self) -> int:
+        """
+        Zeigt einen Dialog mit +/- Buttons zur Auswahl der leeren Seiten.
+        Gibt die Anzahl der leeren Zeilen (Seiten × 5) zurück oder -1 bei Abbruch.
+        """
+        ROWS_PER_PAGE = 5
+        result = [-1]
+
+        dlg = tk.Toplevel(self.master)
+        dlg.title("Leere Seiten")
+        dlg.resizable(False, False)
+        dlg.transient(self.master)
+        dlg.grab_set()
+
+        pages_var = tk.IntVar(value=1)
+
+        outer = ttk.Frame(dlg, padding=20)
+        outer.pack(fill='both', expand=True)
+
+        ttk.Label(outer,
+                  text="Wie viele leere Seiten soll die PDF enthalten?",
+                  font=("Segoe UI", 11)).pack(pady=(0, 12))
+
+        counter_frame = ttk.Frame(outer)
+        counter_frame.pack()
+
+        def _dec():
+            v = pages_var.get()
+            if v > 1:
+                pages_var.set(v - 1)
+
+        def _inc():
+            pages_var.set(pages_var.get() + 1)
+
+        ttk.Button(counter_frame, text="−", width=4, command=_dec).pack(side='left', padx=4)
+        ttk.Label(counter_frame, textvariable=pages_var, width=4, anchor='center',
+                  font=("Segoe UI", 14, "bold")).pack(side='left')
+        ttk.Button(counter_frame, text="+", width=4, command=_inc).pack(side='left', padx=4)
+
+        ttk.Label(outer, text="Seite(n)  ×  5 leere Zeilen",
+                  font=("Segoe UI", 9), foreground="#666666").pack(pady=(6, 16))
+
+        btn_frame = ttk.Frame(outer)
+        btn_frame.pack()
+
+        def _ok():
+            result[0] = pages_var.get() * ROWS_PER_PAGE
+            dlg.destroy()
+
+        def _cancel():
+            dlg.destroy()
+
+        ttk.Button(btn_frame, text="OK",        command=_ok,     width=10).pack(side='left', padx=5)
+        ttk.Button(btn_frame, text="Abbrechen", command=_cancel, width=10).pack(side='left', padx=5)
+
+        dlg.bind("<Return>", lambda _: _ok())
+        dlg.bind("<Escape>", lambda _: _cancel())
+
+        # Fenster zentrieren
+        dlg.update_idletasks()
+        pw = self.master.winfo_x() + self.master.winfo_width() // 2
+        ph = self.master.winfo_y() + self.master.winfo_height() // 2
+        dlg.geometry(f"+{pw - dlg.winfo_width() // 2}+{ph - dlg.winfo_height() // 2}")
+
+        self.master.wait_window(dlg)
+        return result[0]
+
     def _save_doppel_namensliste_as_pdf(self):
+        num_empty = self._ask_doppel_extra_pages()
+        if num_empty == -1:
+            return
+
         save_path = filedialog.asksaveasfilename(
             parent=self.master,
             title="Doppelzimmer-Namensliste speichern",
@@ -35142,7 +35213,7 @@ class KassenprotokollApp:
                 'doppel_pdf_col_widths',
                 self.default_settings['doppel_pdf_col_widths'])
             pdf.add_page()
-            pdf.create_table(rooms, num_empty_rooms=5, col_widths=col_widths)
+            pdf.create_table(rooms, num_empty_rooms=num_empty, col_widths=col_widths)
             pdf.output(save_path)
             pdf.close()
 
@@ -35705,6 +35776,10 @@ class KassenprotokollApp:
 
     def _print_doppel_namensliste(self):
         """Erstellt eine temporäre Doppelzimmer-PDF und öffnet sie zum Drucken."""
+        num_empty = self._ask_doppel_extra_pages()
+        if num_empty == -1:
+            return
+
         pdf_instance = None
         try:
             firmenname = self.namensliste_firmenname_var.get()
@@ -35723,7 +35798,7 @@ class KassenprotokollApp:
                 logo_path=_get_pdf_logo_path(self.current_settings, 'namensliste'),
                 datum_str=datum_str)
             pdf_instance.add_page()
-            pdf_instance.create_table(rooms, num_empty_rooms=5, col_widths=col_widths)
+            pdf_instance.create_table(rooms, num_empty_rooms=num_empty, col_widths=col_widths)
             pdf_instance.output(temp_pdf_path)
 
             if platform.system() == "Windows":
