@@ -13190,8 +13190,6 @@ class KassenprotokollApp:
    
     def __init__(self, master, effective_data_root=None):
         self.master = master
-        
-        
         self.sub_app_instances = [] # Zentrale Registrierung für Sub-Anwendungen
 
         
@@ -13264,9 +13262,6 @@ class KassenprotokollApp:
             self.effective_data_root = effective_data_root
         else:
             self.effective_data_root = self._determine_effective_data_root()
-        
-        
-        self.effective_data_root = self._determine_effective_data_root()
         self.settings_file = os.path.join(self.effective_data_root, 'kassenprotokoll_settings.json')
         self.history_file = os.path.join(self.effective_data_root, 'kassenprotokoll_history.json')
         
@@ -13323,20 +13318,8 @@ class KassenprotokollApp:
         # HIER DIE NEUEN ZEILEN FÜR DEN URLAUBSANTRAG EINFÜGEN
         self.urlaubsantraege_data_file = os.path.join(self.effective_data_root, 'urlaubsantraege_data.json')
 
-        # --- AUTOMATISCHES LEEREN BEIM PROGRAMMSTART ---
-        # Dieser Block prüft bei jedem Start, ob die Datendatei existiert und löscht sie.
-        # Dies führt zum gewünschten automatischen Leeren ohne Benutzerinteraktion.
-        if os.path.exists(self.urlaubsantraege_data_file):
-            try:
-                os.remove(self.urlaubsantraege_data_file)
-                print("INFO: 'urlaubsantraege_data.json' wurde beim Start automatisch geleert.")
-            except OSError as e:
-                # Falls die Datei gesperrt ist, wird eine Fehlermeldung in der Konsole ausgegeben.
-                print(f"FEHLER: 'urlaubsantraege_data.json' konnte nicht automatisch geleert werden: {e}")
-        
         self.urlaubsantraege_data_cache = []
-        self._load_urlaubsantraege_data() # Diese Funktion wird nun immer eine leere Liste initialisieren.
-        # ENDE DER NEUEN ZEILEN
+        self._load_urlaubsantraege_data()
         
         
          # vvvvv HIER DIE NEUEN ZEILEN EINFÜGEN vvvvv
@@ -13358,16 +13341,8 @@ class KassenprotokollApp:
         
         self.namensliste_data_file = os.path.join(self.effective_data_root, 'namensliste_data.json')
         
-        # Automatisch leeren beim Start
-        if os.path.exists(self.ueberstundenantrag_data_file):
-            try:
-                os.remove(self.ueberstundenantrag_data_file)
-            except OSError as e:
-                print(f"FEHLER: 'ueberstundenantrag_data.json' konnte nicht geleert werden: {e}")
-
         self.ueberstundenantrag_data_cache = []
         self._load_ueberstundenantrag_data()
-        # ^^^^^ HIER ENDEN DIE NEUEN ZEILEN ^^^^^
         
         
         
@@ -13386,12 +13361,6 @@ class KassenprotokollApp:
         
         self.adressbuch_search_var = tk.StringVar()
         self._load_adressbuch_data()
-        
-        
-        
-        
-        self.adressbuch_search_var = tk.StringVar()
-        self._load_adressbuch_data()  # HIER WIRD DER DATENSATZ GELADEN
         # HIER ENDET DIE KORREKTUR
         
         
@@ -14530,60 +14499,45 @@ class KassenprotokollApp:
         
         self._apply_settings_to_styles()
         self._create_sidebar(self.sidebar_frame)
-        self._create_dashboard_page(self.pages["Dashboard"]) # <- HIER EINFÜGEN
+
+        # Lazy-Page-Creator: Seiten werden erst beim ersten Besuch gebaut
+        self._page_creators = {
+            "Offene Rechnungen":   lambda p: self._create_offene_rechnungen_page(p),
+            "Tischreservierung":   lambda p: self._create_tischreservierung_page(p),
+            "Anrufliste":          lambda p: self._create_anrufliste_page(p),
+            "Spickzettel":         lambda p: self._create_spickzettel_page(p),
+            "UmsatzsteuerRechner": lambda p: self._create_umsatzsteuer_rechner_page(p),
+            "Trinkgeldliste":      lambda p: self._create_trinkgeldliste_page(p),
+            "Weckrufliste":        lambda p: self._create_weckrufliste_page(p),
+            "Minibarliste":        lambda p: self._create_minibarliste_page(p),
+            "Tagesabrechnung":     lambda p: self._create_tagesabrechnung_page(p),
+            "Checkliste Früh":     lambda p: self._create_checkliste_fruehdienst_page(p),
+            "Checkliste Spät":     lambda p: self._create_checkliste_spaetdienst_page(p),
+            "Checkliste Nacht":    lambda p: self._create_checkliste_nacht_page(p),
+            "Shuttle Hinfahrt":    lambda p: self._create_shuttle_page(p, 'Hinfahrt'),
+            "Shuttle Rückfahrt":   lambda p: self._create_shuttle_page(p, 'Rückfahrt'),
+            "Taxibestellung":      lambda p: self._create_taxibestellung_page(p),
+            "ShuttleMenu":         lambda p: self._create_shuttle_menu_page(p),
+            "Namensliste":         lambda p: self._create_namensliste_page(p),
+            "Adressbuch":          lambda p: self._create_adressbuch_page(p),
+            "Urlaubsantraege":     lambda p: self._create_urlaubsantraege_page(p),
+            "Überstundenantrag":   lambda p: self._create_ueberstundenantrag_page(p),
+            "AuthCodeFinder":      lambda p: self._create_auth_code_finder_page(p),
+            "Layover":             lambda p: self._create_layover_page(p),
+            "Zimmerreservierung":  lambda p: self._create_zimmerreservierung_page(p),
+            "MOD-Checkliste":      lambda p: self._create_mod_rundgang_page(p),
+            "Wochenendplaner":     lambda p: self._create_weekend_planner_page(p),
+        }
+        self._built_pages = set()
+
+        # Nur die sofort sichtbaren Seiten beim Start bauen
+        self._create_dashboard_page(self.pages["Dashboard"])
+        self._built_pages.add("Dashboard")
         self._create_kassenprotokoll_page(self.pages["Kassenprotokoll"])
-        
-        self._create_offene_rechnungen_page(self.pages["Offene Rechnungen"]) 
+        self._built_pages.add("Kassenprotokoll")
 
-
-           # In __init__, nach den anderen self._create_..._page Aufrufen
-        self._create_tischreservierung_page(self.pages["Tischreservierung"])
-        
-        self._create_anrufliste_page(self.pages["Anrufliste"]) # <-- NEUE ZEILE HINZUFÜGEN
-
-         # vvvvv HIER DEN NEUEN AUFRUF EINFÜGEN vvvvv
-        self._create_spickzettel_page(self.pages["Spickzettel"])
-        # ^^^^^ HIER ENDET DER NEUE AUFRUF ^^^^^
-        
-        self._create_umsatzsteuer_rechner_page(self.pages["UmsatzsteuerRechner"])
-        
-        self._create_trinkgeldliste_page(self.pages["Trinkgeldliste"])
-        self._create_weckrufliste_page(self.pages["Weckrufliste"])
-        self._create_minibarliste_page(self.pages["Minibarliste"])
-        self._create_tagesabrechnung_page(self.pages["Tagesabrechnung"])
-        self._create_checkliste_fruehdienst_page(self.pages["Checkliste Früh"])
-        self._create_checkliste_spaetdienst_page(self.pages["Checkliste Spät"])
-        self._create_checkliste_nacht_page(self.pages["Checkliste Nacht"])
-
-        self._create_shuttle_page(self.pages["Shuttle Hinfahrt"], 'Hinfahrt')
-        self._create_shuttle_page(self.pages["Shuttle Rückfahrt"], 'Rückfahrt')
-        self._create_taxibestellung_page(self.pages["Taxibestellung"])
-        # HIER WIRD DIE ERSTELLUNG DER NEUEN SEITE AUFGERUFEN
-        self._create_shuttle_menu_page(self.pages["ShuttleMenu"])
-        
-        self._create_namensliste_page(self.pages["Namensliste"])
-        self._create_adressbuch_page(self.pages["Adressbuch"])
-        self._create_urlaubsantraege_page(self.pages["Urlaubsantraege"]) # NEUE ZEILE
-
-        self._create_ueberstundenantrag_page(self.pages["Überstundenantrag"]) # <-- NEUE ZEILE
-
-        self._create_auth_code_finder_page(self.pages["AuthCodeFinder"]) # <-- DIESE ZEILE HINZUFÜGEN
-        
-        self._create_layover_page(self.pages["Layover"])
-
-        self._create_zimmerreservierung_page(self.pages["Zimmerreservierung"]) # <--- DIESEN AUFRUF HINZUFÜGEN
-
-        self._create_mod_rundgang_page(self.pages["MOD-Checkliste"])
-
-        self._create_weekend_planner_page(self.pages["Wochenendplaner"])
-
-        # =================================================================
-        # HIER IST DIE KORREKTUR:
-        # Dashboard sofort in den Vordergrund holen, um Flackern anderer Seiten zu verhindern
-        # =================================================================
         if "Dashboard" in self.pages:
             self.pages["Dashboard"].tkraise()
-        # =================================================================
       
       
       # vvvvv HIER IST DIE PERFEKTE STELLE ZUM EINFÜGEN vvvvv
@@ -14669,6 +14623,13 @@ class KassenprotokollApp:
         self._load_checklist_state('frueh')
         self._load_checklist_state('spaet')
         self._load_checklist_state('nacht')
+
+        # Alle weiteren Listen vorab laden, damit _on_closing nie leere Caches speichert
+        self._load_namensliste_data()
+        self._load_namensliste_doppel_data()
+        self._load_tischreservierung_data()
+        self._load_anrufliste_data()
+        self._load_zimmerreservierung_data()
         
         
         
@@ -14678,32 +14639,30 @@ class KassenprotokollApp:
         Alle anderen Daten werden erst bei Bedarf geladen ("lazy loading").
         """
         self._load_all_data_files()
-        
-        # Nur die Widgets für das Kassenprotokoll (links) erstellen, da sie auf dem Dashboard sichtbar sind
-        self._clear_widget_tracking_lists()
-        self._create_shift_widgets(self.fruehdienst_frame, self.fruehdienst_vars, "Frühdienst", self.spaetdienst_vars)
-        self._create_shift_widgets(self.spaetdienst_frame, self.spaetdienst_vars, "Spätdienst", self.fruehdienst_vars)
-        
+
         # Berechnungen durchführen und Benachrichtigungen aktualisieren
         self._update_all_calculations(called_by_button=False)
         self._update_notifications()
         self._update_button_appearances()
         self._schedule_autosave()
 
-        # vvvvv HIER IST DIE KORREKTUR vvvvv
         # Das Schließen-Protokoll wird auf die korrekte Beenden-Methode umgeleitet
         self.master.protocol("WM_DELETE_WINDOW", self._on_closing)
-        # ^^^^^ ENDE DER KORREKTUR ^^^^^
         self.master.bind("<Map>", self._on_window_restore)
 
         self.show_page("Dashboard")
         self.is_loading_data = False
         self.initialized_pages.add("Dashboard")
-        self.initialized_pages.add("Kassenprotokoll") # Gehört logisch zum Dashboard
 
     def _initialize_page_data(self, page_name):
         """Lädt die Daten für eine bestimmte Seite, wenn sie zum ersten Mal aufgerufen wird."""
-        if page_name == "Trinkgeldliste":
+        if page_name == "Kassenprotokoll":
+            self._load_kassenprotokoll_data()
+            self._clear_widget_tracking_lists()
+            self._create_shift_widgets(self.fruehdienst_frame, self.fruehdienst_vars, "Frühdienst", self.spaetdienst_vars)
+            self._create_shift_widgets(self.spaetdienst_frame, self.spaetdienst_vars, "Spätdienst", self.fruehdienst_vars)
+            self._update_all_calculations(called_by_button=False)
+        elif page_name == "Trinkgeldliste":
             self._load_trinkgeld_data()
             self._set_default_trinkgeld_period_and_load()
         elif page_name == "Minibarliste":
@@ -15543,14 +15502,18 @@ class KassenprotokollApp:
         if page_name not in self.pages:
             messagebox.showerror("Fehler: Seite nicht gefunden", f"Fehler: Seite '{page_name}' konnte nicht gefunden werden. Bitte Rezeption_App neu starten")
             return
-        
-        # vvvvv HIER BEGINNT DIE ERGÄNZUNG vvvvv
-        # Prüft, ob die Seite bereits initialisiert wurde. Wenn nicht, werden jetzt
-        # die Daten für diese spezifische Seite geladen.
+
+        # Seite beim ersten Besuch lazy erstellen
+        if page_name not in self._built_pages:
+            creator = self._page_creators.get(page_name)
+            if creator:
+                creator(self.pages[page_name])
+            self._built_pages.add(page_name)
+
+        # Prüft, ob die Daten für diese Seite bereits geladen wurden.
         if page_name not in self.initialized_pages:
             self._initialize_page_data(page_name)
             self.initialized_pages.add(page_name)
-        # ^^^^^ HIER ENDET DIE ERGÄNZUNG ^^^^^
         
         # Beim Verlassen der Checklisten-Seiten die Validierung durchführen.
         if self.current_page_name == "Checkliste Früh":
@@ -21616,40 +21579,49 @@ class KassenprotokollApp:
         # Sub-Apps aufräumen
         self._cleanup_sub_apps()
 
-        # 3. Daten speichern
+        # 3. Daten speichern – jede Speicherung einzeln absichern, damit ein Fehler
+        #    nicht alle nachfolgenden Speicherungen verhindert.
         print("Speichere Daten...")
-        try:
-            if self.checklist_dirty.get('frueh', False): self._save_checklist_state('frueh', show_feedback=False)
-            if self.checklist_dirty.get('spaet', False): self._save_checklist_state('spaet', show_feedback=False)
-            if self.checklist_dirty.get('nacht', False): self._save_checklist_state('nacht', show_feedback=False)
-            
-            self._save_tischreservierung_data()
-            self._save_anrufliste_data()
-            
-            self._save_kassenprotokoll_data()
-            self._save_current_state_to_history(save_type='manual', changes={'action': 'Programm beendet'})
-            self._save_trinkgeld_data()
-            self._save_minibar_data()
-            self._save_tagesabrechnung_to_history()
-            self._save_weckruf_data()
-            self._save_shuttle_data()
-            self._save_taxi_data()
-            self._save_namensliste_data()
-            self._save_adressbuch_data()
-            self._save_urlaubsantraege_data()
-            self._save_ueberstundenantrag_data()
-            
-            if hasattr(self, 'layover_app_instance') and self.layover_app_instance: 
-                self.layover_app_instance.save_data()
-            
-            if hasattr(self, 'offene_rechnungen_app_instance') and self.offene_rechnungen_app_instance: 
-                self.offene_rechnungen_app_instance.save_data(show_toast=False)
+        def _safe_save(fn, *args, label="", **kwargs):
+            try:
+                fn(*args, **kwargs)
+            except Exception as e:
+                import traceback
+                print(f"!!! FEHLER beim Speichern ({label}): {e}")
+                traceback.print_exc()
 
-            print("Datenspeicherung abgeschlossen.")
-        except Exception as e:
-            print(f"!!! FEHLER BEIM SPEICHERN WÄHREND DES BEENDENS: {e}")
-            import traceback
-            traceback.print_exc()
+        if self.checklist_dirty.get('frueh', False):
+            _safe_save(self._save_checklist_state, 'frueh', show_feedback=False, label="Checkliste Früh")
+        if self.checklist_dirty.get('spaet', False):
+            _safe_save(self._save_checklist_state, 'spaet', show_feedback=False, label="Checkliste Spät")
+        if self.checklist_dirty.get('nacht', False):
+            _safe_save(self._save_checklist_state, 'nacht', show_feedback=False, label="Checkliste Nacht")
+
+        _safe_save(self._save_tischreservierung_data, label="Tischreservierung")
+        _safe_save(self._save_anrufliste_data, label="Anrufliste")
+
+        _safe_save(self._save_kassenprotokoll_data, label="Kassenprotokoll")
+        _safe_save(self._save_current_state_to_history, save_type='manual', changes={'action': 'Programm beendet'}, label="History")
+        _safe_save(self._save_trinkgeld_data, label="Trinkgeld")
+        _safe_save(self._save_minibar_data, label="Minibar")
+        _safe_save(self._save_tagesabrechnung_to_history, label="Tagesabrechnung")
+        _safe_save(self._save_weckruf_data, label="Weckruf")
+        _safe_save(self._save_shuttle_data, label="Shuttle")
+        _safe_save(self._save_taxi_data, label="Taxi")
+        _safe_save(self._save_namensliste_data, label="Namensliste")
+        _safe_save(self._save_namensliste_doppel_data, label="Namensliste Doppel")
+        _safe_save(self._save_zimmerreservierung_data, label="Zimmerreservierung")
+        _safe_save(self._save_adressbuch_data, label="Adressbuch")
+        _safe_save(self._save_urlaubsantraege_data, label="Urlaubsanträge")
+        _safe_save(self._save_ueberstundenantrag_data, label="Überstundenantrag")
+
+        if hasattr(self, 'layover_app_instance') and self.layover_app_instance:
+            _safe_save(self.layover_app_instance.save_data, label="Layover")
+
+        if hasattr(self, 'offene_rechnungen_app_instance') and self.offene_rechnungen_app_instance:
+            _safe_save(self.offene_rechnungen_app_instance.save_data, show_toast=False, label="Offene Rechnungen")
+
+        print("Datenspeicherung abgeschlossen.")
 
         # 4. Ressourcen freigeben und Fenster schließen
         if pygame_available:
@@ -32866,7 +32838,12 @@ class KassenprotokollApp:
 
             self._init_shift_vars(self.fruehdienst_vars, "Frühdienst")
             self._init_shift_vars(self.spaetdienst_vars, "Spätdienst")
-            
+
+            # Kassenprotokoll-Daten nach dem Zurücksetzen der Vars wieder laden,
+            # damit die Daten nach einem Einstellungs-Speichern nicht verloren gehen.
+            self._load_kassenprotokoll_data()
+            self._load_latest_from_history()
+
             self._rebuild_ui_after_settings_change()
 
             if path_changed:
@@ -34917,7 +34894,9 @@ class KassenprotokollApp:
             self.namensliste_tree.config(cursor="")
 
             if not target or target == drag_id:
-                self._load_and_display_namensliste()
+                # Kein echter Drag (nur Klick) – Auswahl erhalten, kein Neu-Laden
+                if drag_id and self.namensliste_tree.exists(drag_id):
+                    self.namensliste_tree.selection_set(drag_id)
                 return
 
             # Reihenfolge im data_cache anpassen
@@ -37787,7 +37766,45 @@ class SplashLoader:
         self.on_complete_callback() # Haupt-App Logik starten
 
 if __name__ == "__main__":
-    
+
+    # ── Single-Instance: laufende Instanz beenden, dann neu starten ─────────
+    import subprocess as _sp, time as _time, atexit as _atexit
+    if getattr(sys, 'frozen', False):
+        _app_dir = os.path.dirname(sys.executable)
+    else:
+        _app_dir = os.path.dirname(os.path.abspath(__file__))
+    _PID_FILE = os.path.join(_app_dir, 'kassenprotokoll.pid')
+
+    if os.path.exists(_PID_FILE):
+        try:
+            with open(_PID_FILE, 'r') as _pf:
+                _old_pid = int(_pf.read().strip())
+            if _old_pid != os.getpid():
+                _sp.run(['taskkill', '/F', '/T', '/PID', str(_old_pid)],
+                        capture_output=True)
+                _time.sleep(1.2)
+        except Exception:
+            pass
+        try:
+            os.remove(_PID_FILE)
+        except Exception:
+            pass
+
+    try:
+        with open(_PID_FILE, 'w') as _pf:
+            _pf.write(str(os.getpid()))
+    except Exception:
+        pass
+
+    def _remove_pid_file():
+        try:
+            if os.path.exists(_PID_FILE):
+                os.remove(_PID_FILE)
+        except Exception:
+            pass
+    _atexit.register(_remove_pid_file)
+    # ────────────────────────────────────────────────────────────────────────
+
     multiprocessing.freeze_support()
 
     # --- Initial Theme Setup ---
@@ -37851,8 +37868,6 @@ if __name__ == "__main__":
     except tk.TclError: 
          pass
 
-    # --- HIER BEGINNT DIE ÄNDERUNG FÜR DEN TICKET-REQUEST ---
-    
     # Diese Funktion wird aufgerufen, NACHDEM der Ladebalken fertig ist
     def start_application_logic():
         # Die eigentliche App initialisieren
@@ -37862,7 +37877,7 @@ if __name__ == "__main__":
 
     # Splash Screen starten (blockiert den Start von KassenprotokollApp für ca. 3 Sekunden visuell)
     # duration_ms=3000 bedeutet 3 Sekunden Ladezeit.
-    splash = SplashLoader(root, on_complete_callback=start_application_logic, duration_ms=3000)
+    splash = SplashLoader(root, on_complete_callback=start_application_logic, duration_ms=800)
 
     # Mainloop starten
     root.mainloop()
