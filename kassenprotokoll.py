@@ -15752,54 +15752,24 @@ class KassenprotokollApp:
         # --- ENTFERNT: Sidebar Toggle Button (Pfeil) ---
         # --- ENTFERNT: Restart Button (Power) ---
         
-        # Header Canvas (Schwarze Box mit Goldrand)
-        header_bg_color = self.style.lookup('AppBackground.TFrame', 'background')
-        self.dashboard_header_canvas = tk.Canvas(header_container, height=120, bd=0, highlightthickness=0, bg=header_bg_color)
-        
-        # Platziert auf column=0 (da keine Buttons mehr links/rechts sind)
-        self.dashboard_header_canvas.grid(row=0, column=0, sticky='ew', pady=0, padx=0)
+        # Header: Frame-basiert (kein Canvas) – zuverlässige Label-Anzeige
+        self.dashboard_header_canvas = None  # nicht mehr verwendet
+        self.dashboard_date_text_id  = None
+        self.dashboard_time_text_id  = None
 
-        _bg = "#0A0A0A"
+        hdr_outer  = tk.Frame(header_container, bg="#B8860B")
+        hdr_outer.grid(row=0, column=0, sticky='ew')
+        hdr_mid    = tk.Frame(hdr_outer, bg="#FFD700")
+        hdr_mid.pack(fill='both', expand=True, padx=3, pady=3)
+        hdr_inner  = tk.Frame(hdr_mid, bg="#0A0A0A")
+        hdr_inner.pack(fill='both', expand=True, padx=3, pady=3)
 
-        def redraw_header(event=None):
-            canvas = self.dashboard_header_canvas
-            if not canvas or not canvas.winfo_exists(): return
-            width, height = canvas.winfo_width(), canvas.winfo_height()
-            if width < 10 or height < 10: return
-            canvas.delete("all")
-
-            # Goldener Rahmen + schwarze Box
-            self._create_rounded_rectangle(canvas, 1, 1, width-1, height-1, radius=22, fill="#B8860B", outline="")
-            self._create_rounded_rectangle(canvas, 4, 4, width-4, height-4, radius=19, fill="#FFD700", outline="")
-            self._create_rounded_rectangle(canvas, 6, 6, width-6, height-6, radius=17, fill=_bg,      outline="")
-
-            # Text mit aktuellen Werten zeichnen und IDs speichern
-            cx, cy = width // 2, height // 2
-            canvas.create_text(cx, cy - 28, text="Rezeptionsmanagement",
-                               font=("Segoe UI", 18, "bold"), fill="#D4AF37", anchor="center")
-            self.dashboard_date_text_id = canvas.create_text(
-                cx, cy + 8, text=self.date_display_var.get(),
-                font=("Segoe UI", 13), fill="#FAFAFA", anchor="center")
-            self.dashboard_time_text_id = canvas.create_text(
-                cx, cy + 32, text=self.time_display_var.get(),
-                font=("Segoe UI", 13), fill="#FAFAFA", anchor="center")
-
-        self.dashboard_header_canvas.bind("<Configure>", redraw_header)
-        self.master.after(50, redraw_header)
-
-        # Trace: sobald Vars sich ändern → sofort itemconfig (unabhängig vom Clock-Loop)
-        def _on_date_change(*_):
-            if self.dashboard_date_text_id and self.dashboard_header_canvas:
-                try: self.dashboard_header_canvas.itemconfig(
-                        self.dashboard_date_text_id, text=self.date_display_var.get())
-                except tk.TclError: pass
-        def _on_time_change(*_):
-            if self.dashboard_time_text_id and self.dashboard_header_canvas:
-                try: self.dashboard_header_canvas.itemconfig(
-                        self.dashboard_time_text_id, text=self.time_display_var.get())
-                except tk.TclError: pass
-        self.date_display_var.trace_add('write', _on_date_change)
-        self.time_display_var.trace_add('write', _on_time_change)
+        tk.Label(hdr_inner, text="Rezeptionsmanagement",
+                 font=("Segoe UI", 18, "bold"), fg="#D4AF37", bg="#0A0A0A").pack(pady=(12, 2))
+        tk.Label(hdr_inner, textvariable=self.date_display_var,
+                 font=("Segoe UI", 13), fg="#FAFAFA", bg="#0A0A0A").pack()
+        tk.Label(hdr_inner, textvariable=self.time_display_var,
+                 font=("Segoe UI", 13), fg="#FAFAFA", bg="#0A0A0A").pack(pady=(0, 12))
         
         # --- Kacheln (Tiles) Bereich ---
         tiles_outer_container = ttk.Frame(scrollable_content, style='AppBackground.TFrame')
