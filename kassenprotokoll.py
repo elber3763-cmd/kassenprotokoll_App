@@ -15759,30 +15759,37 @@ class KassenprotokollApp:
         # Platziert auf column=0 (da keine Buttons mehr links/rechts sind)
         self.dashboard_header_canvas.grid(row=0, column=0, sticky='ew', pady=0, padx=0)
 
+        # Labels mit textvariable – aktualisieren sich automatisch ohne itemconfig
+        _bg = "#0A0A0A"
+        _title_lbl = tk.Label(self.dashboard_header_canvas, text="Rezeptionsmanagement",
+                              font=("Segoe UI", 18, "bold"), fg="#D4AF37", bg=_bg)
+        _date_lbl  = tk.Label(self.dashboard_header_canvas, textvariable=self.date_display_var,
+                              font=("Segoe UI", 13), fg="#FAFAFA", bg=_bg)
+        _time_lbl  = tk.Label(self.dashboard_header_canvas, textvariable=self.time_display_var,
+                              font=("Segoe UI", 13), fg="#FAFAFA", bg=_bg)
+
         def redraw_header(event=None):
             canvas = self.dashboard_header_canvas
             if not canvas or not canvas.winfo_exists(): return
             width, height = canvas.winfo_width(), canvas.winfo_height()
             if width < 10 or height < 10: return
             canvas.delete("all")
-            
+
             # Farben und Fonts
-            bg_color = "#0A0A0A"; outer_border_color = "#B8860B"; inner_border_color = "#FFD700"
-            title_color = "#D4AF37"; date_time_color = "#FAFAFA"
-            title_font = ("Segoe UI", 18, "bold"); date_font = ("Segoe UI", 13)
+            outer_border_color = "#B8860B"; inner_border_color = "#FFD700"
             radius = 22
-            
+
             # Zeichnen der Box
             self._create_rounded_rectangle(canvas, 1, 1, width-1, height-1, radius=radius, fill=outer_border_color, outline="")
             self._create_rounded_rectangle(canvas, 4, 4, width-4, height-4, radius=radius-3, fill=inner_border_color, outline="")
-            self._create_rounded_rectangle(canvas, 6, 6, width-6, height-6, radius=radius-5, fill=bg_color, outline="")
-            
-            # Text platzieren
-            center_x, center_y = width / 2, height / 2
-            canvas.create_text(center_x, center_y - 30, text="Rezeptionsmanagement", font=title_font, fill=title_color, anchor="center")
-            self.dashboard_date_text_id = canvas.create_text(center_x, center_y + 5, text=self.date_display_var.get(), font=date_font, fill=date_time_color, anchor="center")
-            self.dashboard_time_text_id = canvas.create_text(center_x, center_y + 30, text=self.time_display_var.get(), font=date_font, fill=date_time_color, anchor="center")
-        
+            self._create_rounded_rectangle(canvas, 6, 6, width-6, height-6, radius=radius-5, fill=_bg, outline="")
+
+            # Labels als Fenster auf dem Canvas platzieren (aktualisieren sich automatisch)
+            center_x, center_y = width // 2, height // 2
+            canvas.create_window(center_x, center_y - 28, window=_title_lbl, anchor="center")
+            canvas.create_window(center_x, center_y + 8,  window=_date_lbl,  anchor="center")
+            canvas.create_window(center_x, center_y + 32, window=_time_lbl,  anchor="center")
+
         self.dashboard_header_canvas.bind("<Configure>", redraw_header)
         self.master.after(50, redraw_header)
         
