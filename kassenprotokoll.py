@@ -14553,7 +14553,11 @@ class KassenprotokollApp:
         self.master.after(3000, self._initialize_history_state)
         # ^^^^^ HIER ENDET DER NEUE CODEBLOCK ^^^^^
         self.time_after_id = None
-        self.background_task_id = None 
+        self.background_task_id = None
+        self._last_updated_date_for_header = ""
+        self._update_time()
+        self.master.after(10000, self._periodic_background_tasks)
+        self.master.after(100, self._initialize_dashboard_and_essential_data)
 
     def _create_auth_code_finder_page(self, parent_frame):
         """Erstellt die Instanz der AuthCodeApp."""
@@ -14575,15 +14579,8 @@ class KassenprotokollApp:
         # Der Aufruf erfolgt über die Instanz der AuthCodeApp, da der Treeview darin erstellt wird.
         self._setupTreeViewCellNavigation(self.auth_code_app_instance.internal_db_tree, edit_command_func=self.auth_code_app_instance._on_edit)
         
-        self.time_after_id = None
-        self.background_task_id = None # NEUE ZEILE: Variable für den neuen Timer
-        self._last_updated_date_for_header = "" 
-        self._update_time() 
-        self.master.after(10000, self._periodic_background_tasks) # NEUE ZEILE: Startet den langsamen Timer nach 10s
-        self.master.after(100, self._initialize_dashboard_and_essential_data)
 
-        
-        
+
     def _create_layover_page(self, parent_frame):
         """Instanziiert die LayoverApp und registriert sie."""
         self.layover_app_instance = LayoverApp(parent_frame, app_ref=self)
