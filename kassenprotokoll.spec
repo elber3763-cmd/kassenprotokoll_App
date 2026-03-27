@@ -1,8 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-import os
 
-# Ausgabe direkt in den Projektordner (neben kassenprotokoll.py)
-_project_root = SPECPATH
 
 a = Analysis(
     ['kassenprotokoll.py'],
@@ -36,9 +33,7 @@ exe = EXE(
     strip=False,
     upx=True,
     upx_exclude=[],
-    # Fester Cache-Ordner: PyInstaller extrahiert nur beim ersten Start,
-    # danach wird der Cache wiederverwendet → schneller Start ab 2. Mal.
-    runtime_tmpdir=os.path.join(_project_root, '_runtime_cache'),
+    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
