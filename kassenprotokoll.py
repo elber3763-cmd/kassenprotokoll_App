@@ -32947,10 +32947,18 @@ class KassenprotokollApp:
         _canvases = [canvas_gen, canvas_app, canvas_log, canvas_pdf, canvas_nl]
         _active_canvas = [canvas_gen]
 
+        def _refresh_scrollregion():
+            for _c in _canvases:
+                if _c.winfo_exists():
+                    _c.configure(scrollregion=_c.bbox("all"))
+
+        settings_window.after(200, _refresh_scrollregion)
+
         def _on_tab_changed(event):
             try:
                 idx = settings_notebook.index(settings_notebook.select())
                 _active_canvas[0] = _canvases[idx]
+                settings_window.after(50, _refresh_scrollregion)
             except Exception:
                 pass
 
@@ -34169,6 +34177,8 @@ class KassenprotokollApp:
             ttk.Label(at_frame, text=label).grid(row=r, column=0, sticky='w', padx=5, pady=3)
             ttk.Entry(at_frame, textvariable=var).grid(row=r, column=1, sticky='ew', padx=5, pady=3)
         row_idx += 1
+        # Abstandshalter am Ende damit die Scrollregion den letzten Abschnitt vollständig einschließt
+        ttk.Label(parent_frame, text="").grid(row=row_idx, column=0, pady=20)
 
 
     def create_color_picker(parent, key, label_text, initial_color, is_tab_color=False, tab_key=None):
