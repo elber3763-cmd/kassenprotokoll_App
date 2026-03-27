@@ -24,9 +24,9 @@ _runtime_cache/
 *.json
 *.log
 
-# Ausnahme: Pfad-Konfiguration soll versioniert werden (kein Betriebsdaten)
+# Ausnahmen: werden versioniert
 !app_path_config.json
-# kassenprotokoll_settings.json wird NICHT versioniert (Betriebsdaten des Admins)
+!kassenprotokoll_settings.json
 
 # Office Temp-Dateien
 ~$*
