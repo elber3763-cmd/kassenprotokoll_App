@@ -21797,8 +21797,6 @@ class KassenprotokollApp:
 
         if os.path.exists(self.settings_file):
             self._debug_log(f"_load_settings: Datei gefunden, wird gelesen...")
-        else:
-            self._debug_log(f"_load_settings: DATEI NICHT GEFUNDEN – verwende Defaults")
             try:
                 with open(self.settings_file, 'r', encoding='utf-8') as f:
                     loaded_settings = json.load(f)
