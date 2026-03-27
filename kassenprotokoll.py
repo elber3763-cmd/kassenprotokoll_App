@@ -21776,27 +21776,15 @@ class KassenprotokollApp:
 
 
 
-    def _debug_log(self, msg):
-        """Schreibt eine Debug-Zeile in debug_settings.log neben der EXE."""
-        try:
-            log_path = get_app_data_path("debug_settings.log")
-            import datetime as _dt
-            with open(log_path, 'a', encoding='utf-8') as _f:
-                _f.write(f"[{_dt.datetime.now().isoformat()}] {msg}\n")
-        except Exception:
-            pass
-
     def _load_settings(self):
         """
         Lädt die Einstellungen robust. Erstellt eine Basis aus den Standardwerten
         und überschreibt diese dann rekursiv mit den Werten aus der gespeicherten
         Einstellungsdatei.
         """
-        self._debug_log(f"_load_settings: settings_file={self.settings_file!r}")
         self.current_settings = json.loads(json.dumps(self.default_settings))
 
         if os.path.exists(self.settings_file):
-            self._debug_log(f"_load_settings: Datei gefunden, wird gelesen...")
             try:
                 with open(self.settings_file, 'r', encoding='utf-8') as f:
                     loaded_settings = json.load(f)
@@ -21814,7 +21802,6 @@ class KassenprotokollApp:
                 
                 if isinstance(loaded_settings, dict):
                     recursive_update(self.current_settings, loaded_settings)
-                    self._debug_log(f"_load_settings: GELADEN – custom_buttons={len(self.current_settings.get('custom_buttons',[]))}, theme={self.current_settings.get('selected_theme')!r}")
 
                     # Migration: Falls alte Einstellungen keine 'room'-Spalte haben, Defaults wiederherstellen
                     loaded_col_widths = loaded_settings.get('namensliste_col_widths', {})
@@ -21824,7 +21811,6 @@ class KassenprotokollApp:
                         )
 
             except (json.JSONDecodeError, IOError, Exception) as e:
-                self._debug_log(f"_load_settings: LESEFEHLER: {e}")
                 messagebox.showwarning(
                     "Einstellungen Ladefehler",
                     f"Die Einstellungsdatei ist beschädigt: {e}\nEs werden die Standardeinstellungen verwendet.",
@@ -21832,7 +21818,6 @@ class KassenprotokollApp:
                 )
 
     def _save_settings(self):
-        self._debug_log(f"_save_settings: settings_file={self.settings_file!r}, custom_buttons={len(self.current_settings.get('custom_buttons',[]))}")
         try:
             # Sort custom buttons by key before saving for consistent file output
             if 'custom_buttons' in self.current_settings:
@@ -21870,9 +21855,7 @@ class KassenprotokollApp:
             
             with open(self.settings_file, 'w', encoding='utf-8') as f:
                 json.dump(settings_to_save, f, indent=4)
-            self._debug_log(f"_save_settings: ERFOLGREICH gespeichert nach {self.settings_file!r}")
         except Exception as e:
-            self._debug_log(f"_save_settings: FEHLER: {e}")
             messagebox.showerror("Einstellungen speichern", f"Fehler beim Speichern der Einstellungen in '{self.settings_file}': {e}")
     def _apply_settings_to_styles(self):
         # Theme aus Einstellungen anwenden (nur native, schnelle Themes)
