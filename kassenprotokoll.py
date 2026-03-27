@@ -37791,31 +37791,29 @@ class SplashLoader:
 
 if __name__ == "__main__":
 
-    # ── Single-Instance: Socket-Lock, zweite Instanz bringt erste in Vordergrund ──
-    import socket as _socket, ctypes as _ctypes
+    # ── Single-Instance: Socket-IPC ─────────────────────────────────────────
+    import socket as _socket, threading as _threading
 
     _SINGLE_INSTANCE_PORT = 47291   # fester lokaler Port als Mutex-Ersatz
     _APP_WINDOW_TITLE     = "Kassenprotokoll – Rezeptionsmanagement"
-
-    def _bring_existing_to_front():
-        """Findet das laufende App-Fenster per Titel und bringt es in den Vordergrund."""
-        try:
-            hwnd = _ctypes.windll.user32.FindWindowW(None, _APP_WINDOW_TITLE)
-            if hwnd:
-                _ctypes.windll.user32.ShowWindow(hwnd, 9)   # SW_RESTORE
-                _ctypes.windll.user32.SetForegroundWindow(hwnd)
-        except Exception:
-            pass
 
     _lock_socket = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
     _lock_socket.setsockopt(_socket.SOL_SOCKET, _socket.SO_REUSEADDR, 0)
     try:
         _lock_socket.bind(('127.0.0.1', _SINGLE_INSTANCE_PORT))
+        _lock_socket.listen(1)
         # Bind erfolgreich → wir sind die erste Instanz
     except OSError:
-        # Port bereits belegt → App läuft bereits
+        # Port bereits belegt → Signal an laufende Instanz senden
         _lock_socket.close()
-        _bring_existing_to_front()
+        try:
+            _s = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
+            _s.settimeout(2)
+            _s.connect(('127.0.0.1', _SINGLE_INSTANCE_PORT))
+            _s.sendall(b'FOCUS')
+            _s.close()
+        except Exception:
+            pass
         sys.exit(0)
     # ────────────────────────────────────────────────────────────────────────
 
@@ -37884,6 +37882,41 @@ if __name__ == "__main__":
     except tk.TclError: 
          pass
 
+    def _center_and_focus_root():
+        """Zentriert root auf dem Bildschirm und bringt es in den Vordergrund."""
+        try:
+            root.update_idletasks()
+            sw = root.winfo_screenwidth()
+            sh = root.winfo_screenheight()
+            w  = root.winfo_width()
+            h  = root.winfo_height()
+            x  = (sw - w) // 2
+            y  = (sh - h) // 2
+            root.geometry(f"{w}x{h}+{x}+{y}")
+            # Fenster wiederherstellen falls minimiert
+            root.deiconify()
+            root.lift()
+            root.focus_force()
+            root.attributes('-topmost', True)
+            root.after(200, lambda: root.attributes('-topmost', False))
+        except Exception:
+            pass
+
+    def _ipc_listener():
+        """Wartet im Hintergrund auf FOCUS-Signale der zweiten Instanz."""
+        while True:
+            try:
+                conn, _ = _lock_socket.accept()
+                data = conn.recv(16)
+                conn.close()
+                if data == b'FOCUS':
+                    root.after(0, _center_and_focus_root)
+            except Exception:
+                break
+
+    _ipc_thread = _threading.Thread(target=_ipc_listener, daemon=True)
+    _ipc_thread.start()
+
     # Diese Funktion wird aufgerufen, NACHDEM der Ladebalken fertig ist
     def start_application_logic():
         # Die eigentliche App initialisieren
@@ -37897,3 +37930,4 @@ if __name__ == "__main__":
 
     # Mainloop starten
     root.mainloop()
+    _lock_socket.close()
