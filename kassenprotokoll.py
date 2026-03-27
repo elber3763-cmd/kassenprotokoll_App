@@ -15759,7 +15759,7 @@ class KassenprotokollApp:
         # Platziert auf column=0 (da keine Buttons mehr links/rechts sind)
         self.dashboard_header_canvas.grid(row=0, column=0, sticky='ew', pady=0, padx=0)
 
-        # Labels mit textvariable – aktualisieren sich automatisch ohne itemconfig
+        # Labels mit textvariable – per place() positioniert, überleben canvas.delete("all")
         _bg = "#0A0A0A"
         _title_lbl = tk.Label(self.dashboard_header_canvas, text="Rezeptionsmanagement",
                               font=("Segoe UI", 18, "bold"), fg="#D4AF37", bg=_bg)
@@ -15767,28 +15767,21 @@ class KassenprotokollApp:
                               font=("Segoe UI", 13), fg="#FAFAFA", bg=_bg)
         _time_lbl  = tk.Label(self.dashboard_header_canvas, textvariable=self.time_display_var,
                               font=("Segoe UI", 13), fg="#FAFAFA", bg=_bg)
+        _title_lbl.place(relx=0.5, rely=0.25, anchor="center")
+        _date_lbl.place( relx=0.5, rely=0.60, anchor="center")
+        _time_lbl.place( relx=0.5, rely=0.82, anchor="center")
 
         def redraw_header(event=None):
             canvas = self.dashboard_header_canvas
             if not canvas or not canvas.winfo_exists(): return
             width, height = canvas.winfo_width(), canvas.winfo_height()
             if width < 10 or height < 10: return
-            canvas.delete("all")
+            canvas.delete("all")  # löscht nur Canvas-Items, NICHT die place()-Widgets
 
-            # Farben und Fonts
-            outer_border_color = "#B8860B"; inner_border_color = "#FFD700"
-            radius = 22
-
-            # Zeichnen der Box
-            self._create_rounded_rectangle(canvas, 1, 1, width-1, height-1, radius=radius, fill=outer_border_color, outline="")
-            self._create_rounded_rectangle(canvas, 4, 4, width-4, height-4, radius=radius-3, fill=inner_border_color, outline="")
-            self._create_rounded_rectangle(canvas, 6, 6, width-6, height-6, radius=radius-5, fill=_bg, outline="")
-
-            # Labels als Fenster auf dem Canvas platzieren (aktualisieren sich automatisch)
-            center_x, center_y = width // 2, height // 2
-            canvas.create_window(center_x, center_y - 28, window=_title_lbl, anchor="center")
-            canvas.create_window(center_x, center_y + 8,  window=_date_lbl,  anchor="center")
-            canvas.create_window(center_x, center_y + 32, window=_time_lbl,  anchor="center")
+            # Goldener Rahmen + schwarze Box
+            self._create_rounded_rectangle(canvas, 1, 1, width-1, height-1, radius=22, fill="#B8860B", outline="")
+            self._create_rounded_rectangle(canvas, 4, 4, width-4, height-4, radius=19, fill="#FFD700", outline="")
+            self._create_rounded_rectangle(canvas, 6, 6, width-6, height-6, radius=17, fill=_bg,      outline="")
 
         self.dashboard_header_canvas.bind("<Configure>", redraw_header)
         self.master.after(50, redraw_header)
