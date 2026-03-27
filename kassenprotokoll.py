@@ -14146,6 +14146,7 @@ class KassenprotokollApp:
             
             
             'smtp_settings': { 'server': '', 'port': 587, 'sender_email': '', 'username': '', 'password': '' },
+            'anzeigetafel': { 'title': 'Rezeptionsmanagement', 'width': 0, 'height': 120 },
             
             'cash_denominations': [
                 {"value": 200.0, "is_active": True}, {"value": 100.0, "is_active": True},
@@ -15749,19 +15750,29 @@ class KassenprotokollApp:
         # --- ENTFERNT: Sidebar Toggle Button (Pfeil) ---
         # --- ENTFERNT: Restart Button (Power) ---
         
-        # Header: Frame-basiert (kein Canvas) – zuverlässige Label-Anzeige
-        self.dashboard_header_canvas = None  # nicht mehr verwendet
+        # Header: Frame-basiert – Titel/Breite/Höhe aus Einstellungen
+        self.dashboard_header_canvas = None
         self.dashboard_date_text_id  = None
         self.dashboard_time_text_id  = None
 
-        hdr_outer  = tk.Frame(header_container, bg="#B8860B")
-        hdr_outer.grid(row=0, column=0, sticky='ew')
-        hdr_mid    = tk.Frame(hdr_outer, bg="#FFD700")
-        hdr_mid.pack(fill='both', expand=True, padx=3, pady=3)
-        hdr_inner  = tk.Frame(hdr_mid, bg="#0A0A0A")
-        hdr_inner.pack(fill='both', expand=True, padx=3, pady=3)
+        _at = self.current_settings.get('anzeigetafel', self.default_settings['anzeigetafel'])
+        _hdr_title  = _at.get('title',  'Rezeptionsmanagement')
+        _hdr_height = _at.get('height', 120)
+        _hdr_width  = _at.get('width',  0)   # 0 = volle Breite
 
-        tk.Label(hdr_inner, text="Rezeptionsmanagement",
+        hdr_outer = tk.Frame(header_container, bg="#B8860B")
+        hdr_outer.grid(row=0, column=0, sticky='ew')
+        if _hdr_width > 0:
+            hdr_outer.config(width=_hdr_width)
+            hdr_outer.pack_propagate(False)
+
+        hdr_mid   = tk.Frame(hdr_outer, bg="#FFD700")
+        hdr_mid.pack(fill='both', expand=True, padx=3, pady=3)
+        hdr_inner = tk.Frame(hdr_mid, bg="#0A0A0A", height=max(60, _hdr_height - 6))
+        hdr_inner.pack(fill='both', expand=True, padx=3, pady=3)
+        hdr_inner.pack_propagate(False)
+
+        tk.Label(hdr_inner, text=_hdr_title,
                  font=("Segoe UI", 18, "bold"), fg="#D4AF37", bg="#0A0A0A").pack(pady=(12, 2))
         tk.Label(hdr_inner, textvariable=self.date_display_var,
                  font=("Segoe UI", 13), fg="#FAFAFA", bg="#0A0A0A").pack()
@@ -32790,7 +32801,14 @@ class KassenprotokollApp:
                 for key, var in dialog_vars['smtp_vars'].items(): temp_settings['smtp_settings'][key] = var.get()
                 try: temp_settings['smtp_settings']['port'] = int(temp_settings['smtp_settings']['port'])
                 except (ValueError, TypeError): temp_settings['smtp_settings']['port'] = 587
-            
+
+            if 'anzeigetafel_vars' in dialog_vars:
+                if 'anzeigetafel' not in temp_settings: temp_settings['anzeigetafel'] = {}
+                for key, var in dialog_vars['anzeigetafel_vars'].items(): temp_settings['anzeigetafel'][key] = var.get()
+                for int_key in ('width', 'height'):
+                    try: temp_settings['anzeigetafel'][int_key] = int(temp_settings['anzeigetafel'][int_key])
+                    except (ValueError, TypeError): temp_settings['anzeigetafel'][int_key] = self.default_settings['anzeigetafel'][int_key]
+
             self.current_settings = temp_settings
             self._save_settings()
             settings_window.unbind_all("<MouseWheel>")
@@ -34273,7 +34291,26 @@ class KassenprotokollApp:
             ttk.Label(smtp_frame, text=label).grid(row=r, column=0, sticky='w', padx=5, pady=3)
             entry_show = "*" if key == 'password' else None
             ttk.Entry(smtp_frame, textvariable=var, show=entry_show).grid(row=r, column=1, sticky='ew', padx=5, pady=3)
-    
+        row_idx += 1
+
+        # Anzeigetafel-Einstellungen
+        at_frame = ttk.LabelFrame(parent_frame, text="Anzeigetafel (Dashboard-Header)", style='TLabelframe')
+        at_frame.grid(row=row_idx, column=0, columnspan=4, sticky='ew', padx=5, pady=5)
+        at_frame.columnconfigure(1, weight=1)
+        at_cfg = temp_settings.get('anzeigetafel', self.default_settings.get('anzeigetafel', {}))
+        dialog_vars['anzeigetafel_vars'] = {}
+
+        at_opts = [
+            ('title',  'Überschrift:',       str(at_cfg.get('title',  'Rezeptionsmanagement'))),
+            ('width',  'Breite (px, 0=voll)', str(at_cfg.get('width',  0))),
+            ('height', 'Höhe (px):',          str(at_cfg.get('height', 120))),
+        ]
+        for r, (key, label, default) in enumerate(at_opts):
+            var = tk.StringVar(value=default)
+            dialog_vars['anzeigetafel_vars'][key] = var
+            ttk.Label(at_frame, text=label).grid(row=r, column=0, sticky='w', padx=5, pady=3)
+            ttk.Entry(at_frame, textvariable=var).grid(row=r, column=1, sticky='ew', padx=5, pady=3)
+
     def _populate_pdf_logos_settings_tab(self, parent_frame, temp_settings, dialog_vars):
         """Füllt den 'PDF-Logos'-Tab: Für jedes PDF-Dokument kann ein eigenes Logo gewählt werden."""
 
