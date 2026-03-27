@@ -15760,17 +15760,16 @@ class KassenprotokollApp:
         _hdr_height = _at.get('height', 120)
         _hdr_width  = _at.get('width',  0)   # 0 = volle Breite
 
-        hdr_outer = tk.Frame(header_container, bg="#B8860B")
+        hdr_outer = tk.Frame(header_container, bg="#B8860B", height=max(60, _hdr_height))
         hdr_outer.grid(row=0, column=0, sticky='ew')
+        hdr_outer.pack_propagate(False)
         if _hdr_width > 0:
             hdr_outer.config(width=_hdr_width)
-            hdr_outer.pack_propagate(False)
 
         hdr_mid   = tk.Frame(hdr_outer, bg="#FFD700")
         hdr_mid.pack(fill='both', expand=True, padx=3, pady=3)
-        hdr_inner = tk.Frame(hdr_mid, bg="#0A0A0A", height=max(60, _hdr_height - 6))
+        hdr_inner = tk.Frame(hdr_mid, bg="#0A0A0A")
         hdr_inner.pack(fill='both', expand=True, padx=3, pady=3)
-        hdr_inner.pack_propagate(False)
 
         tk.Label(hdr_inner, text=_hdr_title,
                  font=("Segoe UI", 18, "bold"), fg="#D4AF37", bg="#0A0A0A").pack(pady=(12, 2))
