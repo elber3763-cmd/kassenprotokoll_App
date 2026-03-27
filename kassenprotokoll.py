@@ -34151,12 +34151,26 @@ class KassenprotokollApp:
 
         ttk.Button(hover_sound_frame, text="...", command=browse_hover_sound, width=3).grid(row=1, column=2, padx=5)
         row_idx += 1
-       
-       
-       
-       
-       
-       
+
+        # Anzeigetafel-Einstellungen
+        at_frame = ttk.LabelFrame(parent_frame, text="Anzeigetafel (Dashboard-Header)", style='TLabelframe')
+        at_frame.grid(row=row_idx, column=0, columnspan=4, sticky='ew', padx=5, pady=5)
+        at_frame.columnconfigure(1, weight=1)
+        at_cfg = temp_settings.get('anzeigetafel', self.default_settings.get('anzeigetafel', {}))
+        dialog_vars['anzeigetafel_vars'] = {}
+        at_opts = [
+            ('title',  'Überschrift:',        str(at_cfg.get('title',  'Rezeptionsmanagement'))),
+            ('width',  'Breite (px, 0=voll)', str(at_cfg.get('width',  0))),
+            ('height', 'Höhe (px):',          str(at_cfg.get('height', 120))),
+        ]
+        for r, (key, label, default) in enumerate(at_opts):
+            var = tk.StringVar(value=default)
+            dialog_vars['anzeigetafel_vars'][key] = var
+            ttk.Label(at_frame, text=label).grid(row=r, column=0, sticky='w', padx=5, pady=3)
+            ttk.Entry(at_frame, textvariable=var).grid(row=r, column=1, sticky='ew', padx=5, pady=3)
+        row_idx += 1
+
+
     def create_color_picker(parent, key, label_text, initial_color, is_tab_color=False, tab_key=None):
             #nonlocal color_row
             col = 0 if color_row % 2 == 0 else 2
@@ -34292,24 +34306,6 @@ class KassenprotokollApp:
             entry_show = "*" if key == 'password' else None
             ttk.Entry(smtp_frame, textvariable=var, show=entry_show).grid(row=r, column=1, sticky='ew', padx=5, pady=3)
         row_idx += 1
-
-        # Anzeigetafel-Einstellungen
-        at_frame = ttk.LabelFrame(parent_frame, text="Anzeigetafel (Dashboard-Header)", style='TLabelframe')
-        at_frame.grid(row=row_idx, column=0, columnspan=4, sticky='ew', padx=5, pady=5)
-        at_frame.columnconfigure(1, weight=1)
-        at_cfg = temp_settings.get('anzeigetafel', self.default_settings.get('anzeigetafel', {}))
-        dialog_vars['anzeigetafel_vars'] = {}
-
-        at_opts = [
-            ('title',  'Überschrift:',       str(at_cfg.get('title',  'Rezeptionsmanagement'))),
-            ('width',  'Breite (px, 0=voll)', str(at_cfg.get('width',  0))),
-            ('height', 'Höhe (px):',          str(at_cfg.get('height', 120))),
-        ]
-        for r, (key, label, default) in enumerate(at_opts):
-            var = tk.StringVar(value=default)
-            dialog_vars['anzeigetafel_vars'][key] = var
-            ttk.Label(at_frame, text=label).grid(row=r, column=0, sticky='w', padx=5, pady=3)
-            ttk.Entry(at_frame, textvariable=var).grid(row=r, column=1, sticky='ew', padx=5, pady=3)
 
     def _populate_pdf_logos_settings_tab(self, parent_frame, temp_settings, dialog_vars):
         """Füllt den 'PDF-Logos'-Tab: Für jedes PDF-Dokument kann ein eigenes Logo gewählt werden."""
