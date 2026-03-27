@@ -68,16 +68,27 @@ except ImportError:
 try:
     import pygame
     pygame_available = True
-    try:
-        pygame.mixer.init()
-    except pygame.error as e:
-        pygame_available = False
-        print(f"Warning: Pygame mixer could not be initialized: {e}. Alarm sound features will be disabled.")
 except ImportError:
     pygame = None
     pygame_available = False
     print("Warning: pygame not installed. Alarm sound features will be disabled.")
     print("Install with: pip install pygame")
+
+_pygame_mixer_initialized = False
+
+def _ensure_pygame_mixer():
+    """Initialisiert pygame.mixer beim ersten echten Gebrauch (nicht beim Import)."""
+    global pygame_available, _pygame_mixer_initialized
+    if _pygame_mixer_initialized:
+        return pygame_available
+    _pygame_mixer_initialized = True
+    if pygame_available:
+        try:
+            pygame.mixer.init()
+        except Exception as e:
+            pygame_available = False
+            print(f"Warning: Pygame mixer could not be initialized: {e}.")
+    return pygame_available
 
 try:
     import win32com.client as win32
@@ -12325,6 +12336,7 @@ class KassenprotokollApp:
     
     def _check_for_alarms(self, current_time):
         if not self.current_settings.get('alarm_enabled', False) or not pygame_available:
+            # pygame_available bleibt False wenn nicht installiert; mixer wird lazy init bei Bedarf
             return
 
         today_iso = current_time.date().isoformat()
@@ -12354,7 +12366,7 @@ class KassenprotokollApp:
                 
     def stop_alarm_sound(self):
         """Stops any playing alarm sound and properly unloads the resource."""
-        if pygame_available and pygame.mixer.music.get_busy():
+        if pygame_available and _pygame_mixer_initialized and pygame.mixer.music.get_busy():
             try:
                 pygame.mixer.music.stop()
                 pygame.mixer.music.unload()
@@ -12387,7 +12399,7 @@ class KassenprotokollApp:
         # 1. Relativen Pfad aus den Einstellungen holen (z.B. "sounds/alarm.mp3")
         relative_sound_path = self.current_settings.get('alarm_sound_path', '')
         
-        if pygame_available and relative_sound_path:
+        if _ensure_pygame_mixer() and relative_sound_path:
             # 2. Den relativen Pfad in einen absoluten, funktionierenden Pfad umwandeln
             absolute_sound_path = resource_path(relative_sound_path)
 
@@ -12457,7 +12469,9 @@ class KassenprotokollApp:
         """Lädt den Hover-Sound basierend auf den Einstellungen. Wird bei Einstellungsänderungen aufgerufen."""
         self.is_hover_sound_loaded = False
         self.hover_sound = None
-        if not pygame_available or not self.current_settings.get('hover_sound_enabled', False):
+        if not self.current_settings.get('hover_sound_enabled', False):
+            return
+        if not _ensure_pygame_mixer():
             return
 
         relative_path = self.current_settings.get('hover_sound_path', '')
