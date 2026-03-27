@@ -15759,32 +15759,47 @@ class KassenprotokollApp:
         # Platziert auf column=0 (da keine Buttons mehr links/rechts sind)
         self.dashboard_header_canvas.grid(row=0, column=0, sticky='ew', pady=0, padx=0)
 
-        # Labels mit textvariable – per place() positioniert, überleben canvas.delete("all")
         _bg = "#0A0A0A"
-        _title_lbl = tk.Label(self.dashboard_header_canvas, text="Rezeptionsmanagement",
-                              font=("Segoe UI", 18, "bold"), fg="#D4AF37", bg=_bg)
-        _date_lbl  = tk.Label(self.dashboard_header_canvas, textvariable=self.date_display_var,
-                              font=("Segoe UI", 13), fg="#FAFAFA", bg=_bg)
-        _time_lbl  = tk.Label(self.dashboard_header_canvas, textvariable=self.time_display_var,
-                              font=("Segoe UI", 13), fg="#FAFAFA", bg=_bg)
-        _title_lbl.place(relx=0.5, rely=0.25, anchor="center")
-        _date_lbl.place( relx=0.5, rely=0.60, anchor="center")
-        _time_lbl.place( relx=0.5, rely=0.82, anchor="center")
 
         def redraw_header(event=None):
             canvas = self.dashboard_header_canvas
             if not canvas or not canvas.winfo_exists(): return
             width, height = canvas.winfo_width(), canvas.winfo_height()
             if width < 10 or height < 10: return
-            canvas.delete("all")  # löscht nur Canvas-Items, NICHT die place()-Widgets
+            canvas.delete("all")
 
             # Goldener Rahmen + schwarze Box
             self._create_rounded_rectangle(canvas, 1, 1, width-1, height-1, radius=22, fill="#B8860B", outline="")
             self._create_rounded_rectangle(canvas, 4, 4, width-4, height-4, radius=19, fill="#FFD700", outline="")
             self._create_rounded_rectangle(canvas, 6, 6, width-6, height-6, radius=17, fill=_bg,      outline="")
 
+            # Text mit aktuellen Werten zeichnen und IDs speichern
+            cx, cy = width // 2, height // 2
+            canvas.create_text(cx, cy - 28, text="Rezeptionsmanagement",
+                               font=("Segoe UI", 18, "bold"), fill="#D4AF37", anchor="center")
+            self.dashboard_date_text_id = canvas.create_text(
+                cx, cy + 8, text=self.date_display_var.get(),
+                font=("Segoe UI", 13), fill="#FAFAFA", anchor="center")
+            self.dashboard_time_text_id = canvas.create_text(
+                cx, cy + 32, text=self.time_display_var.get(),
+                font=("Segoe UI", 13), fill="#FAFAFA", anchor="center")
+
         self.dashboard_header_canvas.bind("<Configure>", redraw_header)
         self.master.after(50, redraw_header)
+
+        # Trace: sobald Vars sich ändern → sofort itemconfig (unabhängig vom Clock-Loop)
+        def _on_date_change(*_):
+            if self.dashboard_date_text_id and self.dashboard_header_canvas:
+                try: self.dashboard_header_canvas.itemconfig(
+                        self.dashboard_date_text_id, text=self.date_display_var.get())
+                except tk.TclError: pass
+        def _on_time_change(*_):
+            if self.dashboard_time_text_id and self.dashboard_header_canvas:
+                try: self.dashboard_header_canvas.itemconfig(
+                        self.dashboard_time_text_id, text=self.time_display_var.get())
+                except tk.TclError: pass
+        self.date_display_var.trace_add('write', _on_date_change)
+        self.time_display_var.trace_add('write', _on_time_change)
         
         # --- Kacheln (Tiles) Bereich ---
         tiles_outer_container = ttk.Frame(scrollable_content, style='AppBackground.TFrame')
