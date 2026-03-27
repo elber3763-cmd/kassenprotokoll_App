@@ -37791,42 +37791,32 @@ class SplashLoader:
 
 if __name__ == "__main__":
 
-    # ── Single-Instance: laufende Instanz beenden, dann neu starten ─────────
-    import subprocess as _sp, time as _time, atexit as _atexit
-    if getattr(sys, 'frozen', False):
-        _app_dir = os.path.dirname(sys.executable)
-    else:
-        _app_dir = os.path.dirname(os.path.abspath(__file__))
-    _PID_FILE = os.path.join(_app_dir, 'kassenprotokoll.pid')
+    # ── Single-Instance: Socket-Lock, zweite Instanz bringt erste in Vordergrund ──
+    import socket as _socket, ctypes as _ctypes
 
-    if os.path.exists(_PID_FILE):
+    _SINGLE_INSTANCE_PORT = 47291   # fester lokaler Port als Mutex-Ersatz
+    _APP_WINDOW_TITLE     = "Kassenprotokoll – Rezeptionsmanagement"
+
+    def _bring_existing_to_front():
+        """Findet das laufende App-Fenster per Titel und bringt es in den Vordergrund."""
         try:
-            with open(_PID_FILE, 'r') as _pf:
-                _old_pid = int(_pf.read().strip())
-            if _old_pid != os.getpid():
-                _sp.run(['taskkill', '/F', '/T', '/PID', str(_old_pid)],
-                        capture_output=True)
-                _time.sleep(1.2)
-        except Exception:
-            pass
-        try:
-            os.remove(_PID_FILE)
+            hwnd = _ctypes.windll.user32.FindWindowW(None, _APP_WINDOW_TITLE)
+            if hwnd:
+                _ctypes.windll.user32.ShowWindow(hwnd, 9)   # SW_RESTORE
+                _ctypes.windll.user32.SetForegroundWindow(hwnd)
         except Exception:
             pass
 
+    _lock_socket = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
+    _lock_socket.setsockopt(_socket.SOL_SOCKET, _socket.SO_REUSEADDR, 0)
     try:
-        with open(_PID_FILE, 'w') as _pf:
-            _pf.write(str(os.getpid()))
-    except Exception:
-        pass
-
-    def _remove_pid_file():
-        try:
-            if os.path.exists(_PID_FILE):
-                os.remove(_PID_FILE)
-        except Exception:
-            pass
-    _atexit.register(_remove_pid_file)
+        _lock_socket.bind(('127.0.0.1', _SINGLE_INSTANCE_PORT))
+        # Bind erfolgreich → wir sind die erste Instanz
+    except OSError:
+        # Port bereits belegt → App läuft bereits
+        _lock_socket.close()
+        _bring_existing_to_front()
+        sys.exit(0)
     # ────────────────────────────────────────────────────────────────────────
 
     multiprocessing.freeze_support()
@@ -37876,6 +37866,8 @@ if __name__ == "__main__":
     else:
         root = tk.Tk()
         initial_theme = None
+
+    root.title(_APP_WINDOW_TITLE)
 
     # Fenstergröße vorbereiten
     initial_width_from_file = loaded_initial_settings.get('window_width')
