@@ -15762,9 +15762,9 @@ class KassenprotokollApp:
         def redraw_header(event=None):
             canvas = self.dashboard_header_canvas
             if not canvas or not canvas.winfo_exists(): return
-            canvas.delete("all")
             width, height = canvas.winfo_width(), canvas.winfo_height()
             if width < 10 or height < 10: return
+            canvas.delete("all")
             
             # Farben und Fonts
             bg_color = "#0A0A0A"; outer_border_color = "#B8860B"; inner_border_color = "#FFD700"
