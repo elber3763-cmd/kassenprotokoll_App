@@ -1,0 +1,87 @@
+[
+    {
+        "kategorie": "Allergiker (Badewanne + Dusche)",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "#18 bis #23"
+    },
+    {
+        "kategorie": "Rollstuhlfreundlich",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "#470 + #479"
+    },
+    {
+        "kategorie": "Hund",
+        "typ": "Eco/BUS",
+        "Zi-Nr.n": "#401-#411"
+    },
+    {
+        "kategorie": "Hund",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "#475 bis #479"
+    },
+    {
+        "kategorie": "Extra lange Betten (220cm)",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "#702 bis #706"
+    },
+    {
+        "kategorie": "Spezielle Büro-Zimmer (Stuhl, Tisch, Lampe)",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "#570 bis #574"
+    },
+    {
+        "kategorie": "Hochhaus Eckzimmer",
+        "typ": "Eco/Bus",
+        "Zi-Nr.n": "-10er / -11er"
+    },
+    {
+        "kategorie": "Hochhaus Fahrstuhlnähe",
+        "typ": "Eco/Bus",
+        "Zi-Nr.n": "-7er"
+    },
+    {
+        "kategorie": "Silber, separates WC, Dusche + Badewanne",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "EG bis 2. OG"
+    },
+    {
+        "kategorie": "Beerenfarben (moderner), ein Badezimmer, nur Dusche",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "3. OG bis 5. OG"
+    },
+    {
+        "kategorie": "Getrennte Betten",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "#375 bis #379"
+    },
+    {
+        "kategorie": "Ruhig Hochhaus",
+        "typ": "Eco/Bus",
+        "Zi-Nr.n": "alle"
+    },
+    {
+        "kategorie": "Ruhig Neubau",
+        "typ": "Des",
+        "Zi-Nr.n": "alle"
+    },
+    {
+        "kategorie": "Ruhig Deluxe",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "#-70er bis #-74er"
+    },
+    {
+        "kategorie": "Ruhig Residence",
+        "typ": "Bus DZ",
+        "Zi-Nr.n": "#-86er bis #-93er"
+    },
+    {
+        "kategorie": "Suite (#12, #13)",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "Mit offener Verbindungstür ergeben beide Zimmer die Suite"
+    },
+    {
+        "kategorie": "Suite (#16, #17)",
+        "typ": "Deluxe",
+        "Zi-Nr.n": "Mit offener Verbindungstür ergeben beide Zimmer die Suite"
+    }
+]

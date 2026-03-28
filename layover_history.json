@@ -1,0 +1,382 @@
+[
+  {
+    "timestamp": "2025-10-08T11:30:46.803900",
+    "action": "Daten bearbeitet",
+    "data": {
+      "single": {
+        "total": 100,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-10-08T02:25:55.017334",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "single": {
+        "total": 20,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-10-08T02:25:44.986382",
+    "action": "Daten bearbeitet",
+    "data": {
+      "single": {
+        "total": 10,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-26T03:54:40.059083",
+    "action": "Alle Daten gelöscht",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-26T03:35:47.201297",
+    "action": "Alle Daten gelöscht",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-26T03:35:41.554603",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "single": {
+        "total": 20,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-21T12:30:40.545522",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "single": {
+        "total": 20,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-20T16:56:41.596951",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "single": {
+        "total": 20,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-20T16:55:05.584348",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "single": {
+        "total": 20,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-20T04:28:24.201946",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "single": {
+        "total": 20,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-20T04:09:12.602242",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "single": {
+        "total": 20,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-18T22:20:58.614520",
+    "action": "Daten bearbeitet",
+    "data": {
+      "single": {
+        "total": 20,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-09-11T22:08:26.109346",
+    "action": "Daten bearbeitet",
+    "data": {
+      "single": {
+        "total": 10,
+        "oos": 2
+      },
+      "double": {
+        "total": 10,
+        "oos": 2
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-08-28T02:10:09.623985",
+    "action": "PDF exportiert",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-08-26T01:12:17.921078",
+    "action": "PDF exportiert",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-08-26T01:12:01.849433",
+    "action": "PDF exportiert",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-08-26T01:08:53.152250",
+    "action": "PDF exportiert",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-08-26T01:01:45.860721",
+    "action": "PDF exportiert",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-08-26T00:06:14.968554",
+    "action": "PDF exportiert",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  },
+  {
+    "timestamp": "2025-08-25T15:34:32.127329",
+    "action": "Alle Daten gelöscht",
+    "data": {
+      "single": {
+        "total": 0,
+        "oos": 0
+      },
+      "double": {
+        "total": 0,
+        "oos": 0
+      },
+      "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+      }
+    }
+  }
+]

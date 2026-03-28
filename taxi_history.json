@@ -1,0 +1,262 @@
+[
+  {
+    "timestamp": "2025-10-08T14:01:44.724621",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "3e3354ce4f534e6fa4f420df0b96c52b",
+      "datum": "2025-10-08",
+      "uhrzeit": "19:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-10-08T14:01:22.406101",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "d8be5ebdb990457697e75448e77fa7e5",
+      "datum": "2025-10-08",
+      "uhrzeit": "12:00",
+      "name_zimmer": "101",
+      "zielort": "TEST",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-10-08T00:40:06.892641",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "d8be5ebdb990457697e75448e77fa7e5",
+      "datum": "2025-10-08",
+      "uhrzeit": "12:00",
+      "name_zimmer": "101",
+      "zielort": "TEST",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-21T12:32:00.415845",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "df25aa40f01e4d328bb844a71ad9bee2",
+      "datum": "2025-09-11",
+      "uhrzeit": "17:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-21T12:31:55.754820",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "df25aa40f01e4d328bb844a71ad9bee2",
+      "datum": "2025-09-11",
+      "uhrzeit": "17:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-20T17:10:01.725015",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "d50b31350ed34bd69433c2562cf4d0ee",
+      "datum": "2025-09-11",
+      "uhrzeit": "12:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-18T22:26:05.366049",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "813fd3fd5fd64e59b0378333e3e22eb5",
+      "datum": "2025-09-18",
+      "uhrzeit": "23:00",
+      "name_zimmer": "TEST",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-18T22:25:48.334658",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "813fd3fd5fd64e59b0378333e3e22eb5",
+      "datum": "2025-09-18",
+      "uhrzeit": "23:00",
+      "name_zimmer": "TEST",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-11T23:44:59.891516",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "6367c5d205b74bde8a3d062161ae0e31",
+      "datum": "2025-09-11",
+      "uhrzeit": "23:45",
+      "name_zimmer": "TEST",
+      "zielort": "101",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-11T23:29:02.707774",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "6367c5d205b74bde8a3d062161ae0e31",
+      "datum": "2025-09-11",
+      "uhrzeit": "23:45",
+      "name_zimmer": "TEST",
+      "zielort": "101",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-11T15:21:23.193088",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "df25aa40f01e4d328bb844a71ad9bee2",
+      "datum": "2025-09-11",
+      "uhrzeit": "17:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-11T08:25:27.730698",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "d50b31350ed34bd69433c2562cf4d0ee",
+      "datum": "2025-09-11",
+      "uhrzeit": "08:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-11T08:25:10.956746",
+    "action": "Bearbeitet",
+    "data": {
+      "id": "d50b31350ed34bd69433c2562cf4d0ee",
+      "datum": "2025-09-11",
+      "uhrzeit": "08:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-11T08:23:54.932426",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "d50b31350ed34bd69433c2562cf4d0ee",
+      "datum": "2025-09-11",
+      "uhrzeit": "12:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-10T23:09:15.160869",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "d50b31350ed34bd69433c2562cf4d0ee",
+      "datum": "2025-09-11",
+      "uhrzeit": "12:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-10T23:08:07.416256",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "a5f2ab9c13ac458faeccba4f51abc266",
+      "datum": "2025-09-10",
+      "uhrzeit": "12:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-07T15:56:59.283619",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "e4452cb9899f4b0281cae37647bef303",
+      "datum": "2025-09-07",
+      "uhrzeit": "16:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-07T14:54:09.901984",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "e4452cb9899f4b0281cae37647bef303",
+      "datum": "2025-09-07",
+      "uhrzeit": "16:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-06T15:02:22.474944",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "4b8ab2e96c174757b8084f827a4e1952",
+      "datum": "2025-09-06",
+      "uhrzeit": "15:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  },
+  {
+    "timestamp": "2025-09-06T14:54:54.970973",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "4b8ab2e96c174757b8084f827a4e1952",
+      "datum": "2025-09-06",
+      "uhrzeit": "15:00",
+      "name_zimmer": "101",
+      "zielort": "LH",
+      "personen": 1,
+      "kuerzel": "KD"
+    }
+  }
+]

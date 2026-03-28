@@ -1,0 +1,57 @@
+{
+  "gruppen": [
+    {
+      "id": "b69c5dd68a1044298aae8eb801bb6234",
+      "bk_ref": "123456",
+      "gruppenname": "TEST",
+      "anreise": "01.01.2025",
+      "abreise": "02.01.2025",
+      "info_sent": "Nein",
+      "info_kuerzel": "",
+      "info_datum": "",
+      "erneut_sent": "Nein",
+      "erneut_kuerzel": "",
+      "erneut_datum": "",
+      "final_sent": "Nein",
+      "final_kuerzel": "",
+      "final_datum": "",
+      "kommentar": ""
+    },
+    {
+      "id": "0738b50229db4bd78a4ee824c1bed7ce",
+      "bk_ref": "14587",
+      "gruppenname": "TEST2",
+      "anreise": "10.08.2025",
+      "abreise": "11.08.2025",
+      "info_sent": "Nein",
+      "info_kuerzel": "",
+      "info_datum": "",
+      "erneut_sent": "Nein",
+      "erneut_kuerzel": "",
+      "erneut_datum": "",
+      "final_sent": "Ja",
+      "final_kuerzel": "TB",
+      "final_datum": "11.08.2025",
+      "kommentar": "TEST"
+    }
+  ],
+  "einzel": [
+    {
+      "id": "8201dcc02d5a480fb6ad85d0cea5c552",
+      "bk_ref": "123456",
+      "gruppenname": "Finanz IT",
+      "anreise": "08.08.2025",
+      "abreise": "09.08.2025",
+      "info_sent": "Nein",
+      "info_kuerzel": "TB",
+      "info_datum": "",
+      "erneut_sent": "Nein",
+      "erneut_kuerzel": "",
+      "erneut_datum": "",
+      "final_sent": "Nein",
+      "final_kuerzel": "",
+      "final_datum": "",
+      "kommentar": "TEST"
+    }
+  ]
+}

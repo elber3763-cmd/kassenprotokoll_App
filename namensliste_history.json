@@ -1,0 +1,587 @@
+[
+  {
+    "timestamp": "2026-03-25T04:08:12.208067",
+    "action": "Eintrag/Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": []
+    }
+  },
+  {
+    "timestamp": "2026-03-25T04:05:03.729701",
+    "action": "Eintrag hinzugefügt",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "346e8f47770c461e9e12f8243b500019",
+          "room": "",
+          "name": "Kraft Jannik Finn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-25T02:11:50.263193",
+    "action": "Alle Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": []
+    }
+  },
+  {
+    "timestamp": "2026-03-22T22:48:37.825643",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "69c689ef5a6247dd883eacf1cced7b45",
+          "room": "",
+          "name": "Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "Mustermann Kalmund Ali Reza, van",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T15:00:38.514234",
+    "action": "Eintrag/Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": []
+    }
+  },
+  {
+    "timestamp": "2026-03-16T15:00:34.285834",
+    "action": "Liste aufbereitet (Namen getauscht)",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "69c689ef5a6247dd883eacf1cced7b45",
+          "room": "",
+          "name": "Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "Mustermann Kalmund Ali Reza, van",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:55:19.989403",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "69c689ef5a6247dd883eacf1cced7b45",
+          "room": "",
+          "name": "Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "van Mustermann Kalmund Ali Reza",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:54:19.032446",
+    "action": "Eintrag/Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": []
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:54:14.965599",
+    "action": "Liste aufbereitet (Namen getauscht)",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "21ca85740bd543ee850e01de88d2a2d1",
+          "room": "101",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:54:06.984373",
+    "action": "Eintrag hinzugefügt",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "21ca85740bd543ee850e01de88d2a2d1",
+          "room": "101",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:53:53.352733",
+    "action": "Eintrag/Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": []
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:53:48.791301",
+    "action": "Liste aufbereitet (Namen getauscht)",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "0a86c7a6ee4a4a2d9e5e0be3bcab16c5",
+          "room": "101",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "539290f8a8274126aceb09852fef4da7",
+          "room": "101",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:52:41.604376",
+    "action": "Eintrag hinzugefügt",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "0a86c7a6ee4a4a2d9e5e0be3bcab16c5",
+          "room": "101",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "539290f8a8274126aceb09852fef4da7",
+          "room": "101",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:50:32.503496",
+    "action": "Eintrag/Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": []
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:50:28.007374",
+    "action": "Liste aufbereitet (Namen getauscht)",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "69c689ef5a6247dd883eacf1cced7b45",
+          "room": "",
+          "name": "Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "van Mustermann Kalmund Ali Reza",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T14:23:23.629519",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "Reza, van Mustermann Kalmund Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "69c689ef5a6247dd883eacf1cced7b45",
+          "room": "",
+          "name": "Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T13:13:25.749984",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "Reza, van Mustermann Kalmund Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "69c689ef5a6247dd883eacf1cced7b45",
+          "room": "",
+          "name": "Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T04:12:17.815669",
+    "action": "Eintrag hinzugefügt",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "Reza, van Mustermann Kalmund Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "69c689ef5a6247dd883eacf1cced7b45",
+          "room": "",
+          "name": "Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T04:11:58.704270",
+    "action": "Liste aufbereitet (Namen getauscht)",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "Reza, van Mustermann Kalmund Ali",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-16T04:11:28.624372",
+    "action": "Eintrag hinzugefügt",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "eca19675c69341ffbbc14fde08308e7a",
+          "name": "Herr van Mustermann Kalmund Ali Reza",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "fc66081a79e441aa869970884b921089",
+          "room": "",
+          "name": "TEST",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f461f21f5fea48fea0c6703c09f74fa0",
+          "room": "",
+          "name": "TEST1",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
+          "room": "",
+          "name": "TEST2",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  }
+]

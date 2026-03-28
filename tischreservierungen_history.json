@@ -1,0 +1,130 @@
+[
+  {
+    "timestamp": "2025-09-21T12:33:03.140491",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "dd3e5e7538424d26b11e815782ab106b",
+      "name": "Koch",
+      "anschrift": "Kochstr. 12, 101250 Berlin",
+      "telefon": "0178451287",
+      "datum": "28.08.2025",
+      "uhrzeit": "19:00",
+      "personen": "2",
+      "besondere_wuensche": "Keine W\u00fcnsche",
+      "angenommen_von": "KD",
+      "am_datum": "28.08.2025"
+    }
+  },
+  {
+    "timestamp": "2025-09-20T17:18:53.198516",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "dd3e5e7538424d26b11e815782ab106b",
+      "name": "Koch",
+      "anschrift": "Kochstr. 12, 101250 Berlin",
+      "telefon": "0178451287",
+      "datum": "28.08.2025",
+      "uhrzeit": "19:00",
+      "personen": "2",
+      "besondere_wuensche": "Keine W\u00fcnsche",
+      "angenommen_von": "KD",
+      "am_datum": "28.08.2025"
+    }
+  },
+  {
+    "timestamp": "2025-09-18T22:30:02.204361",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "956a011b16ae434db5e4e620de2cee0e",
+      "name": "TEST",
+      "anschrift": "",
+      "telefon": "",
+      "datum": "18.09.2025",
+      "uhrzeit": "19:00",
+      "personen": "2",
+      "besondere_wuensche": "",
+      "angenommen_von": "",
+      "am_datum": "18.09.2025"
+    }
+  },
+  {
+    "timestamp": "2025-08-28T17:07:37.143951",
+    "action": "Bearbeitet",
+    "data": {
+      "id": "cc9b5012a7834784a1f0bfcab15b6b17",
+      "name": "Koch",
+      "anschrift": "Kochstr. 12, 12452 Berlin",
+      "telefon": "014140",
+      "datum": "28.08.2025",
+      "uhrzeit": "19:00",
+      "personen": "2",
+      "besondere_wuensche": "W\u00fcnsche Keine",
+      "angenommen_von": "KD",
+      "am_datum": "28.08.2025"
+    }
+  },
+  {
+    "timestamp": "2025-08-28T17:05:48.920299",
+    "action": "Bearbeitet",
+    "data": {
+      "id": "cc9b5012a7834784a1f0bfcab15b6b17",
+      "name": "Koch",
+      "anschrift": "Kochstr. 12, 12452 Berlin",
+      "telefon": "014140",
+      "datum": "28.08.2025",
+      "uhrzeit": "19:00",
+      "personen": "2",
+      "besondere_wuensche": "W\u00fcnsche Keine",
+      "angenommen_von": "KD",
+      "am_datum": "28.08.2025"
+    }
+  },
+  {
+    "timestamp": "2025-08-28T16:28:47.548482",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "cc9b5012a7834784a1f0bfcab15b6b17",
+      "name": "Koch",
+      "anschrift": "Kochstr. 12, 12452 Berlin",
+      "telefon": "014140",
+      "datum": "28.08.2025",
+      "uhrzeit": "19:00",
+      "personen": "2",
+      "besondere_wuensche": "W\u00fcnsche Keine",
+      "angenommen_von": "KD",
+      "am_datum": "28.08.2025"
+    }
+  },
+  {
+    "timestamp": "2025-08-28T16:14:26.754286",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "dd3e5e7538424d26b11e815782ab106b",
+      "name": "Koch",
+      "anschrift": "Kochstr. 12, 101250 Berlin",
+      "telefon": "0178451287",
+      "datum": "28.08.2025",
+      "uhrzeit": "19:00",
+      "personen": "2",
+      "besondere_wuensche": "Keine W\u00fcnsche",
+      "angenommen_von": "KD",
+      "am_datum": "28.08.2025"
+    }
+  },
+  {
+    "timestamp": "2025-08-28T15:32:38.849427",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "dd3e5e7538424d26b11e815782ab106b",
+      "name": "Koch",
+      "anschrift": "Kochstr. 12, 101250 Berlin",
+      "telefon": "0178451287",
+      "datum": "28.08.2025",
+      "uhrzeit": "19:00",
+      "personen": "2",
+      "besondere_wuensche": "Keine W\u00fcnsche",
+      "angenommen_von": "KD",
+      "am_datum": "28.08.2025"
+    }
+  }
+]

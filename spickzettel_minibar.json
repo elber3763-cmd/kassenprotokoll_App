@@ -1,0 +1,62 @@
+[
+    {
+        "produkt": "Cola 0,2l",
+        "preis": "3,60 €"
+    },
+    {
+        "produkt": "Fanta 0,2l",
+        "preis": "3,60 €"
+    },
+    {
+        "produkt": "Sprite 0,2l",
+        "preis": "3,60 €"
+    },
+    {
+        "produkt": "Mezzo 0,2l",
+        "preis": "3,60 €"
+    },
+    {
+        "produkt": "Cola Light 0,2l",
+        "preis": "3,60 €"
+    },
+    {
+        "produkt": "Apollinaris 0,25l",
+        "preis": "3,60 €"
+    },
+    {
+        "produkt": "VIO 0,75l",
+        "preis": "7,90 €"
+    },
+    {
+        "produkt": "Apolli laut 0,75l",
+        "preis": "7,90 €"
+    },
+    {
+        "produkt": "Granini Apfelsaft",
+        "preis": "3,60 €"
+    },
+    {
+        "produkt": "Warsteiner Pils 0,25l",
+        "preis": "4,50 €"
+    },
+    {
+        "produkt": "Franziskaner Hefe 0,5l",
+        "preis": "5,50 €"
+    },
+    {
+        "produkt": "Franziskaner Hefe Alkfr. 0,5l",
+        "preis": "5,50 €"
+    },
+    {
+        "produkt": "Bickensohler Grauburgunder 0,25l",
+        "preis": "7,00 €"
+    },
+    {
+        "produkt": "Schokoriegel",
+        "preis": "2,00 €"
+    },
+    {
+        "produkt": "NicNacs",
+        "preis": "2,00 €"
+    }
+]

@@ -16,16 +16,16 @@ backups/
 
 # Build / Dist
 build/
-*.spec
 *.egg-info/
 
-# Laufzeit-Daten (werden zur Laufzeit generiert)
-*.json
+# Logs & temp
 *.log
 
-# Ausnahmen: Diese Dateien sollen mit EXE zusammen versioniert werden
-!dist/kassenprotokoll_settings.json
-!dist/app_path_config.json
+# Sensitive Dateien niemals committen
+dist/github-recovery-codes.txt
+
+# Venv & IDE intern
+.venv/
 
 # Office Temp-Dateien
 ~$*

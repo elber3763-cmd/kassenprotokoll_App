@@ -1,0 +1,120 @@
+[
+  {
+    "timestamp": "2026-03-04T01:09:33.567579",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "4e20be254058430cad43993ed0d67aec",
+      "name": "TEST",
+      "abteilung": "",
+      "position": "",
+      "erster_tag": "01.12.2025",
+      "letzter_tag": "05.12.2025",
+      "gesamtzahl": "5"
+    }
+  },
+  {
+    "timestamp": "2026-03-02T15:34:45.320344",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "33b1de72a9dd4548a39dcf382c61e9ac",
+      "name": "TEST",
+      "abteilung": "TEST",
+      "position": "TEST",
+      "erster_tag": "02.03.2026",
+      "letzter_tag": "15.03.2026",
+      "regulaere_freie_tage": "4",
+      "gesamtzahl": "10"
+    }
+  },
+  {
+    "timestamp": "2026-03-01T22:06:16.383921",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "f0cc9420dd274d29afc6f49bca71b219",
+      "name": "TEST",
+      "abteilung": "TEST",
+      "position": "TEST",
+      "erster_tag": "01.12.2026",
+      "letzter_tag": "15.12.2026",
+      "gesamtzahl": "11"
+    }
+  },
+  {
+    "timestamp": "2026-03-01T21:52:48.780047",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "42ba4f16bdb34de0bd6d6a4150c32f33",
+      "name": "Test",
+      "abteilung": "Test",
+      "position": "Test",
+      "erster_tag": "01.12.2026",
+      "letzter_tag": "15.12.2026",
+      "gesamtzahl": "11"
+    }
+  },
+  {
+    "timestamp": "2025-10-08T02:34:37.123976",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "4e20be254058430cad43993ed0d67aec",
+      "name": "TEST",
+      "abteilung": "",
+      "position": "",
+      "erster_tag": "01.12.2025",
+      "letzter_tag": "05.12.2025",
+      "gesamtzahl": "5"
+    }
+  },
+  {
+    "timestamp": "2025-10-08T02:34:27.418789",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "4e20be254058430cad43993ed0d67aec",
+      "name": "TEST",
+      "abteilung": "",
+      "position": "",
+      "erster_tag": "01.12.2025",
+      "letzter_tag": "05.12.2025",
+      "gesamtzahl": "5"
+    }
+  },
+  {
+    "timestamp": "2025-09-21T12:33:22.822622",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "4e20be254058430cad43993ed0d67aec",
+      "name": "TEST",
+      "abteilung": "",
+      "position": "",
+      "erster_tag": "01.12.2025",
+      "letzter_tag": "05.12.2025",
+      "gesamtzahl": "5"
+    }
+  },
+  {
+    "timestamp": "2025-09-20T17:21:15.545858",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "4e20be254058430cad43993ed0d67aec",
+      "name": "TEST",
+      "abteilung": "",
+      "position": "",
+      "erster_tag": "01.12.2025",
+      "letzter_tag": "05.12.2025",
+      "gesamtzahl": "5"
+    }
+  },
+  {
+    "timestamp": "2025-09-18T22:41:23.918201",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "4e20be254058430cad43993ed0d67aec",
+      "name": "TEST",
+      "abteilung": "",
+      "position": "",
+      "erster_tag": "01.12.2025",
+      "letzter_tag": "05.12.2025",
+      "gesamtzahl": "5"
+    }
+  }
+]

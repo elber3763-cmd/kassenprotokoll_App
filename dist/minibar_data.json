@@ -1,0 +1,51 @@
+{
+  "2025-12": [
+    {
+      "id": "6eb6222772a24972a584cb6d18539592",
+      "datum": "2025-12-25",
+      "artikel_name": "Apoli",
+      "menge": 1.0,
+      "verlust_anzahl": 0.0,
+      "preis_pro_stueck": 3.5,
+      "gesamt_umsatz": 3.5
+    },
+    {
+      "id": "47bcfd7e9d1c4922828d09366e016d0c",
+      "datum": "2025-12-25",
+      "artikel_name": "Bickensohler",
+      "menge": 1.0,
+      "verlust_anzahl": 0.0,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    },
+    {
+      "id": "10b42e7f45d344719e1003f7e01c2e2c",
+      "datum": "2025-12-26",
+      "artikel_name": "Apoli",
+      "menge": 1.0,
+      "verlust_anzahl": 0.0,
+      "preis_pro_stueck": 3.5,
+      "gesamt_umsatz": 3.5
+    }
+  ],
+  "2026-03": [
+    {
+      "id": "8fcb05bdf37c4c35a48deb7f5f69a320",
+      "datum": "2026-03-05",
+      "artikel_name": "Apfelsaft",
+      "menge": 1.0,
+      "verlust_anzahl": 0.0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "08d3b9dfc11a4a7a8f68353a592db143",
+      "datum": "2026-03-05",
+      "artikel_name": "Apfelsaft",
+      "menge": 1.0,
+      "verlust_anzahl": 0.0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    }
+  ]
+}

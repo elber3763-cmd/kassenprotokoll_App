@@ -1,0 +1,87 @@
+[
+  {
+    "timestamp": "2026-03-04T01:10:03.035165",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "e8f6b45f6b49433bb9638c06fac58f15",
+      "fuer_abteilung": "K\u00fcche",
+      "datum": "29.08.2025",
+      "anrufer": "Mustermann",
+      "firma": "IBM GmbH",
+      "telefonnummer": "017458245",
+      "uhrzeit": "12:45",
+      "bitte_um_rueckruf": true,
+      "zur_info": true,
+      "angenommen_von": "Rezeptionsteam",
+      "nachricht": "Die Fehlermeldung ist sehr eindeutig und hilft uns, das Problem direkt zu lokalisieren.\nProblem: Beim Erstellen des PDFs f\u00fcr die Zimmerreservierung wird versucht, das Euro-Zeichen (\u20ac) mit der Schriftart \"Helvetica\" zu schreiben. Die Standard-Implementierung von Helvetica in der fpdf-Bibliothek unterst\u00fctzt dieses Zeichen nicht, was zu dem Absturz f\u00fchrt.\nUrsache: In der Klasse ZimmerreservierungPDF gibt es einen Programmierfehler. Der Code-Block, der eigentlich die Unicode-f\u00e4hige Schriftart DejaVuSans laden sollte, befindet sich aufgrund einer falschen Einr\u00fcckung au\u00dferhalb der __init__-Methode. Dadurch wird er nie korrekt ausgef\u00fchrt, wenn eine neue PDF-Datei erstellt wird, und das Programm f\u00e4llt auf die Standard-Schriftart \"Helvetica\" zur\u00fcck."
+    }
+  },
+  {
+    "timestamp": "2025-10-08T02:35:03.927439",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "e8f6b45f6b49433bb9638c06fac58f15",
+      "fuer_abteilung": "K\u00fcche",
+      "datum": "29.08.2025",
+      "anrufer": "Mustermann",
+      "firma": "IBM GmbH",
+      "telefonnummer": "017458245",
+      "uhrzeit": "12:45",
+      "bitte_um_rueckruf": true,
+      "zur_info": true,
+      "angenommen_von": "Rezeptionsteam",
+      "nachricht": "Die Fehlermeldung ist sehr eindeutig und hilft uns, das Problem direkt zu lokalisieren.\nProblem: Beim Erstellen des PDFs f\u00fcr die Zimmerreservierung wird versucht, das Euro-Zeichen (\u20ac) mit der Schriftart \"Helvetica\" zu schreiben. Die Standard-Implementierung von Helvetica in der fpdf-Bibliothek unterst\u00fctzt dieses Zeichen nicht, was zu dem Absturz f\u00fchrt.\nUrsache: In der Klasse ZimmerreservierungPDF gibt es einen Programmierfehler. Der Code-Block, der eigentlich die Unicode-f\u00e4hige Schriftart DejaVuSans laden sollte, befindet sich aufgrund einer falschen Einr\u00fcckung au\u00dferhalb der __init__-Methode. Dadurch wird er nie korrekt ausgef\u00fchrt, wenn eine neue PDF-Datei erstellt wird, und das Programm f\u00e4llt auf die Standard-Schriftart \"Helvetica\" zur\u00fcck."
+    }
+  },
+  {
+    "timestamp": "2025-09-21T12:33:43.040119",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "e8f6b45f6b49433bb9638c06fac58f15",
+      "fuer_abteilung": "K\u00fcche",
+      "datum": "29.08.2025",
+      "anrufer": "Mustermann",
+      "firma": "IBM GmbH",
+      "telefonnummer": "017458245",
+      "uhrzeit": "12:45",
+      "bitte_um_rueckruf": true,
+      "zur_info": true,
+      "angenommen_von": "Rezeptionsteam",
+      "nachricht": "Die Fehlermeldung ist sehr eindeutig und hilft uns, das Problem direkt zu lokalisieren.\nProblem: Beim Erstellen des PDFs f\u00fcr die Zimmerreservierung wird versucht, das Euro-Zeichen (\u20ac) mit der Schriftart \"Helvetica\" zu schreiben. Die Standard-Implementierung von Helvetica in der fpdf-Bibliothek unterst\u00fctzt dieses Zeichen nicht, was zu dem Absturz f\u00fchrt.\nUrsache: In der Klasse ZimmerreservierungPDF gibt es einen Programmierfehler. Der Code-Block, der eigentlich die Unicode-f\u00e4hige Schriftart DejaVuSans laden sollte, befindet sich aufgrund einer falschen Einr\u00fcckung au\u00dferhalb der __init__-Methode. Dadurch wird er nie korrekt ausgef\u00fchrt, wenn eine neue PDF-Datei erstellt wird, und das Programm f\u00e4llt auf die Standard-Schriftart \"Helvetica\" zur\u00fcck."
+    }
+  },
+  {
+    "timestamp": "2025-09-20T17:25:10.914992",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "e8f6b45f6b49433bb9638c06fac58f15",
+      "fuer_abteilung": "K\u00fcche",
+      "datum": "29.08.2025",
+      "anrufer": "Mustermann",
+      "firma": "IBM GmbH",
+      "telefonnummer": "017458245",
+      "uhrzeit": "12:45",
+      "bitte_um_rueckruf": true,
+      "zur_info": true,
+      "angenommen_von": "Rezeptionsteam",
+      "nachricht": "Die Fehlermeldung ist sehr eindeutig und hilft uns, das Problem direkt zu lokalisieren.\nProblem: Beim Erstellen des PDFs f\u00fcr die Zimmerreservierung wird versucht, das Euro-Zeichen (\u20ac) mit der Schriftart \"Helvetica\" zu schreiben. Die Standard-Implementierung von Helvetica in der fpdf-Bibliothek unterst\u00fctzt dieses Zeichen nicht, was zu dem Absturz f\u00fchrt.\nUrsache: In der Klasse ZimmerreservierungPDF gibt es einen Programmierfehler. Der Code-Block, der eigentlich die Unicode-f\u00e4hige Schriftart DejaVuSans laden sollte, befindet sich aufgrund einer falschen Einr\u00fcckung au\u00dferhalb der __init__-Methode. Dadurch wird er nie korrekt ausgef\u00fchrt, wenn eine neue PDF-Datei erstellt wird, und das Programm f\u00e4llt auf die Standard-Schriftart \"Helvetica\" zur\u00fcck."
+    }
+  },
+  {
+    "timestamp": "2025-09-18T22:56:26.289502",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "id": "e8f6b45f6b49433bb9638c06fac58f15",
+      "fuer_abteilung": "K\u00fcche",
+      "datum": "29.08.2025",
+      "anrufer": "Mustermann",
+      "firma": "IBM GmbH",
+      "telefonnummer": "017458245",
+      "uhrzeit": "12:45",
+      "bitte_um_rueckruf": true,
+      "zur_info": true,
+      "angenommen_von": "Rezeptionsteam",
+      "nachricht": "Die Fehlermeldung ist sehr eindeutig und hilft uns, das Problem direkt zu lokalisieren.\nProblem: Beim Erstellen des PDFs f\u00fcr die Zimmerreservierung wird versucht, das Euro-Zeichen (\u20ac) mit der Schriftart \"Helvetica\" zu schreiben. Die Standard-Implementierung von Helvetica in der fpdf-Bibliothek unterst\u00fctzt dieses Zeichen nicht, was zu dem Absturz f\u00fchrt.\nUrsache: In der Klasse ZimmerreservierungPDF gibt es einen Programmierfehler. Der Code-Block, der eigentlich die Unicode-f\u00e4hige Schriftart DejaVuSans laden sollte, befindet sich aufgrund einer falschen Einr\u00fcckung au\u00dferhalb der __init__-Methode. Dadurch wird er nie korrekt ausgef\u00fchrt, wenn eine neue PDF-Datei erstellt wird, und das Programm f\u00e4llt auf die Standard-Schriftart \"Helvetica\" zur\u00fcck."
+    }
+  }
+]

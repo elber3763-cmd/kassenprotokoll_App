@@ -1,0 +1,3960 @@
+[
+  {
+    "timestamp": "2026-03-15T04:15:49.695184",
+    "type": "manual",
+    "changes": {
+      "action": "Programm beendet"
+    },
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "0.95": "0"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "0.95": "0,95 \u20ac"
+      },
+      "stamp_sum_display": "0,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "SUMME_POSTEN": "750,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-50,00 \u20ac",
+        "ENTNAHME": "-50,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "0.95": "0"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "0.95": "0,95 \u20ac"
+      },
+      "stamp_sum_display": "0,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "SUMME_POSTEN": "0,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-800,00 \u20ac",
+        "ENTNAHME": "-800,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "highlight": true
+  },
+  {
+    "timestamp": "2026-03-15T04:15:32.183271",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "0.95": "0"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "0.95": "0,95 \u20ac"
+      },
+      "stamp_sum_display": "0,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "SUMME_POSTEN": "750,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-50,00 \u20ac",
+        "ENTNAHME": "-50,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "0.95": "0"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "0.95": "0,95 \u20ac"
+      },
+      "stamp_sum_display": "0,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "SUMME_POSTEN": "0,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-800,00 \u20ac",
+        "ENTNAHME": "-800,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-15T01:54:20.217876",
+    "type": "manual",
+    "changes": {
+      "action": "Programm beendet"
+    },
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "highlight": true
+  },
+  {
+    "timestamp": "2026-03-15T01:54:18.241695",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-15T01:12:52.152589",
+    "type": "manual",
+    "changes": {
+      "action": "Programm beendet"
+    },
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "highlight": true
+  },
+  {
+    "timestamp": "2026-03-15T01:12:44.660237",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-14T03:17:17.433566",
+    "type": "manual",
+    "changes": {
+      "action": "Programm beendet"
+    },
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "highlight": true
+  },
+  {
+    "timestamp": "2026-03-14T03:16:41.625918",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-14T03:15:54.761723",
+    "type": "manual",
+    "changes": {
+      "action": "Programm beendet"
+    },
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "highlight": true
+  },
+  {
+    "timestamp": "2026-03-14T03:12:53.847022",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-13T11:00:51.476136",
+    "type": "manual",
+    "changes": {
+      "action": "Programm beendet"
+    },
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "highlight": true
+  },
+  {
+    "timestamp": "2026-03-13T11:00:37.502539",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-13T03:10:16.240609",
+    "type": "manual",
+    "changes": {
+      "action": "Programm beendet"
+    },
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "highlight": true
+  },
+  {
+    "timestamp": "2026-03-13T03:07:35.399537",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-13T03:02:35.379034",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-13T02:57:35.372832",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-13T02:52:35.361993",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-13T02:48:13.332621",
+    "type": "delta",
+    "changes": {
+      "Quittung 1": "0,00 \u20ac \u2192 50,00 \u20ac",
+      "Summe Posten": "0,00 \u20ac \u2192 800,00 \u20ac",
+      "Tip": "-800,00 \u20ac \u2192 0,00 \u20ac",
+      "Entnahme": "-800,00 \u20ac \u2192 0,00 \u20ac"
+    },
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "3",
+        "100.0": "1",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "700,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "50,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "800,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "0,00 \u20ac",
+        "ENTNAHME": "0,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "1000"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "50,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "50,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-750,00 \u20ac",
+        "ENTNAHME": "-750,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-13T02:47:35.348576",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "0"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "0,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "0,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-800,00 \u20ac",
+        "ENTNAHME": "-800,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "0"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "0,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "0,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-800,00 \u20ac",
+        "ENTNAHME": "-800,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  },
+  {
+    "timestamp": "2026-03-13T02:42:35.342641",
+    "type": "autosave",
+    "changes": null,
+    "fruehdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "0"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "0,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "manual_total_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "0,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-800,00 \u20ac",
+        "ENTNAHME": "-800,00 \u20ac"
+      },
+      "notes_content": ""
+    },
+    "spaetdienst_data": {
+      "cash_counts": {
+        "200.0": "0",
+        "100.0": "0",
+        "50.0": "0",
+        "20.0": "0",
+        "10.0": "0",
+        "5.0": "0",
+        "2.0": "0",
+        "1.0": "0",
+        "0.5": "0",
+        "0.2": "0",
+        "0.1": "0",
+        "0.05": "0",
+        "0.02": "0",
+        "0.01": "0"
+      },
+      "cash_amounts_display_manual": {
+        "2.0": "0,00 \u20ac",
+        "1.0": "0,00 \u20ac",
+        "0.5": "0,00 \u20ac",
+        "0.2": "0,00 \u20ac",
+        "0.1": "0,00 \u20ac",
+        "0.05": "0,00 \u20ac",
+        "0.02": "0,00 \u20ac",
+        "0.01": "0,00 \u20ac"
+      },
+      "cash_sum_display": "0,00 \u20ac",
+      "stamp_counts": {
+        "1.6": "0",
+        "1.45": "0",
+        "1.1": "0",
+        "0.95": "0",
+        "0.8": "0",
+        "0.7": "0",
+        "0.6": "0",
+        "0.15": "0",
+        "0.1": "0",
+        "0.05": "0"
+      },
+      "stamp_price_input": {
+        "1.6": "1,60 \u20ac",
+        "1.45": "1,45 \u20ac",
+        "1.1": "1,10 \u20ac",
+        "0.95": "0,95 \u20ac",
+        "0.8": "0,80 \u20ac",
+        "0.7": "0,70 \u20ac",
+        "0.6": "0,60 \u20ac",
+        "0.15": "0,15 \u20ac",
+        "0.1": "0,10 \u20ac",
+        "0.05": "0,05 \u20ac"
+      },
+      "stamp_sum_display": "0,00 \u20ac",
+      "card_data": {
+        "Mastercard": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "VisaVPAY": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Amex": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        },
+        "Maestro": {
+          "fruehdienst_sum_input": "0,00 \u20ac",
+          "spaetdienst_sum_input": "0,00 \u20ac",
+          "reception1": "0,00 \u20ac",
+          "reception2": "0,00 \u20ac",
+          "reception3": "0,00 \u20ac"
+        }
+      },
+      "kassenabschluss_werte": {
+        "QUITTUNG_1": "0,00 \u20ac",
+        "QUITTUNG_2": "0,00 \u20ac",
+        "QUITTUNG_3": "0,00 \u20ac",
+        "DIVERSES": "0,00 \u20ac",
+        "MINIBAR_UMSATZ_TOTAL": "0,00 \u20ac",
+        "SUMME_POSTEN": "0,00 \u20ac",
+        "SOLL": "800,00 \u20ac",
+        "UMSATZ_FRUEH": "0,00 \u20ac",
+        "UMSATZ_SPAET": "0,00 \u20ac",
+        "UMSATZ_TOTAL": "0,00 \u20ac",
+        "KASSE_TOTAL": "800,00 \u20ac",
+        "TIP": "-800,00 \u20ac",
+        "ENTNAHME": "-800,00 \u20ac"
+      },
+      "notes_content": ""
+    }
+  }
+]

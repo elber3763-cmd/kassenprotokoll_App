@@ -1,0 +1,53 @@
+{
+  "employees": [
+    "Albarjak, Hassan",
+    "Heinrich, Janne",
+    "Lupo, Tabea",
+    "Petrova, Miroslava",
+    "Schwarze-Pape, Sonja",
+    "Tangtong, Patcharawalai",
+    "Tesaloni, Zefanya",
+    "Zahn, Lucas"
+  ],
+  "assignments": {
+    "2026-01-03": [
+      "Albarjak, Hassan",
+      "Heinrich, Janne",
+      "Lupo, Tabea",
+      "Petrova, Miroslava"
+    ],
+    "2026-01-04": [
+      "Albarjak, Hassan",
+      "Heinrich, Janne",
+      "Lupo, Tabea",
+      "Petrova, Miroslava"
+    ]
+  },
+  "year": 2026,
+  "button_configs": {
+    "btn_help": "O:/kassenprotokoll_App/help.png",
+    "btn_dashboard": "O:/kassenprotokoll_App/Dashboard.png",
+    "btn_planner": "O:/kassenprotokoll_App/Planer.png",
+    "btn_settings": "O:/kassenprotokoll_App/setting.png",
+    "btn_emp_add": "O:/kassenprotokoll_App/hinzufügen.png",
+    "btn_emp_del": "O:/kassenprotokoll_App/Papierkorb.png",
+    "btn_analysis": "O:/kassenprotokoll_App/Email.png",
+    "btn_emp_edit": "O:/kassenprotokoll_App/bearbeiten2.png",
+    "btn_logout": "O:/kassenprotokoll_App/logout2.png"
+  },
+  "view_settings": {
+    "icon_size": 40,
+    "show_text": false
+  },
+  "employee_emails": {
+    "Albarjak, Hassan": "test@gmx.de",
+    "Heinrich, Janne": "test@gmail.com",
+    "Lupo, Tabea": "test@esyline.com",
+    "Petrova, Miroslava": "test@necub.com",
+    "Schwarze-Pape, Sonja": "test@laoia.com",
+    "Tangtong, Patcharawalai": "test@sharklasers.com",
+    "Tesaloni, Zefanya": "test@trashmailr.com",
+    "Zahn, Lucas": "test@protonmail.com"
+  },
+  "admin_password": "planer123"
+}

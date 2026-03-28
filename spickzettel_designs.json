@@ -1,0 +1,86 @@
+[
+    {
+        "nr": "#260",
+        "name": "Fische",
+        "beschreibung": "Blaue Farben, Wellen",
+        "bad": "Badewanne",
+        "betten": "Betten trennbar"
+    },
+    {
+        "nr": "#259 VT",
+        "name": "Löwe",
+        "beschreibung": "Beige-braune Farben, afrikanischer Stil, viel Bambus",
+        "bad": "Badewanne, kein Teppich",
+        "betten": "Betten trennbar"
+    },
+    {
+        "nr": "#258 VT",
+        "name": "Schütze",
+        "beschreibung": "Beige-braune Farben, afrikanischer Stil, viel Bambus",
+        "bad": "Dusche/Klappbett",
+        "betten": ""
+    },
+    {
+        "nr": "#257 VT",
+        "name": "Waage",
+        "beschreibung": "Grüne Farben mit bunten Blumen",
+        "bad": "Badewanne",
+        "betten": "Betten trennbar"
+    },
+    {
+        "nr": "#256 VT",
+        "name": "Zwilling",
+        "beschreibung": "Grüne Farben mit bunten Blumen",
+        "bad": "Dusche/Klappbett",
+        "betten": ""
+    },
+    {
+        "nr": "#255",
+        "name": "Skorpion",
+        "beschreibung": "Rot-schwarze Farben",
+        "bad": "Whirlpool Badewanne + Dusche",
+        "betten": ""
+    },
+    {
+        "nr": "#160",
+        "name": "Wassermann",
+        "beschreibung": "Blaue Farbe, Dreizack am Bett, Bidet, sonst ähnlich Fische",
+        "bad": "Badewanne, kein Teppich",
+        "betten": ""
+    },
+    {
+        "nr": "#159 VT",
+        "name": "Krebs",
+        "beschreibung": "Graue Farbe",
+        "bad": "Badewanne",
+        "betten": ""
+    },
+    {
+        "nr": "#158 VT",
+        "name": "Jungfrau",
+        "beschreibung": "Graue Farbe",
+        "bad": "Dusche / Klappbett",
+        "betten": ""
+    },
+    {
+        "nr": "#157 VT",
+        "name": "Stier",
+        "beschreibung": "Rot-schwarze Farben, asiatischer Stil",
+        "bad": "Badewanne",
+        "betten": ""
+    },
+    {
+        "nr": "#156 VT",
+        "name": "Steinbock",
+        "beschreibung": "Rot-schwarze Farben, asiatischer Stil",
+        "bad": "Dusche/Klappbett",
+        "betten": ""
+    },
+    {
+        "nr": "#155",
+        "name": "Widder",
+        "beschreibung": "Rot-schwarze Farben, Sportzimmer, Fahrrad im Bad",
+        "bad": "Badewanne",
+        "betten": "Betten trennbar"
+    }
+]

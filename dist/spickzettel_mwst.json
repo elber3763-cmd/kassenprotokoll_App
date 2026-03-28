@@ -1,0 +1,46 @@
+[
+    {
+        "kategorie": "MwSt-Sätze (Frühstück)",
+        "beschreibung": "FS 23 € -> Speisen 16,10 € / Getränke 6,90 € (19%)"
+    },
+    {
+        "kategorie": "MwSt-Sätze (Frühstück)",
+        "beschreibung": "FS 6 € -> Speisen 4,20 € / Getränke 1,80 € (19%)"
+    },
+    {
+        "kategorie": "MwSt-Sätze (Frühstück)",
+        "beschreibung": "FS 4 € (nur BFA) -> Speisen 2,80 € / Getränke 1,20 € (19%)"
+    },
+    {
+        "kategorie": "Parkplatz",
+        "beschreibung": "19% - 6 € Hausgäste / 10 € extern zu VA's / 15 € zu Messe / 30 € Busse"
+    },
+    {
+        "kategorie": "Haustier",
+        "beschreibung": "19%"
+    },
+    {
+        "kategorie": "Logis",
+        "beschreibung": "7%"
+    },
+    {
+        "kategorie": "BHS",
+        "beschreibung": "7%"
+    },
+    {
+        "kategorie": "Außer Haus",
+        "beschreibung": "7%"
+    },
+    {
+        "kategorie": "Lupa",
+        "beschreibung": "7%"
+    },
+    {
+        "kategorie": "Tickets",
+        "beschreibung": "0%"
+    },
+    {
+        "kategorie": "Parkplatz für Zeugen Jehovas",
+        "beschreibung": "0%"
+    }
+]

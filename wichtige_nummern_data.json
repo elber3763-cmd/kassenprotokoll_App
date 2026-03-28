@@ -1,0 +1,74 @@
+[
+  {
+    "id": "b7391c21401d4779ae2f38e17fda539c",
+    "titel": "Jessica Bock",
+    "telefon": "01711914809",
+    "beschreibung": ""
+  },
+  {
+    "id": "a65cf6dc4e1949cbab69b8b644365395",
+    "titel": "Andreas Triebsch",
+    "telefon": "01733945597",
+    "beschreibung": ""
+  },
+  {
+    "id": "62129808b4f1457baee7cd91bae564ca",
+    "titel": "Bock Sen.",
+    "telefon": "01717478399",
+    "beschreibung": ""
+  },
+  {
+    "id": "830a17e6644e4b5082b00ca61b3ad508",
+    "titel": "BMZ",
+    "telefon": "08000078007",
+    "beschreibung": "BMZ-Nr.: 1102357"
+  },
+  {
+    "id": "2578176754cf4a0e80686cdf85f3e22b",
+    "titel": "Riebe",
+    "telefon": "0517598940",
+    "beschreibung": "Sanitär-Firma"
+  },
+  {
+    "id": "cc56805b5abe4df99d8fe60e5c6875e5",
+    "titel": "Enercity",
+    "telefon": "05114303311",
+    "beschreibung": "Heizanlagen"
+  },
+  {
+    "id": "44a5c1adc4fd4adf86b9013fd07c04e8",
+    "titel": "Wantosch",
+    "telefon": "01717482404",
+    "beschreibung": "Elektro - Firma"
+  },
+  {
+    "id": "9d68b76ce58b4383b69dc9eb7f3c18e9",
+    "titel": "TKE (Aufzüge)",
+    "telefon": "08003657240",
+    "beschreibung": "TKE hat einen Vollwartungsvertrag 24/7."
+  },
+  {
+    "id": "cffe742b3d084ee396ddc00d030a6d7b",
+    "titel": "Klauenberg",
+    "telefon": "01739696030",
+    "beschreibung": "Rohrreinigung - Firma"
+  },
+  {
+    "id": "32e2a8b5edea49cfb77aa22888e15706",
+    "titel": "Feuerwehr",
+    "telefon": "112",
+    "beschreibung": ""
+  },
+  {
+    "id": "1c27e4d5085e4ba7b5d113b453cf2310",
+    "titel": "Polizei",
+    "telefon": "110",
+    "beschreibung": ""
+  },
+  {
+    "id": "9c9d375163fb4f258e42ff6d0b0bcab2",
+    "titel": "Polizei an der Messe",
+    "telefon": "05111093771",
+    "beschreibung": ""
+  }
+]

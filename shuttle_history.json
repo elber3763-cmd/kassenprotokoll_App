@@ -1,0 +1,275 @@
+[
+  {
+    "timestamp": "2026-03-04T17:02:09.673000",
+    "action": "Erledigt gel\u00f6scht",
+    "data": {
+      "id": "d6dcac49a71d47a4af96ed66cb644903",
+      "type": "Hinfahrt",
+      "datum": "04.03.2026",
+      "zeit": "07:00",
+      "zimmer": "105",
+      "gastname": "TEST5",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T17:02:09.672573",
+    "action": "Erledigt gel\u00f6scht",
+    "data": {
+      "id": "90ede8ebeb644cd9bfc17248de112494",
+      "type": "Hinfahrt",
+      "datum": "04.03.2026",
+      "zeit": "07:00",
+      "zimmer": "104",
+      "gastname": "TEST4",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T17:02:09.671870",
+    "action": "Erledigt gel\u00f6scht",
+    "data": {
+      "id": "334a438fbc354a4aac35127dbafd1278",
+      "type": "Hinfahrt",
+      "datum": "04.03.2026",
+      "zeit": "07:00",
+      "zimmer": "103",
+      "gastname": "TEST3",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T17:01:51.387059",
+    "action": "Erledigt gel\u00f6scht",
+    "data": {
+      "id": "62944ce6da694bef8abcb436e9784678",
+      "type": "Hinfahrt",
+      "datum": "04.03.2026",
+      "zeit": "07:00",
+      "zimmer": "102",
+      "gastname": "TEST2",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:58:48.238821",
+    "action": "Erledigt gel\u00f6scht",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST1",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:58:19.721768",
+    "action": "Bearbeitet",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST1",
+      "personen": 1
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:57:59.439457",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "d6dcac49a71d47a4af96ed66cb644903",
+      "type": "Hinfahrt",
+      "datum": "04.03.2026",
+      "zeit": "07:00",
+      "zimmer": "105",
+      "gastname": "TEST5",
+      "personen": 1
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:53:33.202859",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "90ede8ebeb644cd9bfc17248de112494",
+      "type": "Hinfahrt",
+      "datum": "04.03.2026",
+      "zeit": "07:00",
+      "zimmer": "104",
+      "gastname": "TEST4",
+      "personen": 1
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:53:22.837421",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "334a438fbc354a4aac35127dbafd1278",
+      "type": "Hinfahrt",
+      "datum": "04.03.2026",
+      "zeit": "07:00",
+      "zimmer": "103",
+      "gastname": "TEST3",
+      "personen": 1
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:53:05.085646",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "id": "62944ce6da694bef8abcb436e9784678",
+      "type": "Hinfahrt",
+      "datum": "04.03.2026",
+      "zeit": "07:00",
+      "zimmer": "102",
+      "gastname": "TEST2",
+      "personen": 1
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:52:01.071241",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:51:04.560062",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:50:47.707396",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:50:34.238028",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:50:24.907783",
+    "action": "Erledigt gel\u00f6scht",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:50:24.907090",
+    "action": "Erledigt gel\u00f6scht",
+    "data": {
+      "id": "ae765ec8f98f4f009e79b2309b1fcc9e",
+      "type": "Hinfahrt",
+      "datum": "03.12.2025",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST1",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:50:06.069546",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:49:10.993973",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+      "type": "Hinfahrt",
+      "datum": "05.03.2026",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1,
+      "erledigt": true
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:48:50.583120",
+    "action": "Wiederhergestellt",
+    "data": {
+      "id": "86fab0044fda45218208e1717cd85d33",
+      "type": "Hinfahrt",
+      "datum": "08.10.2025",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1
+    }
+  },
+  {
+    "timestamp": "2026-03-04T15:47:31.788801",
+    "action": "Erledigt gel\u00f6scht",
+    "data": {
+      "id": "86fab0044fda45218208e1717cd85d33",
+      "type": "Hinfahrt",
+      "datum": "08.10.2025",
+      "zeit": "07:00",
+      "zimmer": "101",
+      "gastname": "TEST",
+      "personen": 1,
+      "erledigt": true
+    }
+  }
+]

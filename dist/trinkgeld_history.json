@@ -1,0 +1,302 @@
+[
+  {
+    "timestamp": "2026-02-27T15:26:29.996807",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2026-02-27",
+      "bestand": 100.0,
+      "einnahme_frueh": 2.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 102.0
+    }
+  },
+  {
+    "timestamp": "2026-02-20T12:48:07.483397",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "datum": "2026-02-20",
+      "bestand": 0.0,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "MZ",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "MZ",
+      "gesamt": 0.0
+    }
+  },
+  {
+    "timestamp": "2026-02-20T12:47:54.739867",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2026-02-20",
+      "bestand": 0.0,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "MZ",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "MZ",
+      "gesamt": 0.0
+    }
+  },
+  {
+    "timestamp": "2025-09-11T22:04:17.286813",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-09-11",
+      "bestand": 100.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 5.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 10.0,
+      "entnahme_spaet": 5.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 110.0
+    }
+  },
+  {
+    "timestamp": "2025-09-10T03:00:10.518139",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "datum": "2025-09-03",
+      "bestand": 100.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 10.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 10.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 90.0
+    }
+  },
+  {
+    "timestamp": "2025-09-10T03:00:07.689954",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "datum": "2025-09-10",
+      "bestand": 99.0,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "AZU",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "AZU",
+      "gesamt": 99.0
+    }
+  },
+  {
+    "timestamp": "2025-09-10T03:00:07.676227",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "datum": "2025-09-09",
+      "bestand": 99.0,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "AZ",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "AZ",
+      "gesamt": 99.0
+    }
+  },
+  {
+    "timestamp": "2025-09-10T03:00:07.664687",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "datum": "2025-09-08",
+      "bestand": 99.0,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "AZ",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "AZ",
+      "gesamt": 99.0
+    }
+  },
+  {
+    "timestamp": "2025-09-10T03:00:07.652314",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "datum": "2025-09-06",
+      "bestand": 95.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 5.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 1.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 99.0
+    }
+  },
+  {
+    "timestamp": "2025-09-10T03:00:07.638760",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "datum": "2025-09-05",
+      "bestand": 90.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 10.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 10.0,
+      "entnahme_spaet": 5.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 95.0
+    }
+  },
+  {
+    "timestamp": "2025-09-08T00:42:45.005671",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-09-10",
+      "bestand": 99.0,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "AZU",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "AZU",
+      "gesamt": 99.0
+    }
+  },
+  {
+    "timestamp": "2025-09-08T00:24:36.512976",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-09-09",
+      "bestand": 99.0,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "AZ",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "AZ",
+      "gesamt": 99.0
+    }
+  },
+  {
+    "timestamp": "2025-09-08T00:16:23.181677",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-09-08",
+      "bestand": 99.0,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "AZ",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "AZ",
+      "gesamt": 99.0
+    }
+  },
+  {
+    "timestamp": "2025-09-06T01:38:48.430537",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-09-06",
+      "bestand": 95.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 5.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 1.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 99.0
+    }
+  },
+  {
+    "timestamp": "2025-09-06T01:38:23.485356",
+    "action": "Gel\u00f6scht",
+    "data": {
+      "datum": "2025-09-06",
+      "bestand": 95.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 105.0
+    }
+  },
+  {
+    "timestamp": "2025-09-05T22:11:30.871517",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-09-06",
+      "bestand": 95.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 105.0
+    }
+  },
+  {
+    "timestamp": "2025-09-05T02:29:20.301459",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-09-05",
+      "bestand": 90.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 10.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 10.0,
+      "entnahme_spaet": 5.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 95.0
+    }
+  },
+  {
+    "timestamp": "2025-09-03T13:59:47.995110",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-09-03",
+      "bestand": 100.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 10.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 10.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 90.0
+    }
+  },
+  {
+    "timestamp": "2025-08-31T12:13:16.383721",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-08-31",
+      "bestand": 158.38,
+      "einnahme_frueh": 2.0,
+      "entnahme_frueh": 1.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 159.38
+    }
+  },
+  {
+    "timestamp": "2025-08-29T13:29:28.615995",
+    "action": "Hinzugef\u00fcgt",
+    "data": {
+      "datum": "2025-08-29",
+      "bestand": 148.38,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 158.38
+    }
+  }
+]

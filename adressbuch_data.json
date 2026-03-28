@@ -1,0 +1,351 @@
+[
+  {
+    "id": "d50b31350ed34bd69433c2562cf4d0ee",
+    "name": "Koorosh Dadgar",
+    "abteilung": "Empfang",
+    "position": "Night Audit",
+    "email": "dadgar@gmx.de",
+    "telefon": "01784232626",
+    "notizen": ""
+  },
+  {
+    "id": "649fe7a319484e0c99f9711950103534",
+    "name": "Daniel Heuer",
+    "abteilung": "Empfang",
+    "position": "Empfangsmitarbeiter",
+    "email": "",
+    "telefon": "01726295637",
+    "notizen": ""
+  },
+  {
+    "id": "884e79be228944898f87e52f78bec977",
+    "name": "Sonja Schwarze",
+    "abteilung": "Empfang",
+    "position": "Shift Leader",
+    "email": "",
+    "telefon": "01627989096",
+    "notizen": ""
+  },
+  {
+    "id": "da7cdccfca344cb28cb6afd1ab44503f",
+    "name": "Kai Kunstmann",
+    "abteilung": "Küche",
+    "position": "Küchenchef",
+    "email": "",
+    "telefon": "",
+    "notizen": ""
+  },
+  {
+    "id": "7bc447e92943430f8b2eac93b3decdd8",
+    "name": "André Hübert",
+    "abteilung": "Housekeeping",
+    "position": "Leiter Housekeeping",
+    "email": "",
+    "telefon": "01607137094",
+    "notizen": ""
+  },
+  {
+    "id": "40bb022050484fe4b3c39a091291bd03",
+    "name": "Nicola Sarstedt",
+    "abteilung": "Verkauf",
+    "position": "Leitung Verkauf-& Marketing",
+    "email": "",
+    "telefon": "",
+    "notizen": ""
+  },
+  {
+    "id": "92d2ebdca7104f65a98291c1ff70ad1e",
+    "name": "Laura Patzer",
+    "abteilung": "Verkauf",
+    "position": "Assistentin Verkauf & Marketing",
+    "email": "",
+    "telefon": "01752338218",
+    "notizen": ""
+  },
+  {
+    "id": "bfcc34ae7d164f3f9dc732db0e29a957",
+    "name": "Bettina Longmuir",
+    "abteilung": "Reservierung",
+    "position": "Reservierungsleitung",
+    "email": "",
+    "telefon": "015253137882",
+    "notizen": ""
+  },
+  {
+    "id": "8d059647d63e4160922024dc9b7d6be0",
+    "name": "Melanie Zaunik",
+    "abteilung": "Reservierung",
+    "position": "Stellv. Reservierung",
+    "email": "",
+    "telefon": "051369713879",
+    "notizen": ""
+  },
+  {
+    "id": "0b3799c78e28451eaa2faa6c13f78da9",
+    "name": "Janne Heinrich",
+    "abteilung": "Empfang",
+    "position": "Stellv. Empfangsleitung",
+    "email": "",
+    "telefon": "017657862353",
+    "notizen": ""
+  },
+  {
+    "id": "709ad2a18eeb47069e33d84c61c8e68a",
+    "name": "Ralf Glozober",
+    "abteilung": "Technik",
+    "position": "Leitender Haustechniker",
+    "email": "",
+    "telefon": "",
+    "notizen": ""
+  },
+  {
+    "id": "9475b909c6264af8af4c3d18222c4858",
+    "name": "Mary Renz",
+    "abteilung": "Annonce",
+    "position": "Assistenz der Geschäftsleitung",
+    "email": "",
+    "telefon": "015165126192",
+    "notizen": ""
+  },
+  {
+    "id": "ef3d198fb29440ec846cd8958a9e7737",
+    "name": "Andreas Triebsch",
+    "abteilung": "Direktion",
+    "position": "Direktor",
+    "email": "",
+    "telefon": "015172035797",
+    "notizen": ""
+  },
+  {
+    "id": "53fb6cf8802b4d8794a486e9c6b783d9",
+    "name": "Simone Basan",
+    "abteilung": "Küche",
+    "position": "Köchin",
+    "email": "",
+    "telefon": "016099282424",
+    "notizen": ""
+  },
+  {
+    "id": "a78da77024a8436f9d16ed3a290cb978",
+    "name": "Sebastian Bock",
+    "abteilung": "Haustechnik",
+    "position": "Haustechniker",
+    "email": "",
+    "telefon": "017052623758",
+    "notizen": ""
+  },
+  {
+    "id": "9b7d576df6c44e168cad1278fd4b9d75",
+    "name": "Kataryna Lämmerhold",
+    "abteilung": "Housekeeping",
+    "position": "Hausdame",
+    "email": "",
+    "telefon": "017636583763",
+    "notizen": ""
+  },
+  {
+    "id": "048f986907b445919061d762f625148b",
+    "name": "Seyd Heike",
+    "abteilung": "Revenue",
+    "position": "Revenue Managerin",
+    "email": "",
+    "telefon": "051873037400",
+    "notizen": ""
+  },
+  {
+    "id": "0e94439e1d554ba195712f9426a7e106",
+    "name": "Julia Sonnenschein",
+    "abteilung": "Reservierung",
+    "position": "Reservierungsmitarbeiter",
+    "email": "",
+    "telefon": "01799100413",
+    "notizen": ""
+  },
+  {
+    "id": "306a3eb712a040e09324f205ef906ea5",
+    "name": "Hamsa Yildiz",
+    "abteilung": "Hausdiener",
+    "position": "Page",
+    "email": "",
+    "telefon": "017620268054",
+    "notizen": ""
+  },
+  {
+    "id": "7909f9f2e1c446738624dcb7f67fbc0a",
+    "datum": "2025-08-10",
+    "zeit": "03:16",
+    "zimmer": "101",
+    "gastname": "Mustermann",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "d25740dbe0774ee0aaad6e36c8d2cf55",
+    "datum": "2025-08-20",
+    "zeit": "23:22",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "0d0d607ae71c4065bbe14140a7fa3e0e",
+    "datum": "2025-08-21",
+    "zeit": "17:00",
+    "zimmer": "1001",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "1a5f707eeac544f4be569d71a63fff22",
+    "datum": "2025-08-21",
+    "zeit": "18:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "92f255146507416aaa32187e7fae6044",
+    "datum": "2025-08-22",
+    "zeit": "13:53",
+    "zimmer": "101",
+    "gastname": "Koch",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "41f9106f241742e4965a27e98e9e4a2e",
+    "datum": "2025-08-28",
+    "zeit": "02:17",
+    "zimmer": "101",
+    "gastname": "ZTEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "4e78ad4b88b1491fa5de06ec283e04a1",
+    "datum": "2025-08-29",
+    "zeit": "13:35",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "693e792c97a14517bf2b129766f9d3f9",
+    "datum": "2025-08-31",
+    "zeit": "12:31",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "fed07965c32141c1b9f5dfb961c472c8",
+    "datum": "2025-09-05",
+    "zeit": "02:16",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "0fabb23d7652448bbfc843dd53affca2",
+    "datum": "2025-09-05",
+    "zeit": "02:19",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "f95bff3c1e4847dea04a3e16fc6d53cb",
+    "datum": "2025-09-05",
+    "zeit": "08:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "9dd44322842546d4b51361dc1b5644d2",
+    "datum": "2025-09-05",
+    "zeit": "09:00",
+    "zimmer": "102",
+    "gastname": "TEST2",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "8b932079f10e4bf28d0767d712f91f41",
+    "datum": "2025-09-06",
+    "zeit": "01:46",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "ee0948cdea7b434ea916ff4ebfaafa96",
+    "datum": "2025-09-06",
+    "zeit": "14:55",
+    "zimmer": "101",
+    "gastname": "Test",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "10eeb32c09a246ec818b3f0458d6d55f",
+    "datum": "2025-09-11",
+    "zeit": "08:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "e07e4405fc7d453e866337dbaa9e3fa7",
+    "datum": "2025-09-11",
+    "zeit": "18:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "64fb57f5c9fd48019168374ef0338c99",
+    "datum": "2025-09-11",
+    "zeit": "00:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "135f08122f6f4682a6e79cbccfcac786",
+    "datum": "2025-09-12",
+    "zeit": "08:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "322a7be1eb6748b492497d07a70f3c78",
+    "datum": "2025-09-11",
+    "zeit": "01:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "64130195b9384cc3b1820d0c3acfd404",
+    "name": "Koorosh",
+    "abteilung": "Empfang",
+    "position": "Night Audit",
+    "email": "dadgar@gmx.de",
+    "telefon": "01784232626",
+    "notizen": ""
+  },
+  {
+    "id": "bcfdd831488d4091a436fba62365e847",
+    "name": "Koorosh",
+    "abteilung": "",
+    "position": "",
+    "email": "",
+    "telefon": "",
+    "notizen": ""
+  },
+  {
+    "id": "06c768db20c74c53b77c05b06fddea69",
+    "datum": "2026-02-28",
+    "zeit": "08:00",
+    "zimmer": "101",
+    "gastname": "test",
+    "kuerzel": "KD"
+  }
+]

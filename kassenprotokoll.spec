@@ -11,7 +11,7 @@ a = Analysis(
         ('images', 'images'),
         ('sounds', 'sounds'),
     ],
-    hiddenimports=['win32com.client', 'win32timezone'],
+    hiddenimports=['win32com.client', 'win32timezone', 'asteval'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

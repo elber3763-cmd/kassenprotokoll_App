@@ -1,0 +1,15 @@
+{
+    "single": {
+        "total": 100,
+        "oos": 2
+    },
+    "double": {
+        "total": 10,
+        "oos": 2
+    },
+    "special_rooms": {
+        "3 Bettzimmer": [],
+        "4 Bettzimmer": [],
+        "Babybett-Zimmer": []
+    }
+}
