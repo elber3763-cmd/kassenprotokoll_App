@@ -1,1 +1,1 @@
-python -m PyInstaller --windowed --clean --additional-hooks-dir hooks --hidden-import PIL._tkinter_finder --hidden-import fpdf --hidden-import asteval --add-data "fonts;fonts" --add-data "icons;icons" kassenprotokoll.py
+python -m PyInstaller kassenprotokoll.spec -y --distpath "O:\kassenprotokoll_App"

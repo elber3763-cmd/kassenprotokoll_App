@@ -12,6 +12,7 @@ env/
 # PyInstaller Build-Cache (wird bei jedem Build neu erzeugt)
 build/
 *.egg-info/
+_runtime_cache/
 
 # Sensitive Dateien
 .env
