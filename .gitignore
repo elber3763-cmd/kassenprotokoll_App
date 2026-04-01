@@ -1,40 +1,37 @@
-# Python
+# Python Bytecode
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.pyw.bak
-*.py.bak
 
-# Virtuelle Umgebung
+# Virtuelle Umgebung (wird per pip install -r requirements.txt wiederhergestellt)
+.venv/
 venv/
 env/
 
-# Datenbanken & Backups
-*.db
-backups/
-
-# Build / Dist
+# PyInstaller Build-Cache (wird bei jedem Build neu erzeugt)
 build/
 *.egg-info/
 
-# Logs & temp
-*.log
-
-# Sensitive Dateien niemals committen
+# Sensitive Dateien
+.env
 dist/github-recovery-codes.txt
-
-# Venv & IDE intern
-.venv/
 
 # Office Temp-Dateien
 ~$*
 .~lock.*
 
-# Generierte PDFs & Dokumente
-*.pdf
-
 # System
 desktop.ini
 Thumbs.db
 .DS_Store
+
+# Temporäre Dateien
+*.py.bak
+*.pyw.bak
+build_stdout.txt
+build_stderr.txt
+test_out.txt
+test_err.txt
+kassenprotokoll_temp.py
+kassenprotokoll_temp2.py

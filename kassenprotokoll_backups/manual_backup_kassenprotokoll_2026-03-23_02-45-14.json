@@ -1,0 +1,197 @@
+{
+  "fruehdienst_data": {
+    "cash_counts": {
+      "200.0": "3",
+      "100.0": "1",
+      "50.0": "0",
+      "20.0": "0",
+      "10.0": "0",
+      "5.0": "0",
+      "2.0": "0",
+      "1.0": "0",
+      "0.5": "0",
+      "0.2": "0",
+      "0.1": "0",
+      "0.05": "0",
+      "0.02": "0",
+      "0.01": "0"
+    },
+    "cash_amounts_display_manual": {
+      "2.0": "0,00 €",
+      "1.0": "0,00 €",
+      "0.5": "0,00 €",
+      "0.2": "0,00 €",
+      "0.1": "0,00 €",
+      "0.05": "0,00 €",
+      "0.02": "0,00 €",
+      "0.01": "0,00 €"
+    },
+    "cash_sum_display": "700,00 €",
+    "stamp_counts": {
+      "1.6": "0",
+      "1.45": "0",
+      "1.1": "0",
+      "0.95": "0",
+      "0.8": "0",
+      "0.7": "0",
+      "0.6": "0",
+      "0.15": "0",
+      "0.1": "0",
+      "0.05": "2000"
+    },
+    "stamp_price_input": {
+      "1.6": "1,60 €",
+      "1.45": "1,45 €",
+      "1.1": "1,10 €",
+      "0.95": "0,95 €",
+      "0.8": "0,80 €",
+      "0.7": "0,70 €",
+      "0.6": "0,60 €",
+      "0.15": "0,15 €",
+      "0.1": "0,10 €",
+      "0.05": "0,05 €"
+    },
+    "stamp_sum_display": "100,00 €",
+    "card_data": {
+      "Mastercard": {
+        "manual_total_input": "0,00 €",
+        "reception1": "0,00 €",
+        "reception2": "0,00 €",
+        "reception3": "0,00 €"
+      },
+      "VisaVPAY": {
+        "manual_total_input": "0,00 €",
+        "reception1": "0,00 €",
+        "reception2": "0,00 €",
+        "reception3": "0,00 €"
+      },
+      "Amex": {
+        "manual_total_input": "0,00 €",
+        "reception1": "0,00 €",
+        "reception2": "0,00 €",
+        "reception3": "0,00 €"
+      },
+      "Maestro": {
+        "manual_total_input": "0,00 €",
+        "reception1": "0,00 €",
+        "reception2": "0,00 €",
+        "reception3": "0,00 €"
+      }
+    },
+    "kassenabschluss_werte": {
+      "QUITTUNG_1": "0,00 €",
+      "QUITTUNG_2": "0,00 €",
+      "QUITTUNG_3": "0,00 €",
+      "DIVERSES": "0,00 €",
+      "MINIBAR_UMSATZ_TOTAL": "0,00 €",
+      "SUMME_POSTEN": "800,00 €",
+      "SOLL": "800,00 €",
+      "UMSATZ_FRUEH": "0,00 €",
+      "UMSATZ_TOTAL": "0,00 €",
+      "KASSE_TOTAL": "800,00 €",
+      "TIP": "0,00 €",
+      "ENTNAHME": "0,00 €"
+    },
+    "notes_content": ""
+  },
+  "spaetdienst_data": {
+    "cash_counts": {
+      "200.0": "0",
+      "100.0": "0",
+      "50.0": "0",
+      "20.0": "0",
+      "10.0": "0",
+      "5.0": "0",
+      "2.0": "0",
+      "1.0": "0",
+      "0.5": "0",
+      "0.2": "0",
+      "0.1": "0",
+      "0.05": "0",
+      "0.02": "0",
+      "0.01": "0"
+    },
+    "cash_amounts_display_manual": {
+      "2.0": "0,00 €",
+      "1.0": "0,00 €",
+      "0.5": "0,00 €",
+      "0.2": "0,00 €",
+      "0.1": "0,00 €",
+      "0.05": "0,00 €",
+      "0.02": "0,00 €",
+      "0.01": "0,00 €"
+    },
+    "cash_sum_display": "0,00 €",
+    "stamp_counts": {
+      "1.6": "0",
+      "1.45": "0",
+      "1.1": "0",
+      "0.95": "0",
+      "0.8": "0",
+      "0.7": "0",
+      "0.6": "0",
+      "0.15": "0",
+      "0.1": "0",
+      "0.05": "2000"
+    },
+    "stamp_price_input": {
+      "1.6": "1,60 €",
+      "1.45": "1,45 €",
+      "1.1": "1,10 €",
+      "0.95": "0,95 €",
+      "0.8": "0,80 €",
+      "0.7": "0,70 €",
+      "0.6": "0,60 €",
+      "0.15": "0,15 €",
+      "0.1": "0,10 €",
+      "0.05": "0,05 €"
+    },
+    "stamp_sum_display": "100,00 €",
+    "card_data": {
+      "Mastercard": {
+        "fruehdienst_sum_input": "0,00 €",
+        "spaetdienst_sum_input": "0,00 €",
+        "reception1": "0,00 €",
+        "reception2": "0,00 €",
+        "reception3": "0,00 €"
+      },
+      "VisaVPAY": {
+        "fruehdienst_sum_input": "0,00 €",
+        "spaetdienst_sum_input": "0,00 €",
+        "reception1": "0,00 €",
+        "reception2": "0,00 €",
+        "reception3": "0,00 €"
+      },
+      "Amex": {
+        "fruehdienst_sum_input": "0,00 €",
+        "spaetdienst_sum_input": "0,00 €",
+        "reception1": "0,00 €",
+        "reception2": "0,00 €",
+        "reception3": "0,00 €"
+      },
+      "Maestro": {
+        "fruehdienst_sum_input": "0,00 €",
+        "spaetdienst_sum_input": "0,00 €",
+        "reception1": "0,00 €",
+        "reception2": "0,00 €",
+        "reception3": "0,00 €"
+      }
+    },
+    "kassenabschluss_werte": {
+      "QUITTUNG_1": "0,00 €",
+      "QUITTUNG_2": "0,00 €",
+      "QUITTUNG_3": "0,00 €",
+      "DIVERSES": "0,00 €",
+      "MINIBAR_UMSATZ_TOTAL": "0,00 €",
+      "SUMME_POSTEN": "100,00 €",
+      "SOLL": "800,00 €",
+      "UMSATZ_FRUEH": "0,00 €",
+      "UMSATZ_SPAET": "0,00 €",
+      "UMSATZ_TOTAL": "0,00 €",
+      "KASSE_TOTAL": "800,00 €",
+      "TIP": "-700,00 €",
+      "ENTNAHME": "-700,00 €"
+    },
+    "notes_content": ""
+  }
+}

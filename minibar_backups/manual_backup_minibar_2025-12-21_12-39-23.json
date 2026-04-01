@@ -1,0 +1,148 @@
+{
+  "2025-12": [
+    {
+      "id": "4670afa6302640a2ab932a62784de1fc",
+      "datum": "2025-12-16",
+      "artikel_name": "Bickensohler",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    },
+    {
+      "id": "8600cc2b1d1e4ce3b0b25ecca8280ece",
+      "datum": "2025-12-16",
+      "artikel_name": "Cola",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "6539c0e1a705491d903a66555dae0bfc",
+      "datum": "2025-12-16",
+      "artikel_name": "Schokoriegel",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 2.0
+    },
+    {
+      "id": "9bb1beb2bbd640018175d16f6d2d2d20",
+      "datum": "2025-12-17",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "17286223e50d466fadf7eba15673b467",
+      "datum": "2025-12-17",
+      "artikel_name": "Apoli",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.5,
+      "gesamt_umsatz": 3.5
+    },
+    {
+      "id": "96fbf4acac3e4549914e87940e88eff6",
+      "datum": "2025-12-17",
+      "artikel_name": "Cola",
+      "menge": 3,
+      "verlust_anzahl": 1,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 7.2
+    },
+    {
+      "id": "6a50bb6a9c384c3e8e246941fcb17f28",
+      "datum": "2025-12-17",
+      "artikel_name": "NicNac's",
+      "menge": 2,
+      "verlust_anzahl": 1,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 2.0
+    },
+    {
+      "id": "78427372881e490184191269d5917061",
+      "datum": "2025-12-17",
+      "artikel_name": "Schokoriegel",
+      "menge": 2,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 4.0
+    },
+    {
+      "id": "0489262f1af24ff589ce0d7994173fd1",
+      "datum": "2025-12-18",
+      "artikel_name": "NicNac's",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 2.0
+    },
+    {
+      "id": "47195773c3074cd3836079b6a98b8ba5",
+      "datum": "2025-12-18",
+      "artikel_name": "Schokoriegel",
+      "menge": 2,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 4.0
+    },
+    {
+      "id": "4a0162d43ed840f3946d935dbeb93afd",
+      "datum": "2025-12-19",
+      "artikel_name": "NicNac's",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 2.0
+    },
+    {
+      "id": "ffbc88386e2d4553846cd2a26ec1166b",
+      "datum": "2025-12-19",
+      "artikel_name": "Schokoriegel",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 2.0
+    },
+    {
+      "id": "bde61c36ef914b1cb51704e385ce6bd0",
+      "datum": "2025-12-20",
+      "artikel_name": "Apoli",
+      "menge": 2,
+      "verlust_anzahl": 1,
+      "preis_pro_stueck": 3.5,
+      "gesamt_umsatz": 3.5
+    },
+    {
+      "id": "58e0c1a0a68e4fcf94af1b1c83aaa568",
+      "datum": "2025-12-20",
+      "artikel_name": "Bickensohler",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    },
+    {
+      "id": "562cb90508af42c09be1a055e9013b6c",
+      "datum": "2025-12-20",
+      "artikel_name": "Cola",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "0e66413193454b16baa2dc680cb757a0",
+      "datum": "2025-12-21",
+      "artikel_name": "Bickensohler",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    }
+  ]
+}

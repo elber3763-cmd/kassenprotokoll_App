@@ -1,0 +1,18 @@
+[
+  {
+    "id": "c9c73c1515d24027a9a92d1c50dbd3ea",
+    "datum": "2025-11-03",
+    "zeit": "23:55",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  },
+  {
+    "id": "4f680fb5cf0e4c3ea69da3f4c8143d5e",
+    "datum": "2025-11-04",
+    "zeit": "11:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "kuerzel": "KD"
+  }
+]

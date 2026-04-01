@@ -1,0 +1,40 @@
+{
+  "einnahmen_fo_frueh": "100,00 €",
+  "einnahmen_fo_spaet": "100,00 €",
+  "einnahmen_fo_nacht": "100,00 €",
+  "einnahmen_fo_tip": "-100,00 €",
+  "einnahmen_bar_haupt": "10.000,00 €",
+  "einnahmen_bar_tip": "-500,00 €",
+  "ausgaben_rows": [
+    {
+      "mitarbeiter": "",
+      "wofuer": "",
+      "betrag": "100,00 €"
+    },
+    {
+      "mitarbeiter": "",
+      "wofuer": "",
+      "betrag": "0,00 €"
+    },
+    {
+      "mitarbeiter": "",
+      "wofuer": "",
+      "betrag": "0,00 €"
+    },
+    {
+      "mitarbeiter": "",
+      "wofuer": "",
+      "betrag": "0,00 €"
+    },
+    {
+      "mitarbeiter": "",
+      "wofuer": "",
+      "betrag": "0,00 €"
+    },
+    {
+      "mitarbeiter": "",
+      "wofuer": "",
+      "betrag": "0,00 €"
+    }
+  ]
+}

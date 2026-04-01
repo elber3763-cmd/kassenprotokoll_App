@@ -1,0 +1,31 @@
+{
+  "2025-12": [
+    {
+      "id": "e22d825625e248ad926c6baf259f2778",
+      "datum": "2025-12-02",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "41cbe57019944f54802b8e650ac2cd35",
+      "datum": "2025-12-02",
+      "artikel_name": "Bickensohler",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    },
+    {
+      "id": "c36d693274db4f8d8857ceadb3a82a1c",
+      "datum": "2025-12-02",
+      "artikel_name": "NicNac's",
+      "menge": 2,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 4.0
+    }
+  ]
+}

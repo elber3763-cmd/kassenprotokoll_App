@@ -1,0 +1,39 @@
+[
+  {
+    "id": "a72e63a86bcf462485ca5ca3cf3132c1",
+    "type": "Hinfahrt",
+    "datum": "05.03.2026",
+    "zeit": "07:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "personen": 1,
+    "erledigt": true
+  },
+  {
+    "id": "62944ce6da694bef8abcb436e9784678",
+    "type": "Hinfahrt",
+    "datum": "04.03.2026",
+    "zeit": "07:00",
+    "zimmer": "102",
+    "gastname": "TEST2",
+    "personen": 1
+  },
+  {
+    "id": "334a438fbc354a4aac35127dbafd1278",
+    "type": "Hinfahrt",
+    "datum": "04.03.2026",
+    "zeit": "07:00",
+    "zimmer": "103",
+    "gastname": "TEST3",
+    "personen": 1
+  },
+  {
+    "id": "90ede8ebeb644cd9bfc17248de112494",
+    "type": "Hinfahrt",
+    "datum": "04.03.2026",
+    "zeit": "07:00",
+    "zimmer": "104",
+    "gastname": "TEST4",
+    "personen": 1
+  }
+]

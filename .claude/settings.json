@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pyinstaller -y kassenprotokoll.spec)",
+      "Bash(pyinstaller kassenprotokoll.spec -y)"
+    ]
+  }
+}

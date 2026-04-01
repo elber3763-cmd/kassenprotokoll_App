@@ -1,5 +1,2288 @@
 [
   {
+    "timestamp": "2026-04-01T16:35:33.944136",
+    "action": "Alle Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "b7e958ce44fe4cb7bfa1119f971f286d",
+          "name": "Anbarpinar\tYounes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b050d6e850eb4004816c9d6b14fe1253",
+          "name": "Matz\tBastian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e68bfa32d40747c7bbdbe39b8a09b8f0",
+          "name": "Bäcker\tVincent",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1e689df685e54155b77a50587319743b",
+          "name": "Barion\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d2595a589be149d2adbe617351b11421",
+          "name": "Baumann\tNiklas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "62d2ff87de874eb0b917fa07e751fc26",
+          "name": "Breytung\tYannis",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "132a9f1f58eb40658b686de851776845",
+          "name": "Buttler\tJohn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d9936fd28a4c4d9eac7996cd8c20cc86",
+          "name": "Delkeskamp\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "42f7141a49c0490ea26d650cf68be348",
+          "name": "Freimüller\tBennet",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "18f237d5326b449bab5f83a16f1bae97",
+          "name": "Ehinger\tMike",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9ade50f6945c4d55afc404c31186f0b1",
+          "name": "Eilert\tJulian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "57ded2bb3bdf432e9186900d0f86a7eb",
+          "name": "Ernst\tBenedikt",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "371a59d1b50a4ed3877a59127a266fa8",
+          "name": "Gambach\tAdrian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5c77f523356545e99b5fb368a2b484d6",
+          "name": "Even\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d5f638270e6045ecafd76e205bb8ecc1",
+          "name": "Schwenk\tNico",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7603e15740184602aad627d125640503",
+          "name": "Flimm\tAnnamaria",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8983b4f752a24413b4cbc18ae041aa95",
+          "name": "Gormanns\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2ff20c7472da48b5a5ced9d16d3157b3",
+          "name": "Guddat\tJustin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "dd6e860ce5024ce492597d14d20acc21",
+          "name": "Hanser\tLuka",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eb619099a040494784aab3608df3de7a",
+          "name": "Jansen\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d4c99ccb5d274e1fbf1a86690a3b1299",
+          "name": "Jasinski\tScott",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2aa6e36af02c483abb3691f1fc571371",
+          "name": "Teichler\tDavid Ralf",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "be664386d80c4731addce8faea7eaf5f",
+          "name": "Kappelmeier\tAaron",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c7b818ed85c48f79cef0780b6b04c82",
+          "name": "Kappes\tSven",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f9d2674dd3e48f481c371303d2dd430",
+          "name": "Kielau\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3487d8b44b1e44f5a7331466a6b6c555",
+          "name": "Wolf\tPascal Leon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "bc5659d4e93545fe9bdc71956727d508",
+          "name": "Klein\tKevin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "28eb2a5c83774429a012d67c43ba81a8",
+          "name": "Kraft\tJannik Finn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "ae959a239c16479b80dbf87786c667f2",
+          "name": "Lampe\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7abe0b92f577472fb6bb575bc0c29b00",
+          "name": "Laskaj\tFabian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "63664c12e20e4f12a248af10974ace4b",
+          "name": "Le\tThanh Thy",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7b8eca6c3139454f81e5dece65fb4a2d",
+          "name": "Lobmüller\tSamuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eda76ccb9f744966ac861864e3878cc8",
+          "name": "Mauß\tMarius",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a69f7c75160447a485e59d69cf35e3a0",
+          "name": "Schiffer\tMark",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "88a565c5e7bd40758d7fec9c0e692c07",
+          "name": "Mayer\tSteffen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "660914f32bb04580aa066654779f1eed",
+          "name": "Meyer\tDavid",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5461b27cced14010a81527d77f1845f2",
+          "name": "Renn\tJohannes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1cf959bba97a42648b0125f0393d4eee",
+          "name": "Mostafavi\tLucas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d6fb94ccdeab4e5ea984637e4d1958cd",
+          "name": "Müller\tPhilipp",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f56426b199e494099820d369e243e73",
+          "name": "Nawrotzki\tLuca",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8097137af1a04cb6a4ef03797c93b999",
+          "name": "Normann\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a6f7f47c8eb548468c1013abfb028d3d",
+          "name": "Nünning\tManuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eff8153c555c4ed5a9d7287565280d38",
+          "name": "Radtke\tColin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "44c7ef50ef3946fb810d1dabcb5567a1",
+          "name": "Pilapil\tMarc Anthony",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2c76b3b3061e4059a4e43f91ed8e6d2a",
+          "name": "Quirin\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a57e56c818b44857bd2c239368c70d38",
+          "name": "Schmidt\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9f62204206fc41a3be060f12ac445cc2",
+          "name": "Steinbarth\tMaik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6469ce505d8548568c30f9efe6cbe058",
+          "name": "Vilenkin\tDaniyil",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b52b157f6ec5495c86b2df59ea71947e",
+          "name": "Schmülling\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "10a5ee1e33904e8abbe3e21f86220c8e",
+          "name": "Siebler\tValentin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e56befeed21f4900aa7e849832ce6a2f",
+          "name": "Stratmann\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a886f935f583484dbb26a4ec70c55396",
+          "name": "Hoang\tVan Ha",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f6d52dac13974fbd8c276c8fc7429fa2",
+          "name": "Stromberg\tMadeleen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c13daa265b854a8d8dd88a74883633a4",
+          "name": "Wagner\tSören",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6fe5d6d9bf384d77bb87cfd8a5f69d3b",
+          "name": "Wally\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3798cd91fc74490bb89b675064d58aab",
+          "name": "Wegelin\tLennart",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b04d491d20dc49d5b851ee782c14b7a4",
+          "name": "Wiesner\tRamon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c468c2c87f44230a032bec8eac9eb53",
+          "name": "Wobst\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "25118c03cb6e4a16856ee2ad9496e42d",
+          "name": "Wollny\tEric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "0457283fe9664e4aa14a4779e65cf46d",
+          "name": "Winkler\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "22f4abcdf6214fcd9630bf9f18a883ab",
+          "name": "Stark\tJonas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8467a69732994973ab12122509f99f72",
+          "name": "Anithkumar\tSivakumar",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2fda1f6e08e64a2b914be6b1ee82ae21",
+          "name": "Polaczek\tMarcel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8991c443b5df4db8a05ebcd56b87f8c3",
+          "name": "Boden\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-31T20:10:54.618082",
+    "action": "Wiederhergestellt aus Verlauf",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "b7e958ce44fe4cb7bfa1119f971f286d",
+          "name": "Anbarpinar\tYounes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b050d6e850eb4004816c9d6b14fe1253",
+          "name": "Matz\tBastian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e68bfa32d40747c7bbdbe39b8a09b8f0",
+          "name": "Bäcker\tVincent",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1e689df685e54155b77a50587319743b",
+          "name": "Barion\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d2595a589be149d2adbe617351b11421",
+          "name": "Baumann\tNiklas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "62d2ff87de874eb0b917fa07e751fc26",
+          "name": "Breytung\tYannis",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "132a9f1f58eb40658b686de851776845",
+          "name": "Buttler\tJohn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d9936fd28a4c4d9eac7996cd8c20cc86",
+          "name": "Delkeskamp\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "42f7141a49c0490ea26d650cf68be348",
+          "name": "Freimüller\tBennet",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "18f237d5326b449bab5f83a16f1bae97",
+          "name": "Ehinger\tMike",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9ade50f6945c4d55afc404c31186f0b1",
+          "name": "Eilert\tJulian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "57ded2bb3bdf432e9186900d0f86a7eb",
+          "name": "Ernst\tBenedikt",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "371a59d1b50a4ed3877a59127a266fa8",
+          "name": "Gambach\tAdrian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5c77f523356545e99b5fb368a2b484d6",
+          "name": "Even\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d5f638270e6045ecafd76e205bb8ecc1",
+          "name": "Schwenk\tNico",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7603e15740184602aad627d125640503",
+          "name": "Flimm\tAnnamaria",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8983b4f752a24413b4cbc18ae041aa95",
+          "name": "Gormanns\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2ff20c7472da48b5a5ced9d16d3157b3",
+          "name": "Guddat\tJustin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "dd6e860ce5024ce492597d14d20acc21",
+          "name": "Hanser\tLuka",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eb619099a040494784aab3608df3de7a",
+          "name": "Jansen\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d4c99ccb5d274e1fbf1a86690a3b1299",
+          "name": "Jasinski\tScott",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2aa6e36af02c483abb3691f1fc571371",
+          "name": "Teichler\tDavid Ralf",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "be664386d80c4731addce8faea7eaf5f",
+          "name": "Kappelmeier\tAaron",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c7b818ed85c48f79cef0780b6b04c82",
+          "name": "Kappes\tSven",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f9d2674dd3e48f481c371303d2dd430",
+          "name": "Kielau\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3487d8b44b1e44f5a7331466a6b6c555",
+          "name": "Wolf\tPascal Leon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "bc5659d4e93545fe9bdc71956727d508",
+          "name": "Klein\tKevin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "28eb2a5c83774429a012d67c43ba81a8",
+          "name": "Kraft\tJannik Finn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "ae959a239c16479b80dbf87786c667f2",
+          "name": "Lampe\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7abe0b92f577472fb6bb575bc0c29b00",
+          "name": "Laskaj\tFabian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "63664c12e20e4f12a248af10974ace4b",
+          "name": "Le\tThanh Thy",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7b8eca6c3139454f81e5dece65fb4a2d",
+          "name": "Lobmüller\tSamuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eda76ccb9f744966ac861864e3878cc8",
+          "name": "Mauß\tMarius",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a69f7c75160447a485e59d69cf35e3a0",
+          "name": "Schiffer\tMark",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "88a565c5e7bd40758d7fec9c0e692c07",
+          "name": "Mayer\tSteffen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "660914f32bb04580aa066654779f1eed",
+          "name": "Meyer\tDavid",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5461b27cced14010a81527d77f1845f2",
+          "name": "Renn\tJohannes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1cf959bba97a42648b0125f0393d4eee",
+          "name": "Mostafavi\tLucas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d6fb94ccdeab4e5ea984637e4d1958cd",
+          "name": "Müller\tPhilipp",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f56426b199e494099820d369e243e73",
+          "name": "Nawrotzki\tLuca",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8097137af1a04cb6a4ef03797c93b999",
+          "name": "Normann\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a6f7f47c8eb548468c1013abfb028d3d",
+          "name": "Nünning\tManuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eff8153c555c4ed5a9d7287565280d38",
+          "name": "Radtke\tColin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "44c7ef50ef3946fb810d1dabcb5567a1",
+          "name": "Pilapil\tMarc Anthony",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2c76b3b3061e4059a4e43f91ed8e6d2a",
+          "name": "Quirin\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a57e56c818b44857bd2c239368c70d38",
+          "name": "Schmidt\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9f62204206fc41a3be060f12ac445cc2",
+          "name": "Steinbarth\tMaik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6469ce505d8548568c30f9efe6cbe058",
+          "name": "Vilenkin\tDaniyil",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b52b157f6ec5495c86b2df59ea71947e",
+          "name": "Schmülling\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "10a5ee1e33904e8abbe3e21f86220c8e",
+          "name": "Siebler\tValentin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e56befeed21f4900aa7e849832ce6a2f",
+          "name": "Stratmann\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a886f935f583484dbb26a4ec70c55396",
+          "name": "Hoang\tVan Ha",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f6d52dac13974fbd8c276c8fc7429fa2",
+          "name": "Stromberg\tMadeleen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c13daa265b854a8d8dd88a74883633a4",
+          "name": "Wagner\tSören",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6fe5d6d9bf384d77bb87cfd8a5f69d3b",
+          "name": "Wally\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3798cd91fc74490bb89b675064d58aab",
+          "name": "Wegelin\tLennart",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b04d491d20dc49d5b851ee782c14b7a4",
+          "name": "Wiesner\tRamon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c468c2c87f44230a032bec8eac9eb53",
+          "name": "Wobst\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "25118c03cb6e4a16856ee2ad9496e42d",
+          "name": "Wollny\tEric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "0457283fe9664e4aa14a4779e65cf46d",
+          "name": "Winkler\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "22f4abcdf6214fcd9630bf9f18a883ab",
+          "name": "Stark\tJonas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8467a69732994973ab12122509f99f72",
+          "name": "Anithkumar\tSivakumar",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2fda1f6e08e64a2b914be6b1ee82ae21",
+          "name": "Polaczek\tMarcel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8991c443b5df4db8a05ebcd56b87f8c3",
+          "name": "Boden\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-31T20:10:46.186646",
+    "action": "Alle Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "b050d6e850eb4004816c9d6b14fe1253",
+          "name": "Matz\tBastian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e68bfa32d40747c7bbdbe39b8a09b8f0",
+          "name": "Bäcker\tVincent",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1e689df685e54155b77a50587319743b",
+          "name": "Barion\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d2595a589be149d2adbe617351b11421",
+          "name": "Baumann\tNiklas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "62d2ff87de874eb0b917fa07e751fc26",
+          "name": "Breytung\tYannis",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "132a9f1f58eb40658b686de851776845",
+          "name": "Buttler\tJohn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d9936fd28a4c4d9eac7996cd8c20cc86",
+          "name": "Delkeskamp\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "42f7141a49c0490ea26d650cf68be348",
+          "name": "Freimüller\tBennet",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "18f237d5326b449bab5f83a16f1bae97",
+          "name": "Ehinger\tMike",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9ade50f6945c4d55afc404c31186f0b1",
+          "name": "Eilert\tJulian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "57ded2bb3bdf432e9186900d0f86a7eb",
+          "name": "Ernst\tBenedikt",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "371a59d1b50a4ed3877a59127a266fa8",
+          "name": "Gambach\tAdrian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5c77f523356545e99b5fb368a2b484d6",
+          "name": "Even\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d5f638270e6045ecafd76e205bb8ecc1",
+          "name": "Schwenk\tNico",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7603e15740184602aad627d125640503",
+          "name": "Flimm\tAnnamaria",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8983b4f752a24413b4cbc18ae041aa95",
+          "name": "Gormanns\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2ff20c7472da48b5a5ced9d16d3157b3",
+          "name": "Guddat\tJustin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "dd6e860ce5024ce492597d14d20acc21",
+          "name": "Hanser\tLuka",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eb619099a040494784aab3608df3de7a",
+          "name": "Jansen\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d4c99ccb5d274e1fbf1a86690a3b1299",
+          "name": "Jasinski\tScott",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2aa6e36af02c483abb3691f1fc571371",
+          "name": "Teichler\tDavid Ralf",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "be664386d80c4731addce8faea7eaf5f",
+          "name": "Kappelmeier\tAaron",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c7b818ed85c48f79cef0780b6b04c82",
+          "name": "Kappes\tSven",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f9d2674dd3e48f481c371303d2dd430",
+          "name": "Kielau\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3487d8b44b1e44f5a7331466a6b6c555",
+          "name": "Wolf\tPascal Leon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "bc5659d4e93545fe9bdc71956727d508",
+          "name": "Klein\tKevin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "28eb2a5c83774429a012d67c43ba81a8",
+          "name": "Kraft\tJannik Finn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "ae959a239c16479b80dbf87786c667f2",
+          "name": "Lampe\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7abe0b92f577472fb6bb575bc0c29b00",
+          "name": "Laskaj\tFabian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "63664c12e20e4f12a248af10974ace4b",
+          "name": "Le\tThanh Thy",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7b8eca6c3139454f81e5dece65fb4a2d",
+          "name": "Lobmüller\tSamuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eda76ccb9f744966ac861864e3878cc8",
+          "name": "Mauß\tMarius",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a69f7c75160447a485e59d69cf35e3a0",
+          "name": "Schiffer\tMark",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "88a565c5e7bd40758d7fec9c0e692c07",
+          "name": "Mayer\tSteffen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "660914f32bb04580aa066654779f1eed",
+          "name": "Meyer\tDavid",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5461b27cced14010a81527d77f1845f2",
+          "name": "Renn\tJohannes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1cf959bba97a42648b0125f0393d4eee",
+          "name": "Mostafavi\tLucas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d6fb94ccdeab4e5ea984637e4d1958cd",
+          "name": "Müller\tPhilipp",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f56426b199e494099820d369e243e73",
+          "name": "Nawrotzki\tLuca",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8097137af1a04cb6a4ef03797c93b999",
+          "name": "Normann\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a6f7f47c8eb548468c1013abfb028d3d",
+          "name": "Nünning\tManuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eff8153c555c4ed5a9d7287565280d38",
+          "name": "Radtke\tColin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "44c7ef50ef3946fb810d1dabcb5567a1",
+          "name": "Pilapil\tMarc Anthony",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2c76b3b3061e4059a4e43f91ed8e6d2a",
+          "name": "Quirin\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a57e56c818b44857bd2c239368c70d38",
+          "name": "Schmidt\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9f62204206fc41a3be060f12ac445cc2",
+          "name": "Steinbarth\tMaik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6469ce505d8548568c30f9efe6cbe058",
+          "name": "Vilenkin\tDaniyil",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b52b157f6ec5495c86b2df59ea71947e",
+          "name": "Schmülling\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "10a5ee1e33904e8abbe3e21f86220c8e",
+          "name": "Siebler\tValentin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e56befeed21f4900aa7e849832ce6a2f",
+          "name": "Stratmann\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a886f935f583484dbb26a4ec70c55396",
+          "name": "Hoang\tVan Ha",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f6d52dac13974fbd8c276c8fc7429fa2",
+          "name": "Stromberg\tMadeleen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c13daa265b854a8d8dd88a74883633a4",
+          "name": "Wagner\tSören",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6fe5d6d9bf384d77bb87cfd8a5f69d3b",
+          "name": "Wally\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3798cd91fc74490bb89b675064d58aab",
+          "name": "Wegelin\tLennart",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b04d491d20dc49d5b851ee782c14b7a4",
+          "name": "Wiesner\tRamon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c468c2c87f44230a032bec8eac9eb53",
+          "name": "Wobst\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "25118c03cb6e4a16856ee2ad9496e42d",
+          "name": "Wollny\tEric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "0457283fe9664e4aa14a4779e65cf46d",
+          "name": "Winkler\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "22f4abcdf6214fcd9630bf9f18a883ab",
+          "name": "Stark\tJonas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8467a69732994973ab12122509f99f72",
+          "name": "Anithkumar\tSivakumar",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2fda1f6e08e64a2b914be6b1ee82ae21",
+          "name": "Polaczek\tMarcel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8991c443b5df4db8a05ebcd56b87f8c3",
+          "name": "Boden\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-31T20:10:36.228240",
+    "action": "Eintrag/Einträge gelöscht",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "b7e958ce44fe4cb7bfa1119f971f286d",
+          "name": "Anbarpinar\tYounes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b050d6e850eb4004816c9d6b14fe1253",
+          "name": "Matz\tBastian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e68bfa32d40747c7bbdbe39b8a09b8f0",
+          "name": "Bäcker\tVincent",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1e689df685e54155b77a50587319743b",
+          "name": "Barion\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d2595a589be149d2adbe617351b11421",
+          "name": "Baumann\tNiklas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "62d2ff87de874eb0b917fa07e751fc26",
+          "name": "Breytung\tYannis",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "132a9f1f58eb40658b686de851776845",
+          "name": "Buttler\tJohn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d9936fd28a4c4d9eac7996cd8c20cc86",
+          "name": "Delkeskamp\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "42f7141a49c0490ea26d650cf68be348",
+          "name": "Freimüller\tBennet",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "18f237d5326b449bab5f83a16f1bae97",
+          "name": "Ehinger\tMike",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9ade50f6945c4d55afc404c31186f0b1",
+          "name": "Eilert\tJulian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "57ded2bb3bdf432e9186900d0f86a7eb",
+          "name": "Ernst\tBenedikt",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "371a59d1b50a4ed3877a59127a266fa8",
+          "name": "Gambach\tAdrian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5c77f523356545e99b5fb368a2b484d6",
+          "name": "Even\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d5f638270e6045ecafd76e205bb8ecc1",
+          "name": "Schwenk\tNico",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7603e15740184602aad627d125640503",
+          "name": "Flimm\tAnnamaria",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8983b4f752a24413b4cbc18ae041aa95",
+          "name": "Gormanns\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2ff20c7472da48b5a5ced9d16d3157b3",
+          "name": "Guddat\tJustin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "dd6e860ce5024ce492597d14d20acc21",
+          "name": "Hanser\tLuka",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eb619099a040494784aab3608df3de7a",
+          "name": "Jansen\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d4c99ccb5d274e1fbf1a86690a3b1299",
+          "name": "Jasinski\tScott",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2aa6e36af02c483abb3691f1fc571371",
+          "name": "Teichler\tDavid Ralf",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "be664386d80c4731addce8faea7eaf5f",
+          "name": "Kappelmeier\tAaron",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c7b818ed85c48f79cef0780b6b04c82",
+          "name": "Kappes\tSven",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f9d2674dd3e48f481c371303d2dd430",
+          "name": "Kielau\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3487d8b44b1e44f5a7331466a6b6c555",
+          "name": "Wolf\tPascal Leon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "bc5659d4e93545fe9bdc71956727d508",
+          "name": "Klein\tKevin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "28eb2a5c83774429a012d67c43ba81a8",
+          "name": "Kraft\tJannik Finn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "ae959a239c16479b80dbf87786c667f2",
+          "name": "Lampe\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7abe0b92f577472fb6bb575bc0c29b00",
+          "name": "Laskaj\tFabian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "63664c12e20e4f12a248af10974ace4b",
+          "name": "Le\tThanh Thy",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7b8eca6c3139454f81e5dece65fb4a2d",
+          "name": "Lobmüller\tSamuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eda76ccb9f744966ac861864e3878cc8",
+          "name": "Mauß\tMarius",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a69f7c75160447a485e59d69cf35e3a0",
+          "name": "Schiffer\tMark",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "88a565c5e7bd40758d7fec9c0e692c07",
+          "name": "Mayer\tSteffen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "660914f32bb04580aa066654779f1eed",
+          "name": "Meyer\tDavid",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5461b27cced14010a81527d77f1845f2",
+          "name": "Renn\tJohannes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1cf959bba97a42648b0125f0393d4eee",
+          "name": "Mostafavi\tLucas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d6fb94ccdeab4e5ea984637e4d1958cd",
+          "name": "Müller\tPhilipp",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f56426b199e494099820d369e243e73",
+          "name": "Nawrotzki\tLuca",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8097137af1a04cb6a4ef03797c93b999",
+          "name": "Normann\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a6f7f47c8eb548468c1013abfb028d3d",
+          "name": "Nünning\tManuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eff8153c555c4ed5a9d7287565280d38",
+          "name": "Radtke\tColin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "44c7ef50ef3946fb810d1dabcb5567a1",
+          "name": "Pilapil\tMarc Anthony",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2c76b3b3061e4059a4e43f91ed8e6d2a",
+          "name": "Quirin\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a57e56c818b44857bd2c239368c70d38",
+          "name": "Schmidt\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9f62204206fc41a3be060f12ac445cc2",
+          "name": "Steinbarth\tMaik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6469ce505d8548568c30f9efe6cbe058",
+          "name": "Vilenkin\tDaniyil",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b52b157f6ec5495c86b2df59ea71947e",
+          "name": "Schmülling\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "10a5ee1e33904e8abbe3e21f86220c8e",
+          "name": "Siebler\tValentin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e56befeed21f4900aa7e849832ce6a2f",
+          "name": "Stratmann\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a886f935f583484dbb26a4ec70c55396",
+          "name": "Hoang\tVan Ha",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f6d52dac13974fbd8c276c8fc7429fa2",
+          "name": "Stromberg\tMadeleen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c13daa265b854a8d8dd88a74883633a4",
+          "name": "Wagner\tSören",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6fe5d6d9bf384d77bb87cfd8a5f69d3b",
+          "name": "Wally\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3798cd91fc74490bb89b675064d58aab",
+          "name": "Wegelin\tLennart",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b04d491d20dc49d5b851ee782c14b7a4",
+          "name": "Wiesner\tRamon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c468c2c87f44230a032bec8eac9eb53",
+          "name": "Wobst\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "25118c03cb6e4a16856ee2ad9496e42d",
+          "name": "Wollny\tEric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "0457283fe9664e4aa14a4779e65cf46d",
+          "name": "Winkler\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "22f4abcdf6214fcd9630bf9f18a883ab",
+          "name": "Stark\tJonas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8467a69732994973ab12122509f99f72",
+          "name": "Anithkumar\tSivakumar",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2fda1f6e08e64a2b914be6b1ee82ae21",
+          "name": "Polaczek\tMarcel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8991c443b5df4db8a05ebcd56b87f8c3",
+          "name": "Boden\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-03-31T16:40:21.721185",
+    "action": "Liste ersetzt",
+    "data": {
+      "firmenname": "",
+      "extra_infos": "",
+      "entries": [
+        {
+          "id": "b7e958ce44fe4cb7bfa1119f971f286d",
+          "name": "Anbarpinar\tYounes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b050d6e850eb4004816c9d6b14fe1253",
+          "name": "Matz\tBastian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e68bfa32d40747c7bbdbe39b8a09b8f0",
+          "name": "Bäcker\tVincent",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1e689df685e54155b77a50587319743b",
+          "name": "Barion\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d2595a589be149d2adbe617351b11421",
+          "name": "Baumann\tNiklas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "62d2ff87de874eb0b917fa07e751fc26",
+          "name": "Breytung\tYannis",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "132a9f1f58eb40658b686de851776845",
+          "name": "Buttler\tJohn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d9936fd28a4c4d9eac7996cd8c20cc86",
+          "name": "Delkeskamp\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "42f7141a49c0490ea26d650cf68be348",
+          "name": "Freimüller\tBennet",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "18f237d5326b449bab5f83a16f1bae97",
+          "name": "Ehinger\tMike",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9ade50f6945c4d55afc404c31186f0b1",
+          "name": "Eilert\tJulian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "57ded2bb3bdf432e9186900d0f86a7eb",
+          "name": "Ernst\tBenedikt",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "371a59d1b50a4ed3877a59127a266fa8",
+          "name": "Gambach\tAdrian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5c77f523356545e99b5fb368a2b484d6",
+          "name": "Even\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d5f638270e6045ecafd76e205bb8ecc1",
+          "name": "Schwenk\tNico",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7603e15740184602aad627d125640503",
+          "name": "Flimm\tAnnamaria",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8983b4f752a24413b4cbc18ae041aa95",
+          "name": "Gormanns\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2ff20c7472da48b5a5ced9d16d3157b3",
+          "name": "Guddat\tJustin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "dd6e860ce5024ce492597d14d20acc21",
+          "name": "Hanser\tLuka",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eb619099a040494784aab3608df3de7a",
+          "name": "Jansen\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d4c99ccb5d274e1fbf1a86690a3b1299",
+          "name": "Jasinski\tScott",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2aa6e36af02c483abb3691f1fc571371",
+          "name": "Teichler\tDavid Ralf",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "be664386d80c4731addce8faea7eaf5f",
+          "name": "Kappelmeier\tAaron",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c7b818ed85c48f79cef0780b6b04c82",
+          "name": "Kappes\tSven",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f9d2674dd3e48f481c371303d2dd430",
+          "name": "Kielau\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3487d8b44b1e44f5a7331466a6b6c555",
+          "name": "Wolf\tPascal Leon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "bc5659d4e93545fe9bdc71956727d508",
+          "name": "Klein\tKevin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "28eb2a5c83774429a012d67c43ba81a8",
+          "name": "Kraft\tJannik Finn",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "ae959a239c16479b80dbf87786c667f2",
+          "name": "Lampe\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7abe0b92f577472fb6bb575bc0c29b00",
+          "name": "Laskaj\tFabian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "63664c12e20e4f12a248af10974ace4b",
+          "name": "Le\tThanh Thy",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7b8eca6c3139454f81e5dece65fb4a2d",
+          "name": "Lobmüller\tSamuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eda76ccb9f744966ac861864e3878cc8",
+          "name": "Mauß\tMarius",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a69f7c75160447a485e59d69cf35e3a0",
+          "name": "Schiffer\tMark",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "88a565c5e7bd40758d7fec9c0e692c07",
+          "name": "Mayer\tSteffen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "660914f32bb04580aa066654779f1eed",
+          "name": "Meyer\tDavid",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "5461b27cced14010a81527d77f1845f2",
+          "name": "Renn\tJohannes",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1cf959bba97a42648b0125f0393d4eee",
+          "name": "Mostafavi\tLucas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "d6fb94ccdeab4e5ea984637e4d1958cd",
+          "name": "Müller\tPhilipp",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "7f56426b199e494099820d369e243e73",
+          "name": "Nawrotzki\tLuca",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8097137af1a04cb6a4ef03797c93b999",
+          "name": "Normann\tFelix",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a6f7f47c8eb548468c1013abfb028d3d",
+          "name": "Nünning\tManuel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "eff8153c555c4ed5a9d7287565280d38",
+          "name": "Radtke\tColin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "44c7ef50ef3946fb810d1dabcb5567a1",
+          "name": "Pilapil\tMarc Anthony",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2c76b3b3061e4059a4e43f91ed8e6d2a",
+          "name": "Quirin\tMaurice",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a57e56c818b44857bd2c239368c70d38",
+          "name": "Schmidt\tMaximilian",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "9f62204206fc41a3be060f12ac445cc2",
+          "name": "Steinbarth\tMaik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6469ce505d8548568c30f9efe6cbe058",
+          "name": "Vilenkin\tDaniyil",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b52b157f6ec5495c86b2df59ea71947e",
+          "name": "Schmülling\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "10a5ee1e33904e8abbe3e21f86220c8e",
+          "name": "Siebler\tValentin",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "e56befeed21f4900aa7e849832ce6a2f",
+          "name": "Stratmann\tJannik",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "a886f935f583484dbb26a4ec70c55396",
+          "name": "Hoang\tVan Ha",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "f6d52dac13974fbd8c276c8fc7429fa2",
+          "name": "Stromberg\tMadeleen",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "c13daa265b854a8d8dd88a74883633a4",
+          "name": "Wagner\tSören",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "6fe5d6d9bf384d77bb87cfd8a5f69d3b",
+          "name": "Wally\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "3798cd91fc74490bb89b675064d58aab",
+          "name": "Wegelin\tLennart",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "b04d491d20dc49d5b851ee782c14b7a4",
+          "name": "Wiesner\tRamon",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "1c468c2c87f44230a032bec8eac9eb53",
+          "name": "Wobst\tCedric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "25118c03cb6e4a16856ee2ad9496e42d",
+          "name": "Wollny\tEric",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "0457283fe9664e4aa14a4779e65cf46d",
+          "name": "Winkler\tTim",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "22f4abcdf6214fcd9630bf9f18a883ab",
+          "name": "Stark\tJonas",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8467a69732994973ab12122509f99f72",
+          "name": "Anithkumar\tSivakumar",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "2fda1f6e08e64a2b914be6b1ee82ae21",
+          "name": "Polaczek\tMarcel",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        },
+        {
+          "id": "8991c443b5df4db8a05ebcd56b87f8c3",
+          "name": "Boden\tPascal",
+          "nationality": "",
+          "contact": "",
+          "car": ""
+        }
+      ]
+    }
+  },
+  {
     "timestamp": "2026-03-25T04:08:12.208067",
     "action": "Eintrag/Einträge gelöscht",
     "data": {
@@ -348,235 +2631,6 @@
         {
           "id": "eca19675c69341ffbbc14fde08308e7a",
           "name": "van Mustermann Kalmund Ali Reza",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        }
-      ]
-    }
-  },
-  {
-    "timestamp": "2026-03-16T14:23:23.629519",
-    "action": "Wiederhergestellt aus Verlauf",
-    "data": {
-      "firmenname": "",
-      "extra_infos": "",
-      "entries": [
-        {
-          "id": "eca19675c69341ffbbc14fde08308e7a",
-          "name": "Reza, van Mustermann Kalmund Ali",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "fc66081a79e441aa869970884b921089",
-          "room": "",
-          "name": "TEST",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "f461f21f5fea48fea0c6703c09f74fa0",
-          "room": "",
-          "name": "TEST1",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
-          "room": "",
-          "name": "TEST2",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "69c689ef5a6247dd883eacf1cced7b45",
-          "room": "",
-          "name": "Ali",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        }
-      ]
-    }
-  },
-  {
-    "timestamp": "2026-03-16T13:13:25.749984",
-    "action": "Wiederhergestellt aus Verlauf",
-    "data": {
-      "firmenname": "",
-      "extra_infos": "",
-      "entries": [
-        {
-          "id": "eca19675c69341ffbbc14fde08308e7a",
-          "name": "Reza, van Mustermann Kalmund Ali",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "fc66081a79e441aa869970884b921089",
-          "room": "",
-          "name": "TEST",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "f461f21f5fea48fea0c6703c09f74fa0",
-          "room": "",
-          "name": "TEST1",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
-          "room": "",
-          "name": "TEST2",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "69c689ef5a6247dd883eacf1cced7b45",
-          "room": "",
-          "name": "Ali",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        }
-      ]
-    }
-  },
-  {
-    "timestamp": "2026-03-16T04:12:17.815669",
-    "action": "Eintrag hinzugefügt",
-    "data": {
-      "firmenname": "",
-      "extra_infos": "",
-      "entries": [
-        {
-          "id": "eca19675c69341ffbbc14fde08308e7a",
-          "name": "Reza, van Mustermann Kalmund Ali",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "fc66081a79e441aa869970884b921089",
-          "room": "",
-          "name": "TEST",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "f461f21f5fea48fea0c6703c09f74fa0",
-          "room": "",
-          "name": "TEST1",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
-          "room": "",
-          "name": "TEST2",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "69c689ef5a6247dd883eacf1cced7b45",
-          "room": "",
-          "name": "Ali",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        }
-      ]
-    }
-  },
-  {
-    "timestamp": "2026-03-16T04:11:58.704270",
-    "action": "Liste aufbereitet (Namen getauscht)",
-    "data": {
-      "firmenname": "",
-      "extra_infos": "",
-      "entries": [
-        {
-          "id": "eca19675c69341ffbbc14fde08308e7a",
-          "name": "Reza, van Mustermann Kalmund Ali",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "fc66081a79e441aa869970884b921089",
-          "room": "",
-          "name": "TEST",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "f461f21f5fea48fea0c6703c09f74fa0",
-          "room": "",
-          "name": "TEST1",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
-          "room": "",
-          "name": "TEST2",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        }
-      ]
-    }
-  },
-  {
-    "timestamp": "2026-03-16T04:11:28.624372",
-    "action": "Eintrag hinzugefügt",
-    "data": {
-      "firmenname": "",
-      "extra_infos": "",
-      "entries": [
-        {
-          "id": "eca19675c69341ffbbc14fde08308e7a",
-          "name": "Herr van Mustermann Kalmund Ali Reza",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "fc66081a79e441aa869970884b921089",
-          "room": "",
-          "name": "TEST",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "f461f21f5fea48fea0c6703c09f74fa0",
-          "room": "",
-          "name": "TEST1",
-          "nationality": "",
-          "contact": "",
-          "car": ""
-        },
-        {
-          "id": "c7d8a20ad4ef45b3819f41ff625f7565",
-          "room": "",
-          "name": "TEST2",
           "nationality": "",
           "contact": "",
           "car": ""

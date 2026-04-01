@@ -1,0 +1,577 @@
+{
+  "2026-06": [
+    {
+      "datum": "2026-06-01",
+      "bestand": 100.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "KD",
+      "einnahme_spaet": 10.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "KD",
+      "gesamt": 120.0
+    }
+  ],
+  "2025-07": [
+    {
+      "datum": "2025-07-01",
+      "bestand": 108.15,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "JH",
+      "einnahme_spaet": 0.1,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "DH",
+      "gesamt": 108.25
+    },
+    {
+      "datum": "2025-07-03",
+      "bestand": 108.25,
+      "einnahme_frueh": 0.05,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "PT",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "NA",
+      "gesamt": 108.3
+    },
+    {
+      "datum": "2025-07-05",
+      "bestand": 108.3,
+      "einnahme_frueh": 1.4,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "TL",
+      "einnahme_spaet": 10.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 119.7
+    },
+    {
+      "datum": "2025-07-06",
+      "bestand": 119.7,
+      "einnahme_frueh": 12.9,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "TL",
+      "einnahme_spaet": 2.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 134.6
+    },
+    {
+      "datum": "2025-07-07",
+      "bestand": 134.6,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "TL",
+      "einnahme_spaet": 3.66,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "TB",
+      "gesamt": 138.26
+    },
+    {
+      "datum": "2025-07-08",
+      "bestand": 138.26,
+      "einnahme_frueh": 0.9,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "TL",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "TB",
+      "gesamt": 139.16
+    },
+    {
+      "datum": "2025-07-09",
+      "bestand": 139.16,
+      "einnahme_frueh": 0.75,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "TL",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "DH",
+      "gesamt": 139.91
+    },
+    {
+      "datum": "2025-07-10",
+      "bestand": 139.91,
+      "einnahme_frueh": 15.4,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "TL/TB",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 2.15,
+      "kuerzel_spaet": "CG",
+      "gesamt": 153.16
+    },
+    {
+      "datum": "2025-07-14",
+      "bestand": 153.16,
+      "einnahme_frueh": 0.05,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "DH",
+      "einnahme_spaet": 0.09,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "ss",
+      "gesamt": 153.3
+    },
+    {
+      "datum": "2025-07-15",
+      "bestand": 153.3,
+      "einnahme_frueh": 56.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "dh",
+      "einnahme_spaet": 14.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "ss",
+      "gesamt": 223.3
+    },
+    {
+      "datum": "2025-07-16",
+      "bestand": 223.3,
+      "einnahme_frueh": 1.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": ".",
+      "gesamt": 224.3
+    },
+    {
+      "datum": "2025-07-17",
+      "bestand": 224.3,
+      "einnahme_frueh": 20.49,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC spät",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "-",
+      "gesamt": 244.79
+    },
+    {
+      "datum": "2025-07-18",
+      "bestand": 244.79,
+      "einnahme_frueh": 4.4,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "DH",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "NA",
+      "gesamt": 249.19
+    },
+    {
+      "datum": "2025-07-23",
+      "bestand": 249.19,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 7.5,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "DH",
+      "gesamt": 256.69
+    },
+    {
+      "datum": "2025-07-24",
+      "bestand": 256.69,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "JH",
+      "einnahme_spaet": 28.54,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "JH",
+      "gesamt": 285.23
+    },
+    {
+      "datum": "2025-07-25",
+      "bestand": 295.23,
+      "einnahme_frueh": 8.7,
+      "entnahme_frueh": 0.01,
+      "kuerzel_frueh": "PT",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "PT",
+      "gesamt": 303.92
+    },
+    {
+      "datum": "2025-07-26",
+      "bestand": 303.92,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 36.26,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 340.18
+    },
+    {
+      "datum": "2025-07-27",
+      "bestand": 340.18,
+      "einnahme_frueh": 127.73,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SC",
+      "gesamt": 467.91
+    },
+    {
+      "datum": "2025-07-28",
+      "bestand": 467.91,
+      "einnahme_frueh": 9.54,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 20.31,
+      "entnahme_spaet": 106.1,
+      "kuerzel_spaet": "SC",
+      "gesamt": 391.66
+    },
+    {
+      "datum": "2025-07-29",
+      "bestand": 497.76,
+      "einnahme_frueh": 2.47,
+      "entnahme_frueh": 3.42,
+      "kuerzel_frueh": "TB",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "TB",
+      "gesamt": 496.81
+    },
+    {
+      "datum": "2025-07-30",
+      "bestand": 496.81,
+      "einnahme_frueh": 7.9,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "PT",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "PT",
+      "gesamt": 504.71
+    },
+    {
+      "datum": "2025-07-31",
+      "bestand": 504.71,
+      "einnahme_frueh": 5.8,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SC",
+      "gesamt": 510.51
+    }
+  ],
+  "2025-08": [
+    {
+      "datum": "2025-08-01",
+      "bestand": 391.66,
+      "einnahme_frueh": 44.75,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.83,
+      "kuerzel_spaet": "SC",
+      "gesamt": 435.58
+    },
+    {
+      "datum": "2025-08-02",
+      "bestand": 435.58,
+      "einnahme_frueh": 12.75,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "DH",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "TB",
+      "gesamt": 448.33
+    },
+    {
+      "datum": "2025-08-03",
+      "bestand": 448.33,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 19.96,
+      "kuerzel_frueh": "DH",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "NA",
+      "gesamt": 428.37
+    },
+    {
+      "datum": "2025-08-04",
+      "bestand": 428.37,
+      "einnahme_frueh": 91.18,
+      "entnahme_frueh": 46.5,
+      "kuerzel_frueh": "DH",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "NA",
+      "gesamt": 473.05
+    },
+    {
+      "datum": "2025-08-05",
+      "bestand": 473.05,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 10.1,
+      "kuerzel_frueh": "PT",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "NA",
+      "gesamt": 462.95
+    },
+    {
+      "datum": "2025-08-06",
+      "bestand": 462.95,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "NA",
+      "einnahme_spaet": 1.58,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "PT",
+      "gesamt": 464.53
+    },
+    {
+      "datum": "2025-08-07",
+      "bestand": 464.53,
+      "einnahme_frueh": 20.0,
+      "entnahme_frueh": 0.2,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 484.33
+    },
+    {
+      "datum": "2025-08-08",
+      "bestand": 484.33,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "NA",
+      "einnahme_spaet": 1.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "PT",
+      "gesamt": 485.33
+    },
+    {
+      "datum": "2025-08-09",
+      "bestand": 485.33,
+      "einnahme_frueh": 6.45,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 15.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "DH",
+      "gesamt": 506.78
+    },
+    {
+      "datum": "2025-08-10",
+      "bestand": 506.78,
+      "einnahme_frueh": 11.0,
+      "entnahme_frueh": -2.5,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 0.2,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "DH",
+      "gesamt": 515.48
+    },
+    {
+      "datum": "2025-08-11",
+      "bestand": 515.48,
+      "einnahme_frueh": 15.15,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 13.5,
+      "entnahme_spaet": 0.5,
+      "kuerzel_spaet": "DH",
+      "gesamt": 543.63
+    },
+    {
+      "datum": "2025-08-12",
+      "bestand": 543.63,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "NA",
+      "einnahme_spaet": 5.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "DH",
+      "gesamt": 548.63
+    },
+    {
+      "datum": "2025-08-13",
+      "bestand": 548.63,
+      "einnahme_frueh": 0.5,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "TL",
+      "einnahme_spaet": 6.5,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "DH",
+      "gesamt": 555.63
+    },
+    {
+      "datum": "2025-08-14",
+      "bestand": 555.63,
+      "einnahme_frueh": 49.45,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 605.08
+    },
+    {
+      "datum": "2025-08-15",
+      "bestand": 605.08,
+      "einnahme_frueh": 52.8,
+      "entnahme_frueh": 576.0,
+      "kuerzel_frueh": "TB",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "TB",
+      "gesamt": 81.88
+    },
+    {
+      "datum": "2025-08-16",
+      "bestand": 80.88,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 2.54,
+      "kuerzel_frueh": "TL",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "TL",
+      "gesamt": 78.34
+    },
+    {
+      "datum": "2025-08-17",
+      "bestand": 122.04,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 0.3,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "CG",
+      "gesamt": 122.34
+    },
+    {
+      "datum": "2025-08-18",
+      "bestand": 122.34,
+      "einnahme_frueh": 0.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SC",
+      "einnahme_spaet": 2.04,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SC",
+      "gesamt": 124.38
+    },
+    {
+      "datum": "2025-08-21",
+      "bestand": 124.38,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 134.38
+    },
+    {
+      "datum": "2025-08-22",
+      "bestand": 134.38,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 1.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 5.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 138.38
+    },
+    {
+      "datum": "2025-08-28",
+      "bestand": 138.38,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 148.38
+    },
+    {
+      "datum": "2025-08-29",
+      "bestand": 148.38,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 158.38
+    },
+    {
+      "datum": "2025-08-31",
+      "bestand": 158.38,
+      "einnahme_frueh": 2.0,
+      "entnahme_frueh": 1.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 159.38
+    }
+  ],
+  "2025-09": [
+    {
+      "datum": "2025-09-11",
+      "bestand": 100.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 5.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 10.0,
+      "entnahme_spaet": 5.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 110.0
+    }
+  ],
+  "2025-10": [
+    {
+      "datum": "2025-10-24",
+      "bestand": 100.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 110.0
+    }
+  ],
+  "2025-11": [
+    {
+      "datum": "2025-11-03",
+      "bestand": 500.0,
+      "einnahme_frueh": 500.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 1000.0
+    },
+    {
+      "datum": "2025-11-04",
+      "bestand": 1000.0,
+      "einnahme_frueh": 500.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 1500.0
+    }
+  ],
+  "2025-12": [
+    {
+      "datum": "2025-12-03",
+      "bestand": 500.0,
+      "einnahme_frueh": 10.0,
+      "entnahme_frueh": 0.0,
+      "kuerzel_frueh": "SS",
+      "einnahme_spaet": 0.0,
+      "entnahme_spaet": 0.0,
+      "kuerzel_spaet": "SS",
+      "gesamt": 510.0
+    }
+  ]
+}

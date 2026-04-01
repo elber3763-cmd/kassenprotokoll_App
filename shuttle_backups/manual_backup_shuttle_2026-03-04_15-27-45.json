@@ -1,0 +1,12 @@
+[
+  {
+    "id": "86fab0044fda45218208e1717cd85d33",
+    "type": "Hinfahrt",
+    "datum": "08.10.2025",
+    "zeit": "07:00",
+    "zimmer": "101",
+    "gastname": "TEST",
+    "personen": 1,
+    "erledigt": false
+  }
+]

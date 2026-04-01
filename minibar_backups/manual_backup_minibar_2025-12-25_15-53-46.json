@@ -1,0 +1,22 @@
+{
+  "2025-12": [
+    {
+      "id": "47bcfd7e9d1c4922828d09366e016d0c",
+      "datum": "2025-12-25",
+      "artikel_name": "Bickensohler",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    },
+    {
+      "id": "6eb6222772a24972a584cb6d18539592",
+      "datum": "2025-12-25",
+      "artikel_name": "Apoli",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.5,
+      "gesamt_umsatz": 3.5
+    }
+  ]
+}

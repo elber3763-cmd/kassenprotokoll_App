@@ -1,6 +1,6 @@
 {
     "window_width": 1150,
-    "window_height": 1000,
+    "window_height": 999,
     "data_storage_path": "",
     "selected_theme": "alt",
     "overall_header_bg": "#6C6CFF",
@@ -978,10 +978,10 @@
     },
     "doppel_pdf_col_widths": {
         "room": 15,
-        "person": 45,
+        "person": 70,
         "contact": 120,
         "car": 40,
-        "sign": 50
+        "sign": 40
     },
     "namensliste_button_configs": {
         "Namensliste_Add": {
@@ -1042,6 +1042,63 @@
         "NL_DateIcon": {
             "type": "image",
             "value": "O:/kassenprotokoll_App/Schicht.png",
+            "is_active": true
+        }
+    },
+    "namensliste_doppel_button_configs": {
+        "Doppel_Add": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Liste einf\u00fcgen.png",
+            "is_active": true
+        },
+        "Doppel_BulkImport": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Import.png",
+            "is_active": true
+        },
+        "Doppel_Edit": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/bearbeiten.png",
+            "is_active": true
+        },
+        "Doppel_Delete": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Papierkorb.png",
+            "is_active": true
+        },
+        "Doppel_Prepare": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Liste Aufarbeiten.png",
+            "is_active": true
+        },
+        "Doppel_CheckDups": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Doppelt Namen.png",
+            "is_active": true
+        },
+        "Doppel_History": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Verlauf.png",
+            "is_active": true
+        },
+        "Doppel_SavePDF": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Save.png",
+            "is_active": true
+        },
+        "Doppel_Print": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Drucker.png",
+            "is_active": true
+        },
+        "Doppel_BulkAddP1": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/Import.png",
+            "is_active": true
+        },
+        "Doppel_BulkAddP2": {
+            "type": "image",
+            "value": "O:/kassenprotokoll_App/2. Person import.png",
             "is_active": true
         }
     },
@@ -1703,6 +1760,11 @@
         "dialog_buttons": {
             "font_size": 12
         }
+    },
+    "anzeigetafel": {
+        "title": "Rezeptionsmanagement",
+        "width": 400,
+        "height": 120
     },
     "right_panel_button_icon_size": 50,
     "right_panel_button_ipady": 2,

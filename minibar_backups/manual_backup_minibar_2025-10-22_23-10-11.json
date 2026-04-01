@@ -1,0 +1,112 @@
+{
+  "2025-10": [
+    {
+      "id": "1ab1b9dc2ffb40b0af4bfe156325d035",
+      "datum": "2025-10-20",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "1b6abc67338744a2b06272dff5799c45",
+      "datum": "2025-10-20",
+      "artikel_name": "Bickensohler",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    },
+    {
+      "id": "4ee88c5496cf423c920b5f7e637e41cb",
+      "datum": "2025-10-20",
+      "artikel_name": "Cola",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "c8c3488df1de4372846e7047c050d8f8",
+      "datum": "2025-10-20",
+      "artikel_name": "Schokoriegel",
+      "menge": 4,
+      "verlust_anzahl": 1,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 6.0
+    },
+    {
+      "id": "6154b8ca1edc4b04a1be2fe90f56f173",
+      "datum": "2025-10-21",
+      "artikel_name": "Bickensohler",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    },
+    {
+      "id": "32029877bdaf46c2af1ed733604f0e98",
+      "datum": "2025-10-21",
+      "artikel_name": "NicNac's",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 2.0
+    },
+    {
+      "id": "582a72dfd1af401fa1233637c6730d86",
+      "datum": "2025-10-21",
+      "artikel_name": "Schokoriegel",
+      "menge": 2,
+      "verlust_anzahl": 2,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 0.0
+    },
+    {
+      "id": "127366b408e84b70b6805ff44e21b057",
+      "datum": "2025-10-22",
+      "artikel_name": "Apoli",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.5,
+      "gesamt_umsatz": 3.5
+    },
+    {
+      "id": "8598f6801c6e4c39aaf9f446c9b75075",
+      "datum": "2025-10-22",
+      "artikel_name": "Bickensohler",
+      "menge": 2,
+      "verlust_anzahl": 1,
+      "preis_pro_stueck": 7.0,
+      "gesamt_umsatz": 7.0
+    },
+    {
+      "id": "5ee1606d4bb3493a96789cf1a12adc80",
+      "datum": "2025-10-22",
+      "artikel_name": "Cola",
+      "menge": 1,
+      "verlust_anzahl": 1,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 0.0
+    },
+    {
+      "id": "510bfef3482649809f0aa765c3ee44e6",
+      "datum": "2025-10-22",
+      "artikel_name": "NicNac's",
+      "menge": 3,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 6.0
+    },
+    {
+      "id": "421d4b67c3884191b36ce603c577ecb2",
+      "datum": "2025-10-22",
+      "artikel_name": "Schokoriegel",
+      "menge": 4,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 2.0,
+      "gesamt_umsatz": 8.0
+    }
+  ]
+}

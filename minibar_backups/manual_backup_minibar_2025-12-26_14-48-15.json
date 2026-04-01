@@ -1,0 +1,58 @@
+{
+  "2025-12": [
+    {
+      "id": "16b51b582db04dac97ac13cf54fd9def",
+      "datum": "2025-12-26",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "3f4a5bc5a2c2403293d03019fa279710",
+      "datum": "2025-12-26",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "131626cc25da4a47878ba4bcf2bbd3ff",
+      "datum": "2025-12-26",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "d1ad63ed555c465d9657175ee5841210",
+      "datum": "2025-12-26",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "698859f88b344710a2e3ab731cad5c07",
+      "datum": "2025-12-26",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "ce72fa98a928456ebe0dbdc400140718",
+      "datum": "2025-12-26",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    }
+  ]
+}

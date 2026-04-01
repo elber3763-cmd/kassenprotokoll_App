@@ -1,0 +1,22 @@
+{
+  "2025-12": [
+    {
+      "id": "e8bb986be6354cbd9ea5970327ee3f65",
+      "datum": "2025-12-03",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    },
+    {
+      "id": "258da96420c943a6bf96673a79c01a49",
+      "datum": "2025-12-03",
+      "artikel_name": "Apfelsaft",
+      "menge": 1,
+      "verlust_anzahl": 0,
+      "preis_pro_stueck": 3.6,
+      "gesamt_umsatz": 3.6
+    }
+  ]
+}

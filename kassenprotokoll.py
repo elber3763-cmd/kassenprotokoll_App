@@ -29,6 +29,32 @@ import smtplib
 import ssl
 import multiprocessing
 
+from google import genai
+from config import API_KEY
+
+# --- Gemini KI-Konfiguration (nur kostenlose Modelle!) ---
+GEMINI_FREE_MODELS = {
+    "gemini-2.0-flash",
+    "gemini-2.5-flash",
+    "gemini-2.0-flash-lite",
+}
+GEMINI_DEFAULT_MODEL = "gemini-2.0-flash"
+
+client = genai.Client(api_key=API_KEY)
+
+
+def gemini_generate(prompt, model=None):
+    """Sichere Wrapper-Funktion für Gemini API – erlaubt nur kostenlose Modelle."""
+    model = model or GEMINI_DEFAULT_MODEL
+    if model not in GEMINI_FREE_MODELS:
+        raise ValueError(
+            f"GESPERRT: Modell '{model}' ist nicht kostenfrei!\n"
+            f"Erlaubte Modelle: {', '.join(sorted(GEMINI_FREE_MODELS))}"
+        )
+    response = client.models.generate_content(model=model, contents=prompt)
+    return response.text
+
+
 # --- Verfügbarkeitsprüfungen für optionale Bibliotheken ---
 
 try:
@@ -3609,14 +3635,14 @@ class DoppelZimmerListePDF(FPDF):
 
             # ── Zeile 1: 1. Person ────────────────────────────────────────
             self.set_xy(x0 + CW["room"], y0)
-            self.cell(CW["person"],  ROW_H, entry.get("p1_name", ""),  1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
+            self.cell(CW["person"],  ROW_H, ' '.join(entry.get("p1_name", "").split()),  1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
             self.cell(CW["contact"], ROW_H, p1c,                       1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
             self.cell(CW["car"],     ROW_H, p1k,                       1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
             self.cell(CW["sign"],    ROW_H, '',                        1, new_x=XPos.RIGHT, new_y=YPos.TOP, align='L', fill=1)
 
             # ── Zeile 2: 2. Person ────────────────────────────────────────
             self.set_xy(x0 + CW["room"], y0 + ROW_H)
-            self.cell(CW["person"],  ROW_H, entry.get("p2_name", ""),    1, new_x=XPos.RIGHT,   new_y=YPos.TOP, align='L', fill=1)
+            self.cell(CW["person"],  ROW_H, ' '.join(entry.get("p2_name", "").split()),    1, new_x=XPos.RIGHT,   new_y=YPos.TOP, align='L', fill=1)
             self.cell(CW["contact"], ROW_H, entry.get("p2_contact", ""), 1, new_x=XPos.RIGHT,   new_y=YPos.TOP, align='L', fill=1)
             self.cell(CW["car"],     ROW_H, entry.get("p2_car", ""),     1, new_x=XPos.RIGHT,   new_y=YPos.TOP, align='L', fill=1)
             self.cell(CW["sign"],    ROW_H, '',                          1, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align='L', fill=1)
@@ -14052,10 +14078,17 @@ class KassenprotokollApp:
                 'NL_InfoIcon':  {'type': 'symbol', 'value': 'ℹ️', 'is_active': True},
                 'NL_DateIcon':  {'type': 'symbol', 'value': '📅', 'is_active': True},
             },
-            # ^^^^^ HIER ENDET DER NEUE BLOCK ^^^^^
-            
-            
-             # vvvvv HIER DEN NEUEN BLOCK EINFÜGEN vvvvv
+            'namensliste_doppel_button_configs': {
+                'Doppel_Add':       {'type': 'symbol', 'value': '➕ Neues Zimmer',        'is_active': True},
+                'Doppel_BulkImport': {'type': 'symbol', 'value': '📋 Alle importieren',    'is_active': True},
+                'Doppel_Edit':      {'type': 'symbol', 'value': '✏️ Bearbeiten',          'is_active': True},
+                'Doppel_Delete':    {'type': 'symbol', 'value': '🗑️ Löschen',             'is_active': True},
+                'Doppel_Prepare':   {'type': 'symbol', 'value': '✨ Liste aufbereiten',   'is_active': True},
+                'Doppel_CheckDups': {'type': 'symbol', 'value': '🔍 Duplikate prüfen',   'is_active': True},
+                'Doppel_History':   {'type': 'symbol', 'value': '🕰️ Verlauf',             'is_active': True},
+                'Doppel_SavePDF':   {'type': 'symbol', 'value': '📄 Als PDF speichern',   'is_active': True},
+                'Doppel_Print':     {'type': 'symbol', 'value': '🖨️ Drucken',             'is_active': True},
+            },
             'adressbuch_button_configs': {
                 'Adressbuch_Add':    {'type': 'symbol', 'value': '👤 Neuer Kontakt', 'is_active': True},
                 'Adressbuch_Edit':   {'type': 'symbol', 'value': '✏️ Bearbeiten', 'is_active': True},
@@ -30976,7 +31009,8 @@ class KassenprotokollApp:
         row_idx_1 = self._create_settings_weckrufliste_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
         row_idx_1 = self._create_settings_taxibestellung_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
         row_idx_1 = self._create_settings_namensliste_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
-        
+        row_idx_1 = self._create_settings_namensliste_doppel_buttons_section(tab_buttons1, temp_settings, dialog_vars, start_row=row_idx_1)
+
         # =========================================================================
         # TAB 3: SPEZIFISCHE LISTEN-BUTTONS 2
         # =========================================================================
@@ -31835,7 +31869,35 @@ class KassenprotokollApp:
             start_row
         )
         return new_row
-    # ^^^^^ HIER ENDET DER NEUE CODEBLOCK ^^^^^
+
+    def _create_settings_namensliste_doppel_buttons_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
+        """Erstellt den Abschnitt für die Doppelzimmer-Buttons im Einstellungsdialog."""
+        settings_key = 'namensliste_doppel_button_configs'
+        section_title = "Doppelzimmer-Namensliste: Button-Konfiguration"
+
+        button_order = [
+            'Doppel_Add', 'Doppel_BulkImport',
+            'Doppel_Edit', 'Doppel_Delete',
+            'Doppel_Prepare', 'Doppel_CheckDups',
+            'Doppel_History', 'Doppel_SavePDF', 'Doppel_Print',
+        ]
+
+        defaults = self.default_settings.get(settings_key, {})
+        cfg_in_temp = temp_settings.setdefault(settings_key, {})
+        for key in button_order:
+            if key not in cfg_in_temp and key in defaults:
+                cfg_in_temp[key] = dict(defaults[key])
+
+        new_row = self._create_generic_button_config_section(
+            parent_frame,
+            temp_settings,
+            dialog_vars,
+            section_title,
+            settings_key,
+            button_order,
+            start_row
+        )
+        return new_row
 
     def _create_settings_namensliste_columns_section(self, parent_frame, temp_settings, dialog_vars, start_row=0):
         """Spaltenbreiten der Namensliste-Tabelle konfigurieren (Summe = 277 mm für A4-Querformat)."""
@@ -34663,11 +34725,12 @@ class KassenprotokollApp:
                              cursor='hand2',
                              font=("Segoe UI", 10))
 
-        # ── ACTION BAR ─────────────────────────────────────────────────────────
-        action_bar = tk.Frame(parent_frame, bg=C_BAR, pady=8)
-        action_bar.pack(fill='x')
+        # ── ACTION BAR (Einzelbelegung) ───────────────────────────────────────
+        action_bar_einzel = tk.Frame(parent_frame, bg=C_BAR, pady=8)
+        action_bar_einzel.pack(fill='x')
+        self._nl_action_bar_einzel = action_bar_einzel
 
-        home_btn = self._create_home_button(action_bar, bar_color=C_BAR)
+        home_btn = self._create_home_button(action_bar_einzel, bar_color=C_BAR)
         if home_btn:
             home_btn.pack(side='left', padx=8)
 
@@ -34685,18 +34748,18 @@ class KassenprotokollApp:
             ('Namensliste_CheckDups', "Duplikate prüfen",   self._check_namensliste_duplicates),
             (None, None, None),
             ('Namensliste_History',   "Verlauf",            self._open_namensliste_history_dialog),
-            ('Namensliste_SavePDF',   "Als PDF speichern",  self._save_namensliste_pdf_dispatch),
-            ('Namensliste_Print',     "Drucken",            self._print_namensliste_dispatch),
+            ('Namensliste_SavePDF',   "Als PDF speichern",  self._save_namensliste_as_pdf),
+            ('Namensliste_Print',     "Drucken",            self._print_namensliste),
         ]
 
         for key, default_text, command in button_definitions:
             if key is None:
-                tk.Frame(action_bar, bg=_lighten(C_BAR, 18), width=1).pack(
+                tk.Frame(action_bar_einzel, bg=_lighten(C_BAR, 18), width=1).pack(
                     side='left', fill='y', padx=6, pady=4)
                 continue
             cfg = button_configs.get(key, {})
             if cfg.get('is_active', True):
-                btn = _bar_btn(action_bar, default_text, command)
+                btn = _bar_btn(action_bar_einzel, default_text, command)
                 btn.pack(side='left', padx=10, pady=4)
                 self._configure_list_tab_button(btn, key, default_text,
                                                 button_config_source=button_configs)
@@ -34705,6 +34768,51 @@ class KassenprotokollApp:
                            activeforeground='white',
                            padx=14, pady=8)
                 self.namensliste_buttons[key] = btn
+
+        # ── ACTION BAR (Doppelzimmer) ─────────────────────────────────────────
+        action_bar_doppel = tk.Frame(parent_frame, bg=C_BAR, pady=8)
+        self._nl_action_bar_doppel = action_bar_doppel
+        # Wird initial NICHT gepackt (erst bei Tab-Wechsel)
+
+        home_btn_d = self._create_home_button(action_bar_doppel, bar_color=C_BAR)
+        if home_btn_d:
+            home_btn_d.pack(side='left', padx=8)
+
+        if not hasattr(self, 'namensliste_doppel_buttons'):
+            self.namensliste_doppel_buttons = {}
+
+        doppel_btn_configs = {**self.default_settings.get('namensliste_doppel_button_configs', {}),
+                              **self.current_settings.get('namensliste_doppel_button_configs', {})}
+        doppel_btn_defs = [
+            ('Doppel_Add',       "Neues Zimmer",       self._add_namensliste_doppel_entry),
+            ('Doppel_BulkImport', "Alle importieren",    self._import_all_names_doppel),
+            ('Doppel_Edit',      "Bearbeiten",           self._edit_namensliste_doppel_entry),
+            ('Doppel_Delete',    "Löschen",              self._delete_namensliste_doppel_entry),
+            (None, None, None),
+            ('Doppel_Prepare',   "Liste aufbereiten",    self._prepare_namensliste_doppel),
+            ('Doppel_CheckDups', "Duplikate prüfen",     self._check_namensliste_doppel_duplicates),
+            (None, None, None),
+            ('Doppel_History',   "Verlauf",              self._open_namensliste_doppel_history_dialog),
+            ('Doppel_SavePDF',   "Als PDF speichern",    self._save_doppel_namensliste_as_pdf),
+            ('Doppel_Print',     "Drucken",              self._print_doppel_namensliste),
+        ]
+
+        for key, default_text, command in doppel_btn_defs:
+            if key is None:
+                tk.Frame(action_bar_doppel, bg=_lighten(C_BAR, 18), width=1).pack(
+                    side='left', fill='y', padx=6, pady=4)
+                continue
+            cfg = doppel_btn_configs.get(key, {})
+            if cfg.get('is_active', True):
+                btn = _bar_btn(action_bar_doppel, default_text, command)
+                btn.pack(side='left', padx=10, pady=4)
+                self._configure_list_tab_button(btn, key, default_text,
+                                                button_config_source=doppel_btn_configs)
+                btn.config(bg=C_BAR, fg='white',
+                           activebackground=_lighten(C_BAR, 22),
+                           activeforeground='white',
+                           padx=14, pady=8)
+                self.namensliste_doppel_buttons[key] = btn
 
         # ── GRADIENT HERO ──────────────────────────────────────────────────────
         hero = tk.Canvas(parent_frame, height=80, highlightthickness=0, bg=C_HDR1)
@@ -34992,101 +35100,10 @@ class KassenprotokollApp:
         self._load_and_display_namensliste()
 
         # ── TAB 2: DOPPELZIMMER ────────────────────────────────────────────────
-        doppel_btn_bar = tk.Frame(tab_doppel, bg=C_BAR, pady=6)
-        doppel_btn_bar.pack(fill='x')
-
-        tk.Button(doppel_btn_bar, text="➕  Neues Zimmer",
-                  command=self._add_namensliste_doppel_entry,
-                  bg=C_BAR, fg='white',
-                  activebackground=_lighten(C_BAR, 22), activeforeground='white',
-                  relief='flat', bd=0, highlightthickness=0,
-                  cursor='hand2', font=("Segoe UI", 10)
-                  ).pack(side='left', padx=8)
-
-        tk.Button(doppel_btn_bar, text="✏️  Bearbeiten",
-                  command=self._edit_namensliste_doppel_entry,
-                  bg=C_BAR, fg='white',
-                  activebackground=_lighten(C_BAR, 22), activeforeground='white',
-                  relief='flat', bd=0, highlightthickness=0,
-                  cursor='hand2', font=("Segoe UI", 10)
-                  ).pack(side='left', padx=4)
-
-        tk.Button(doppel_btn_bar, text="🗑️  Löschen",
-                  command=self._delete_namensliste_doppel_entry,
-                  bg=C_BAR, fg='white',
-                  activebackground=_lighten(C_BAR, 22), activeforeground='white',
-                  relief='flat', bd=0, highlightthickness=0,
-                  cursor='hand2', font=("Segoe UI", 10)
-                  ).pack(side='left', padx=4)
-
-        tk.Button(doppel_btn_bar, text="📋  1. Person importieren",
-                  command=self._import_p1_names_doppel,
-                  bg=C_BAR, fg='white',
-                  activebackground=_lighten(C_BAR, 22), activeforeground='white',
-                  relief='flat', bd=0, highlightthickness=0,
-                  cursor='hand2', font=("Segoe UI", 10)
-                  ).pack(side='left', padx=4)
-
-        # ── Split-Layout: Namenspool links | Tabelle rechts ───────────────────
-        doppel_content = tk.Frame(tab_doppel, bg='#F7FAFC')
-        doppel_content.pack(fill='both', expand=True)
-        doppel_content.columnconfigure(1, weight=1)
-        doppel_content.rowconfigure(0, weight=1)
-
-        # --- Linkes Panel: Namenspool für 2. Person ---
-        pool_panel = tk.Frame(doppel_content, bg='#F7FAFC', width=200)
-        pool_panel.grid(row=0, column=0, sticky='nsew', padx=(8, 0), pady=6)
-        pool_panel.pack_propagate(False)
-
-        pool_header = tk.Frame(pool_panel, bg='#F7FAFC')
-        pool_header.pack(fill='x', pady=(0, 4))
-        tk.Label(pool_header, text="Namenspool", font=("Segoe UI", 10, "bold"),
-                 bg='#F7FAFC', fg='#2D3748').pack(side='left')
-        tk.Label(pool_header, text="(2. Person)", font=("Segoe UI", 9),
-                 bg='#F7FAFC', fg='#718096').pack(side='left', padx=(4, 0))
-
-        pool_list_outer = tk.Frame(pool_panel, bg='#FFFFFF',
-                                   highlightthickness=1, highlightbackground='#CBD5E0')
-        pool_list_outer.pack(fill='both', expand=True)
-
-        self.namensliste_doppel_pool_listbox = tk.Listbox(
-            pool_list_outer, font=("Segoe UI", 11),
-            bg='#FFFFFF', fg='#1A202C',
-            selectbackground='#DBEAFE', selectforeground='#1565C0',
-            activestyle='none', relief='flat', bd=0,
-            exportselection=False)
-        pool_vsb = ttk.Scrollbar(pool_list_outer, orient='vertical',
-                                 command=self.namensliste_doppel_pool_listbox.yview)
-        self.namensliste_doppel_pool_listbox.configure(yscrollcommand=pool_vsb.set)
-        self.namensliste_doppel_pool_listbox.pack(side='left', fill='both', expand=True)
-        pool_vsb.pack(side='right', fill='y')
-
-        pool_btn_row = tk.Frame(pool_panel, bg='#F7FAFC')
-        pool_btn_row.pack(fill='x', pady=(4, 0))
-        tk.Button(pool_btn_row, text="📋 Einfügen",
-                  command=self._import_pool_names_doppel,
-                  bg='#4A90D9', fg='white',
-                  activebackground='#357ABD', activeforeground='white',
-                  relief='flat', bd=0, highlightthickness=0,
-                  cursor='hand2', font=("Segoe UI", 9)
-                  ).pack(side='left', fill='x', expand=True, padx=(0, 2), ipady=3)
-        tk.Button(pool_btn_row, text="✖",
-                  command=self._clear_pool_doppel,
-                  bg='#E53E3E', fg='white',
-                  activebackground='#C53030', activeforeground='white',
-                  relief='flat', bd=0, highlightthickness=0,
-                  cursor='hand2', font=("Segoe UI", 9)
-                  ).pack(side='left', padx=(2, 0), ipady=3, ipadx=6)
-
-        tk.Label(pool_panel,
-                 text="Oder: Namen aus dem Pool\nhierher ziehen (optional)",
-                 font=("Segoe UI", 8), bg='#F7FAFC', fg='#A0AEC0',
-                 justify='left').pack(anchor='w', pady=(4, 0))
-
-        # --- Rechtes Panel: Treeview ---
-        doppel_tree_outer = tk.Frame(doppel_content, bg='#FFFFFF',
+        # ── Treeview (volle Breite) ───────────────────────────────────────────
+        doppel_tree_outer = tk.Frame(tab_doppel, bg='#FFFFFF',
                                      highlightthickness=1, highlightbackground='#CBD5E0')
-        doppel_tree_outer.grid(row=0, column=1, sticky='nsew', padx=(4, 8), pady=6)
+        doppel_tree_outer.pack(fill='both', expand=True, padx=8, pady=6)
 
         self.style.configure("Doppel.Treeview",
                              rowheight=44,
@@ -35104,20 +35121,15 @@ class KassenprotokollApp:
                        background=[('selected', '#DBEAFE')],
                        foreground=[('selected', '#1565C0')])
 
-        doppel_cols = ("room", "p1", "p1_contact", "p1_car", "sign1",
-                       "p2", "p2_contact", "p2_car", "sign2")
+        doppel_cols = ("room", "person", "contact", "car", "sign")
         self.namensliste_doppel_tree = ttk.Treeview(
             doppel_tree_outer, columns=doppel_cols, show="headings", style="Doppel.Treeview")
         doppel_col_cfg = {
-            "room":       {"text": "Zimmer",              "width": 75},
-            "p1":         {"text": "1. Person",           "width": 190},
-            "p1_contact": {"text": "E-Mail/Tel. (1)",     "width": 150},
-            "p1_car":     {"text": "PKW (1)",             "width": 70},
-            "sign1":      {"text": "Unterschrift (1)",    "width": 110},
-            "p2":         {"text": "2. Person",           "width": 190},
-            "p2_contact": {"text": "E-Mail/Tel. (2)",     "width": 150},
-            "p2_car":     {"text": "PKW (2)",             "width": 70},
-            "sign2":      {"text": "Unterschrift (2)",    "width": 110},
+            "room":    {"text": "Zimmer",        "width": 80},
+            "person":  {"text": "Person",         "width": 220},
+            "contact": {"text": "E-Mail/Tel.",    "width": 180},
+            "car":     {"text": "PKW",            "width": 80},
+            "sign":    {"text": "Unterschrift",   "width": 140},
         }
         for col_id, cfg in doppel_col_cfg.items():
             self.namensliste_doppel_tree.heading(col_id, text=cfg["text"])
@@ -35159,40 +35171,45 @@ class KassenprotokollApp:
             self._doppel_pair_hint_var.set(text)
 
         def _clear_pair_highlight():
+            id_to_group = {}
+            for gi, e in enumerate(self.namensliste_doppel_data_cache):
+                id_to_group[e.get('id', '')] = gi
             for it in self.namensliste_doppel_tree.get_children():
-                tags = [t for t in self.namensliste_doppel_tree.item(it, 'tags')
-                        if t not in ('doppel_pair_source', 'doppel_odd', 'doppel_even')]
-                idx = self.namensliste_doppel_tree.index(it)
-                tags.append('doppel_odd' if idx % 2 == 0 else 'doppel_even')
-                self.namensliste_doppel_tree.item(it, tags=tags)
+                base_id = it[:-4] if it.endswith('__p2') else it
+                group_idx = id_to_group.get(base_id, 0)
+                tag = 'doppel_odd' if group_idx % 2 == 0 else 'doppel_even'
+                self.namensliste_doppel_tree.item(it, tags=(tag,))
 
         def _tree_pair_click(event):
-            item = self.namensliste_doppel_tree.identify_row(event.y)
+            raw_item = self.namensliste_doppel_tree.identify_row(event.y)
 
             # Klick auf leeren Bereich → Auswahl abbrechen
-            if not item:
+            if not raw_item:
                 _pair[0] = None
                 _clear_pair_highlight()
                 _show_pair_hint("")
                 return
 
+            # P2-Zeile auf Eltern-Eintrag auflösen
+            base_id = raw_item[:-4] if raw_item.endswith('__p2') else raw_item
             entry = next((e for e in self.namensliste_doppel_data_cache
-                          if e.get('id') == item), None)
+                          if e.get('id') == base_id), None)
             if not entry:
                 return
 
             if _pair[0] is None:
-                # Erster Klick: Quelle merken (nur wenn 1. Person vorhanden)
-                if entry.get('p1_name', '').strip():
-                    _pair[0] = item
+                # Erster Klick: Quelle merken (nur wenn 1. Person vorhanden und kein Partner)
+                if entry.get('p1_name', '').strip() and not entry.get('p2_name', '').strip():
+                    _pair[0] = base_id
                     _clear_pair_highlight()
-                    cur_tags = [t for t in self.namensliste_doppel_tree.item(item, 'tags')
+                    # P1-Zeile gelb markieren
+                    cur_tags = [t for t in self.namensliste_doppel_tree.item(base_id, 'tags')
                                 if t not in ('doppel_odd', 'doppel_even', 'doppel_pair_source')]
                     cur_tags.append('doppel_pair_source')
-                    self.namensliste_doppel_tree.item(item, tags=cur_tags)
+                    self.namensliste_doppel_tree.item(base_id, tags=cur_tags)
                     name = entry.get('p1_name', '')
                     _show_pair_hint(f"  ✔ '{name}' ausgewählt — jetzt Zimmerpartner anklicken  |  Nochmal klicken = Abbrechen")
-            elif _pair[0] == item:
+            elif _pair[0] == base_id:
                 # Gleiche Zeile nochmal → Auswahl aufheben
                 _pair[0] = None
                 _clear_pair_highlight()
@@ -35214,74 +35231,26 @@ class KassenprotokollApp:
 
         self.namensliste_doppel_tree.bind("<ButtonRelease-1>", _tree_pair_click)
 
-        # ── Namenspool-Listbox DnD (alternativer Weg) ─────────────────────────
-        def _pool_dnd_start(event):
-            sel = self.namensliste_doppel_pool_listbox.curselection()
-            if sel:
-                self._doppel_pool_drag_item = self.namensliste_doppel_pool_listbox.get(sel[0])
-                self.namensliste_doppel_pool_listbox.config(cursor="fleur")
-
-        def _pool_dnd_motion(event):
-            if not self._doppel_pool_drag_item:
-                return
-            x_root = event.widget.winfo_rootx() + event.x
-            y_root = event.widget.winfo_rooty() + event.y
-            widget_under = event.widget.winfo_containing(x_root, y_root)
-            for it in self.namensliste_doppel_tree.get_children():
-                tags = [t for t in self.namensliste_doppel_tree.item(it, 'tags')
-                        if t not in ('doppel_drop_target', 'doppel_odd', 'doppel_even')]
-                idx = self.namensliste_doppel_tree.index(it)
-                tags.append('doppel_odd' if idx % 2 == 0 else 'doppel_even')
-                self.namensliste_doppel_tree.item(it, tags=tags)
-            if widget_under == self.namensliste_doppel_tree:
-                x_local = x_root - self.namensliste_doppel_tree.winfo_rootx()
-                y_local = y_root - self.namensliste_doppel_tree.winfo_rooty()
-                target_row = self.namensliste_doppel_tree.identify_row(y_local)
-                if target_row:
-                    cur_tags = [t for t in self.namensliste_doppel_tree.item(target_row, 'tags')
-                                if t not in ('doppel_odd', 'doppel_even')]
-                    cur_tags.append('doppel_drop_target')
-                    self.namensliste_doppel_tree.item(target_row, tags=cur_tags)
-
-        def _pool_dnd_drop(event):
-            if not self._doppel_pool_drag_item:
-                return
-            name = self._doppel_pool_drag_item
-            self._doppel_pool_drag_item = None
-            self.namensliste_doppel_pool_listbox.config(cursor="")
-            for it in self.namensliste_doppel_tree.get_children():
-                tags = [t for t in self.namensliste_doppel_tree.item(it, 'tags')
-                        if t not in ('doppel_drop_target', 'doppel_odd', 'doppel_even')]
-                idx = self.namensliste_doppel_tree.index(it)
-                tags.append('doppel_odd' if idx % 2 == 0 else 'doppel_even')
-                self.namensliste_doppel_tree.item(it, tags=tags)
-            x_root = event.widget.winfo_rootx() + event.x
-            y_root = event.widget.winfo_rooty() + event.y
-            widget_under = event.widget.winfo_containing(x_root, y_root)
-            if widget_under == self.namensliste_doppel_tree:
-                x_local = x_root - self.namensliste_doppel_tree.winfo_rootx()
-                y_local = y_root - self.namensliste_doppel_tree.winfo_rooty()
-                target_row = self.namensliste_doppel_tree.identify_row(y_local)
-                if target_row:
-                    entry = next((e for e in self.namensliste_doppel_data_cache
-                                  if e.get('id') == target_row), None)
-                    if entry:
-                        entry['p2_name'] = name
-                        self._save_namensliste_doppel_data()
-                        self._load_and_display_namensliste_doppel()
-                        items = list(self.namensliste_doppel_pool_listbox.get(0, tk.END))
-                        if name in items:
-                            self.namensliste_doppel_pool_listbox.delete(items.index(name))
-                            self.namensliste_doppel_pool_cache = list(
-                                self.namensliste_doppel_pool_listbox.get(0, tk.END))
-                            self._save_namensliste_doppel_pool_data()
-
-        self.namensliste_doppel_pool_listbox.bind("<ButtonPress-1>",   _pool_dnd_start)
-        self.namensliste_doppel_pool_listbox.bind("<B1-Motion>",       _pool_dnd_motion)
-        self.namensliste_doppel_pool_listbox.bind("<ButtonRelease-1>", _pool_dnd_drop)
-
-        self._load_namensliste_doppel_pool_data()
         self._load_and_display_namensliste_doppel()
+
+        # ── Tab-Wechsel: Action-Bar umschalten ────────────────────────────────
+        def _on_nl_tab_changed(event=None):
+            """Wechselt die Action-Bar zwischen Einzelbelegung und Doppelzimmer."""
+            try:
+                is_doppel = nl_notebook.index('current') == 1
+            except Exception:
+                is_doppel = False
+            bar_e = self._nl_action_bar_einzel
+            bar_d = self._nl_action_bar_doppel
+            if is_doppel:
+                bar_e.pack_forget()
+                bar_d.pack(fill='x', before=hero)
+            else:
+                bar_d.pack_forget()
+                bar_e.pack(fill='x', before=hero)
+            self._update_namensliste_count_card()
+
+        nl_notebook.bind("<<NotebookTabChanged>>", _on_nl_tab_changed)
 
 
     def _save_namensliste_data(self):
@@ -35310,6 +35279,12 @@ class KassenprotokollApp:
         else:
             self.namensliste_doppel_data_cache = []
 
+    def _resolve_doppel_entry_from_iid(self, iid):
+        """Löst eine Treeview-IID (ggf. __p2-Subzeile) zum Dateneintrag auf."""
+        base_id = iid[:-4] if iid.endswith('__p2') else iid
+        return next((e for e in self.namensliste_doppel_data_cache
+                     if e.get('id') == base_id), None)
+
     def _load_and_display_namensliste_doppel(self):
         if not self.namensliste_doppel_tree or not self.namensliste_doppel_tree.winfo_exists():
             return
@@ -35317,22 +35292,47 @@ class KassenprotokollApp:
             self.namensliste_doppel_tree.delete(item)
         for i, entry in enumerate(self.namensliste_doppel_data_cache):
             tag = 'doppel_odd' if i % 2 == 0 else 'doppel_even'
+            entry_id = entry.get('id', '')
             # Rückwärtskompatibilität: altes 'contact'/'car' auf p1 mappen
             p1_contact = entry.get('p1_contact', entry.get('contact', ''))
             p1_car     = entry.get('p1_car',     entry.get('car', ''))
-            self.namensliste_doppel_tree.insert("", "end", iid=entry.get('id', ''),
+            # Zeile 1: Person 1 (mit Zimmernummer)
+            self.namensliste_doppel_tree.insert("", "end", iid=entry_id,
                 values=(
                     entry.get('room', ''),
-                    entry.get('p1_name', ''),
+                    ' '.join(entry.get('p1_name', '').split()),
                     p1_contact,
                     p1_car,
-                    '',   # Unterschrift (1) – immer leer
-                    entry.get('p2_name', ''),
-                    entry.get('p2_contact', ''),
-                    entry.get('p2_car', ''),
-                    '',   # Unterschrift (2) – immer leer
+                    '',   # Unterschrift – leer
                 ),
                 tags=(tag,))
+            # Zeile 2: Person 2 (ohne Zimmernummer), nur wenn vorhanden
+            p2_name = ' '.join(entry.get('p2_name', '').split())
+            if p2_name:
+                self.namensliste_doppel_tree.insert("", "end", iid=entry_id + '__p2',
+                    values=(
+                        '',           # Zimmer leer bei 2. Person
+                        p2_name,
+                        entry.get('p2_contact', ''),
+                        entry.get('p2_car', ''),
+                        '',           # Unterschrift – leer
+                    ),
+                    tags=(tag,))
+
+        # Einträge-Karte aktualisieren (falls Doppelzimmer-Tab aktiv)
+        self._update_namensliste_count_card()
+
+    def _update_namensliste_count_card(self):
+        """Aktualisiert die Einträge-Karte je nach aktivem Sub-Tab."""
+        is_doppel = False
+        if hasattr(self, 'namensliste_notebook'):
+            try:
+                is_doppel = self.namensliste_notebook.index('current') == 1
+            except Exception:
+                pass
+        count = len(self.namensliste_doppel_data_cache) if is_doppel else len(self.namensliste_data_cache)
+        if hasattr(self, '_namensliste_count_update'):
+            self._namensliste_count_update(str(count))
 
     def _add_namensliste_doppel_entry(self):
         dialog = DoppelZimmerDialog(self.master, self)
@@ -35340,15 +35340,14 @@ class KassenprotokollApp:
         if result:
             self.namensliste_doppel_data_cache.append(result)
             self._save_namensliste_doppel_data()
+            self._save_namensliste_doppel_to_history("Eintrag hinzugefügt")
             self._load_and_display_namensliste_doppel()
 
     def _edit_namensliste_doppel_entry(self, event=None):
         selected_ids = self.namensliste_doppel_tree.selection()
         if not selected_ids:
             return
-        room_id = selected_ids[0]
-        entry = next((e for e in self.namensliste_doppel_data_cache
-                      if e.get('id') == room_id), None)
+        entry = self._resolve_doppel_entry_from_iid(selected_ids[0])
         if not entry:
             return
         dialog = DoppelZimmerDialog(self.master, self, entry_data=entry)
@@ -35357,32 +35356,52 @@ class KassenprotokollApp:
             idx = self.namensliste_doppel_data_cache.index(entry)
             self.namensliste_doppel_data_cache[idx] = result
             self._save_namensliste_doppel_data()
+            self._save_namensliste_doppel_to_history("Eintrag bearbeitet")
             self._load_and_display_namensliste_doppel()
 
     def _delete_namensliste_doppel_entry(self):
         selected_ids = self.namensliste_doppel_tree.selection()
-        if not selected_ids:
-            # Keine Auswahl → gesamte Liste löschen anbieten
-            count = len(self.namensliste_doppel_data_cache)
-            if count == 0:
-                messagebox.showinfo("Hinweis", "Die Liste ist bereits leer.", parent=self.master)
-                return
+        total = len(self.namensliste_doppel_data_cache)
+
+        if total == 0:
+            messagebox.showinfo("Hinweis", "Die Liste ist bereits leer.", parent=self.master)
+            return
+
+        # IIDs auf eindeutige Einträge auflösen (P2-Zeilen → Eltern-Eintrag)
+        entries_to_delete = []
+        seen_ids = set()
+        for iid in selected_ids:
+            entry = self._resolve_doppel_entry_from_iid(iid)
+            if entry and entry.get('id') not in seen_ids:
+                seen_ids.add(entry.get('id'))
+                entries_to_delete.append(entry)
+        sel_count = len(entries_to_delete)
+
+        if sel_count == 0:
+            # Nichts selektiert → gesamte Liste löschen anbieten
             if messagebox.askyesno(
                     "Gesamte Liste löschen",
-                    f"Alle {count} Einträge löschen?\n\nDiese Aktion kann nicht rückgängig gemacht werden.",
+                    f"Möchten Sie ALLE {total} Einträge löschen?\n\n"
+                    f"⚠ Diese Aktion kann nur über den Verlauf rückgängig gemacht werden.",
                     parent=self.master):
+                self._save_namensliste_doppel_to_history("Alle Einträge gelöscht")
                 self.namensliste_doppel_data_cache.clear()
                 self._save_namensliste_doppel_data()
                 self._load_and_display_namensliste_doppel()
             return
-        room_id = selected_ids[0]
-        entry = next((e for e in self.namensliste_doppel_data_cache
-                      if e.get('id') == room_id), None)
-        if not entry:
-            return
-        room_label = entry.get('room') or entry.get('p1_name') or '?'
-        if messagebox.askyesno("Löschen", f"Eintrag '{room_label}' wirklich löschen?", parent=self.master):
-            self.namensliste_doppel_data_cache.remove(entry)
+
+        # Einträge selektiert → Auswahl-Dialog mit 3 Optionen
+        choice = self._ask_delete_scope(sel_count, total)
+
+        if choice == 'selection':
+            self._save_namensliste_doppel_to_history("Eintrag/Einträge gelöscht")
+            for entry in entries_to_delete:
+                self.namensliste_doppel_data_cache.remove(entry)
+            self._save_namensliste_doppel_data()
+            self._load_and_display_namensliste_doppel()
+        elif choice == 'all':
+            self._save_namensliste_doppel_to_history("Alle Einträge gelöscht")
+            self.namensliste_doppel_data_cache.clear()
             self._save_namensliste_doppel_data()
             self._load_and_display_namensliste_doppel()
 
@@ -35410,27 +35429,36 @@ class KassenprotokollApp:
         except Exception as e:
             print(f"Fehler beim Speichern des Doppelzimmer-Namenspool: {e}")
 
-    def _import_p1_names_doppel(self):
-        """Öffnet einen Dialog zum Einfügen von Namen für die 1. Person per Copy & Paste."""
-        dialog = tk.Toplevel(self.master)
-        dialog.title("Namen importieren – 1. Person")
-        dialog.transient(self.master)
-        dialog.grab_set()
-        dialog.resizable(True, True)
-        dialog.geometry("420x480")
+    def _import_all_names_doppel(self):
+        """Komplett-Import: Alle Namen einfügen, dann im Zuordnungs-Dialog paarweise zuordnen."""
+        # ── Schritt 1: Namen-Eingabe ──────────────────────────────────────────
+        input_dlg = tk.Toplevel(self.master)
+        input_dlg.title("Alle Namen importieren – Schritt 1/2")
+        input_dlg.transient(self.master)
+        input_dlg.grab_set()
+        input_dlg.resizable(True, True)
+        input_dlg.geometry("480x520")
 
-        tk.Label(dialog, text="Namen einfügen (eine Person pro Zeile):",
+        tk.Label(input_dlg, text="Alle Teilnehmer einfügen (ein Name pro Zeile):",
                  font=("Segoe UI", 11, "bold"), pady=8).pack(padx=12, anchor='w')
-        tk.Label(dialog,
-                 text="Bestehende Zimmer werden ab der ersten Zeile befüllt.\n"
-                      "Sind mehr Namen als Zimmer vorhanden, werden neue Zimmer angelegt.",
+        tk.Label(input_dlg,
+                 text="Im nächsten Schritt können Sie die Namen\n"
+                      "per Klick zu Zimmerpaaren zusammenfügen.",
                  font=("Segoe UI", 9), fg='#718096', justify='left').pack(padx=12, anchor='w')
 
-        tk.Label(dialog, text="Namensliste:", font=("Segoe UI", 10)).pack(
+        mode_var = tk.StringVar(value='replace')
+        opt_frame = tk.Frame(input_dlg)
+        opt_frame.pack(fill='x', padx=12, pady=(8, 4))
+        ttk.Radiobutton(opt_frame, text="Bestehende Liste ersetzen",
+                         variable=mode_var, value='replace').pack(anchor='w')
+        ttk.Radiobutton(opt_frame, text="An bestehende Liste anhängen",
+                         variable=mode_var, value='append').pack(anchor='w')
+
+        tk.Label(input_dlg, text="Namensliste:", font=("Segoe UI", 10)).pack(
             padx=12, pady=(8, 2), anchor='w')
-        text_frame = tk.Frame(dialog)
+        text_frame = tk.Frame(input_dlg)
         text_frame.pack(fill='both', expand=True, padx=12, pady=(0, 4))
-        text_widget = tk.Text(text_frame, width=45, height=14, font=("Segoe UI", 11),
+        text_widget = tk.Text(text_frame, width=50, height=16, font=("Segoe UI", 11),
                               relief='solid', bd=1)
         text_vsb = ttk.Scrollbar(text_frame, orient='vertical', command=text_widget.yview)
         text_widget.configure(yscrollcommand=text_vsb.set)
@@ -35438,40 +35466,312 @@ class KassenprotokollApp:
         text_vsb.pack(side='right', fill='y')
         text_widget.focus_set()
 
-        def on_import():
+        count_label = tk.Label(input_dlg, text="", font=("Segoe UI", 9), fg='#4A5568')
+        count_label.pack(padx=12, anchor='w')
+
+        def update_count(event=None):
             raw = text_widget.get("1.0", "end").strip()
-            names = [n.strip() for n in raw.splitlines() if n.strip()]
+            names = [n for n in raw.splitlines() if n.strip()]
+            count_label.config(text=f"{len(names)} Namen erkannt" if names else "")
+
+        text_widget.bind('<KeyRelease>', update_count)
+
+        import_result = {'names': [], 'mode': 'replace'}
+
+        def on_next():
+            raw = text_widget.get("1.0", "end").strip()
+            names = [' '.join(n.split()) for n in raw.splitlines() if n.strip()]
             if not names:
-                dialog.destroy()
+                input_dlg.destroy()
                 return
-            existing = self.namensliste_doppel_data_cache
-            # Fill existing rooms first
-            for i, name in enumerate(names):
-                if i < len(existing):
-                    existing[i]['p1_name'] = name
-                else:
-                    existing.append({
-                        "id": uuid.uuid4().hex,
-                        "room": "",
-                        "p1_name": name,
-                        "p2_name": "",
-                        "contact": "",
-                        "car": "",
-                    })
+            if len(names) < 2:
+                messagebox.showinfo("Hinweis", "Mindestens 2 Namen erforderlich für Zimmerzuordnung.",
+                                    parent=input_dlg)
+                return
+            import_result['names'] = names
+            import_result['mode'] = mode_var.get()
+            input_dlg.destroy()
+
+        btn_frame = tk.Frame(input_dlg)
+        btn_frame.pack(fill='x', padx=12, pady=(4, 12))
+        ttk.Button(btn_frame, text="Weiter zur Zuordnung  \u25b6", command=on_next).pack(
+            side='left', padx=(0, 4), ipady=4)
+        ttk.Button(btn_frame, text="Abbrechen", command=input_dlg.destroy).pack(
+            side='left', ipady=4)
+
+        input_dlg.wait_window()
+
+        if not import_result['names']:
+            return
+
+        # ── Schritt 2: Zuordnungs-Dialog ─────────────────────────────────────
+        self._open_doppel_assignment_dialog(
+            import_result['names'], import_result['mode'])
+
+    def _open_doppel_assignment_dialog(self, names, mode):
+        """Zuordnungs-Dialog: Namen per Klick zu Zimmerpaaren zusammenfügen, mit Suchfeld."""
+        dlg = tk.Toplevel(self.master)
+        dlg.title("Zimmerzuordnung – Schritt 2/2")
+        dlg.transient(self.master)
+        dlg.grab_set()
+        dlg.resizable(True, True)
+        dlg.geometry("860x650")
+
+        pool = list(names)           # unzugewiesene Namen
+        rooms = []                   # Liste von (p1, p2) Tupeln
+        selected_name_real = [None]  # tatsächlicher Name (nicht Index), da Filter die Indizes ändert
+        filtered_pool = list(pool)   # gefilterte Ansicht
+
+        # ── Header ────────────────────────────────────────────────────────────
+        header = tk.Frame(dlg)
+        header.pack(fill='x', padx=12, pady=(10, 4))
+        tk.Label(header,
+                 text="Namen zu Zimmer-Paaren zuordnen",
+                 font=("Segoe UI", 12, "bold")).pack(anchor='w')
+        tk.Label(header,
+                 text="1. Klick = Name markieren  |  2. Klick = Paar bilden  |  "
+                      "Doppelklick = Einzelbelegung  |  Klick auf Zimmer = auflösen",
+                 font=("Segoe UI", 9), fg='#718096').pack(anchor='w')
+
+        # ── Status-Leiste ─────────────────────────────────────────────────────
+        status_label = tk.Label(dlg, text="", font=("Segoe UI", 10), fg='#2D3748')
+        status_label.pack(padx=12, anchor='w', pady=(4, 0))
+
+        # ── Zwei-Spalten-Layout ───────────────────────────────────────────────
+        content = tk.Frame(dlg)
+        content.pack(fill='both', expand=True, padx=12, pady=6)
+        content.columnconfigure(0, weight=1)
+        content.columnconfigure(1, weight=0)
+        content.columnconfigure(2, weight=1)
+        content.rowconfigure(2, weight=1)
+
+        # ── Links: Pool mit Suchfeld ──────────────────────────────────────────
+        tk.Label(content, text="Verfügbare Namen:", font=("Segoe UI", 10, "bold")).grid(
+            row=0, column=0, sticky='w', pady=(0, 2))
+
+        search_frame = tk.Frame(content)
+        search_frame.grid(row=1, column=0, sticky='ew', pady=(0, 4))
+        tk.Label(search_frame, text="\U0001f50d", font=("Segoe UI", 10)).pack(side='left')
+        search_var = tk.StringVar()
+        search_entry = ttk.Entry(search_frame, textvariable=search_var, font=("Segoe UI", 10))
+        search_entry.pack(side='left', fill='x', expand=True, padx=(4, 0), ipady=2)
+
+        pool_frame = tk.Frame(content)
+        pool_frame.grid(row=2, column=0, sticky='nsew')
+        pool_listbox = tk.Listbox(pool_frame, font=("Segoe UI", 11), selectmode='single',
+                                   activestyle='none', relief='solid', bd=1)
+        pool_vsb = ttk.Scrollbar(pool_frame, orient='vertical', command=pool_listbox.yview)
+        pool_listbox.configure(yscrollcommand=pool_vsb.set)
+        pool_listbox.pack(side='left', fill='both', expand=True)
+        pool_vsb.pack(side='right', fill='y')
+
+        # ── Mitte: Buttons ────────────────────────────────────────────────────
+        mid_frame = tk.Frame(content)
+        mid_frame.grid(row=2, column=1, padx=10)
+
+        # ── Rechts: Zugeordnete Zimmer mit Suchfeld ──────────────────────────
+        tk.Label(content, text="Zugeordnete Zimmer:", font=("Segoe UI", 10, "bold")).grid(
+            row=0, column=2, sticky='w', pady=(0, 2))
+
+        rooms_search_frame = tk.Frame(content)
+        rooms_search_frame.grid(row=1, column=2, sticky='ew', pady=(0, 4))
+        tk.Label(rooms_search_frame, text="\U0001f50d", font=("Segoe UI", 10)).pack(side='left')
+        rooms_search_var = tk.StringVar()
+        rooms_search_entry = ttk.Entry(rooms_search_frame, textvariable=rooms_search_var,
+                                        font=("Segoe UI", 10))
+        rooms_search_entry.pack(side='left', fill='x', expand=True, padx=(4, 0), ipady=2)
+
+        rooms_frame = tk.Frame(content)
+        rooms_frame.grid(row=2, column=2, sticky='nsew')
+        rooms_listbox = tk.Listbox(rooms_frame, font=("Segoe UI", 11), selectmode='single',
+                                    activestyle='none', relief='solid', bd=1)
+        rooms_vsb = ttk.Scrollbar(rooms_frame, orient='vertical', command=rooms_listbox.yview)
+        rooms_listbox.configure(yscrollcommand=rooms_vsb.set)
+        rooms_listbox.pack(side='left', fill='both', expand=True)
+        rooms_vsb.pack(side='right', fill='y')
+
+        # ── Anzeige-Logik ─────────────────────────────────────────────────────
+        filtered_rooms = []  # indices into rooms that match rooms search
+
+        def refresh_pool_display():
+            nonlocal filtered_pool
+            query = search_var.get().strip().lower()
+            filtered_pool = [n for n in pool if query in n.lower()] if query else list(pool)
+
+            pool_listbox.delete(0, tk.END)
+            for name in filtered_pool:
+                pool_listbox.insert(tk.END, name)
+
+            # Markierung wiederherstellen
+            if selected_name_real[0] and selected_name_real[0] in filtered_pool:
+                mark_idx = filtered_pool.index(selected_name_real[0])
+                pool_listbox.itemconfig(mark_idx, bg='#3182CE', fg='white')
+
+        def refresh_rooms_display():
+            nonlocal filtered_rooms
+            query = rooms_search_var.get().strip().lower()
+            rooms_listbox.delete(0, tk.END)
+            filtered_rooms.clear()
+            for i, (p1, p2) in enumerate(rooms):
+                label = f"Zi {i+1}:  {p1}  +  {p2}" if p2 else f"Zi {i+1}:  {p1}  (Einzel)"
+                if query and query not in label.lower():
+                    continue
+                filtered_rooms.append(i)
+                rooms_listbox.insert(tk.END, label)
+
+        def refresh_display():
+            selected_name_real[0] = None
+            refresh_pool_display()
+            refresh_rooms_display()
+            remaining = len(pool)
+            paired = len(rooms)
+            status_label.config(
+                text=f"Pool: {remaining} Namen  |  Zugeordnet: {paired} Zimmer")
+
+        def on_search_changed(*args):
+            refresh_pool_display()
+
+        def on_rooms_search_changed(*args):
+            refresh_rooms_display()
+
+        search_var.trace_add('write', on_search_changed)
+        rooms_search_var.trace_add('write', on_rooms_search_changed)
+
+        # ── Pool-Klick-Logik ──────────────────────────────────────────────────
+        def on_pool_click(event):
+            sel = pool_listbox.curselection()
+            if not sel:
+                return
+            vis_idx = sel[0]
+            clicked_name = filtered_pool[vis_idx]
+
+            if selected_name_real[0] is None or selected_name_real[0] == clicked_name:
+                if selected_name_real[0] == clicked_name:
+                    # Bereits markiert, erneut geklickt → Markierung aufheben
+                    selected_name_real[0] = None
+                    refresh_pool_display()
+                    status_label.config(
+                        text=f"Pool: {len(pool)} Namen  |  Zugeordnet: {len(rooms)} Zimmer")
+                    return
+                # Ersten Namen markieren
+                selected_name_real[0] = clicked_name
+                refresh_pool_display()
+                status_label.config(
+                    text=f"'{clicked_name}' markiert – jetzt 2. Person anklicken"
+                         f" (oder Doppelklick für Einzelbelegung)")
+            else:
+                # Zweiten Namen → Paar bilden
+                p1 = selected_name_real[0]
+                p2 = clicked_name
+                pool.remove(p1)
+                pool.remove(p2)
+                rooms.append((p1, p2))
+                search_var.set("")  # Suchfeld leeren
+                refresh_display()
+
+        def on_pool_double(event):
+            sel = pool_listbox.curselection()
+            if not sel:
+                return
+            vis_idx = sel[0]
+            name = filtered_pool[vis_idx]
+            pool.remove(name)
+            rooms.append((name, ""))
+            selected_name_real[0] = None
+            search_var.set("")
+            refresh_display()
+
+        def on_rooms_click(event):
+            sel = rooms_listbox.curselection()
+            if not sel:
+                return
+            vis_idx = sel[0]
+            if vis_idx >= len(filtered_rooms):
+                return
+            real_idx = filtered_rooms[vis_idx]
+            p1, p2 = rooms.pop(real_idx)
+            pool.append(p1)
+            if p2:
+                pool.append(p2)
+            selected_name_real[0] = None
+            rooms_search_var.set("")
+            refresh_display()
+
+        pool_listbox.bind('<ButtonRelease-1>', on_pool_click)
+        pool_listbox.bind('<Double-1>', on_pool_double)
+        rooms_listbox.bind('<ButtonRelease-1>', on_rooms_click)
+
+        # ── Mitte-Buttons ─────────────────────────────────────────────────────
+        def auto_pair():
+            while len(pool) >= 2:
+                p1 = pool.pop(0)
+                p2 = pool.pop(0)
+                rooms.append((p1, p2))
+            if pool:
+                rooms.append((pool.pop(0), ""))
+            search_var.set("")
+            refresh_display()
+
+        def reset_all():
+            for p1, p2 in rooms:
+                pool.append(p1)
+                if p2:
+                    pool.append(p2)
+            rooms.clear()
+            selected_name_real[0] = None
+            search_var.set("")
+            rooms_search_var.set("")
+            refresh_display()
+
+        ttk.Button(mid_frame, text="Auto\nzuordnen", command=auto_pair, width=10).pack(
+            pady=(0, 6), ipady=4)
+        ttk.Button(mid_frame, text="Alle\nzurück", command=reset_all, width=10).pack(ipady=4)
+
+        # ── Unten: Speichern/Abbrechen ────────────────────────────────────────
+        btn_frame = tk.Frame(dlg)
+        btn_frame.pack(fill='x', padx=12, pady=(4, 12))
+
+        def on_save():
+            if pool:
+                if not messagebox.askyesno(
+                        "Nicht zugeordnete Namen",
+                        f"Es sind noch {len(pool)} Namen nicht zugeordnet.\n"
+                        f"Diese werden verworfen.\n\nTrotzdem speichern?",
+                        parent=dlg):
+                    return
+
+            self._save_namensliste_doppel_to_history("Vor Komplett-Import")
+
+            if mode == 'replace':
+                self.namensliste_doppel_data_cache.clear()
+
+            for p1, p2 in rooms:
+                self.namensliste_doppel_data_cache.append({
+                    "id": uuid.uuid4().hex,
+                    "room": "",
+                    "p1_name": p1,
+                    "p2_name": p2,
+                    "contact": "",
+                    "car": "",
+                })
+
             self._save_namensliste_doppel_data()
+            self._save_namensliste_doppel_to_history("Komplett-Import mit Zuordnung")
             self._load_and_display_namensliste_doppel()
-            dialog.destroy()
+            dlg.destroy()
             messagebox.showinfo(
                 "Import abgeschlossen",
-                f"{len(names)} Name(n) wurden in die Spalte '1. Person' eingetragen.",
+                f"{len(rooms)} Zimmer wurden erstellt.",
                 parent=self.master)
 
-        btn_frame = tk.Frame(dialog)
-        btn_frame.pack(fill='x', padx=12, pady=(0, 12))
-        ttk.Button(btn_frame, text="Importieren", command=on_import).pack(side='left', padx=(0, 4), ipady=4)
-        ttk.Button(btn_frame, text="Abbrechen", command=dialog.destroy).pack(side='left', ipady=4)
+        ttk.Button(btn_frame, text="Speichern", command=on_save).pack(
+            side='left', padx=(0, 4), ipady=4)
+        ttk.Button(btn_frame, text="Abbrechen", command=dlg.destroy).pack(
+            side='left', ipady=4)
 
-        dialog.wait_window()
+        refresh_display()
+        search_entry.focus_set()
+        dlg.wait_window()
 
     def _import_pool_names_doppel(self):
         """Öffnet einen Dialog zum Einfügen von Namen in den Namenspool (2. Person)."""
@@ -35661,11 +35961,7 @@ class KassenprotokollApp:
             self.namensliste_tree.insert("", "end", values=values, iid=entry.get('id'), tags=(tag,))
 
         # Anzahl-Karte aktualisieren
-        count = len(self.namensliste_data_cache)
-        if hasattr(self, '_namensliste_count_update'):
-            self._namensliste_count_update(str(count))
-        elif self.namensliste_count_label and self.namensliste_count_label.winfo_exists():
-            self.namensliste_count_label.config(text=str(count))
+        self._update_namensliste_count_card()
 
     def _check_namensliste_duplicates(self):
         """Sucht nach doppelten Namen und bietet an, diese zu bereinigen."""
@@ -35844,21 +36140,69 @@ class KassenprotokollApp:
     
     def _delete_namensliste_entry(self, event=None):
         selected_ids = self.namensliste_tree.selection()
-        
-        # Wenn nichts ausgewählt ist, wird gefragt, ob man alles löschen möchte
-        if not selected_ids: 
-            if self.namensliste_data_cache and messagebox.askyesno("Alle löschen", "Es ist kein Eintrag ausgewählt.\nMöchten Sie stattdessen ALLE Einträge löschen?"):
+        total = len(self.namensliste_data_cache)
+
+        if total == 0:
+            messagebox.showinfo("Hinweis", "Die Liste ist bereits leer.", parent=self.master)
+            return
+
+        if not selected_ids:
+            # Nichts selektiert → gesamte Liste löschen anbieten
+            if messagebox.askyesno(
+                    "Gesamte Liste löschen",
+                    f"Möchten Sie ALLE {total} Einträge löschen?\n\n"
+                    f"⚠ Diese Aktion kann nur über den Verlauf rückgängig gemacht werden.",
+                    parent=self.master):
+                self._save_namensliste_to_history("Alle Einträge gelöscht")
                 self.namensliste_data_cache = []
                 self._save_namensliste_data()
-                self._save_namensliste_to_history("Alle Einträge gelöscht")
                 self._load_and_display_namensliste()
             return
-        
-        if messagebox.askyesno("Löschen", f"{len(selected_ids)} Eintrag/Einträge wirklich löschen?"):
-            self.namensliste_data_cache = [e for e in self.namensliste_data_cache if e.get("id") not in selected_ids]
-            self._save_namensliste_data()
+
+        # Einträge selektiert → Auswahl-Dialog mit 3 Optionen
+        sel_count = len(selected_ids)
+        choice = self._ask_delete_scope(sel_count, total)
+
+        if choice == 'selection':
             self._save_namensliste_to_history("Eintrag/Einträge gelöscht")
+            id_set = set(selected_ids)
+            self.namensliste_data_cache = [e for e in self.namensliste_data_cache if e.get("id") not in id_set]
+            self._save_namensliste_data()
             self._load_and_display_namensliste()
+        elif choice == 'all':
+            self._save_namensliste_to_history("Alle Einträge gelöscht")
+            self.namensliste_data_cache = []
+            self._save_namensliste_data()
+            self._load_and_display_namensliste()
+
+    def _ask_delete_scope(self, sel_count, total):
+        """Dialog: Auswahl löschen / Alle löschen / Abbrechen. Gibt 'selection', 'all' oder None zurück."""
+        result = [None]
+        dlg = tk.Toplevel(self.master)
+        dlg.title("Löschen")
+        dlg.transient(self.master)
+        dlg.grab_set()
+        dlg.resizable(False, False)
+
+        tk.Label(dlg, text=f"{sel_count} von {total} Einträgen sind markiert.\nWas möchten Sie löschen?",
+                 font=("Segoe UI", 11), justify='center', padx=20, pady=16).pack()
+
+        btn_frame = tk.Frame(dlg, pady=12)
+        btn_frame.pack(fill='x', padx=16)
+
+        def pick(val):
+            result[0] = val
+            dlg.destroy()
+
+        ttk.Button(btn_frame, text=f"Nur Auswahl ({sel_count})",
+                   command=lambda: pick('selection')).pack(side='left', expand=True, padx=4, ipady=4)
+        ttk.Button(btn_frame, text=f"Alle löschen ({total})",
+                   command=lambda: pick('all')).pack(side='left', expand=True, padx=4, ipady=4)
+        ttk.Button(btn_frame, text="Abbrechen",
+                   command=lambda: pick(None)).pack(side='left', expand=True, padx=4, ipady=4)
+
+        dlg.wait_window()
+        return result[0]
 
     # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     # HIER BEGINNT DER NEUE CODEBLOCK
@@ -35990,6 +36334,7 @@ class KassenprotokollApp:
 
         self.namensliste_doppel_data_cache.sort(key=lambda x: x.get('p1_name', '').lower())
         self._save_namensliste_doppel_data()
+        self._save_namensliste_doppel_to_history("Liste aufbereitet")
         self._load_and_display_namensliste_doppel()
         if self.namensliste_doppel_tree:
             all_item_ids = self.namensliste_doppel_tree.get_children()
@@ -35999,10 +36344,134 @@ class KassenprotokollApp:
                      message="Die Doppelzimmer-Liste wurde aufbereitet, sortiert und alle Einträge markiert.",
                      toast_type='success',
                      colors=self.current_settings.get('toast_colors'))
-# ^^^^^ HIER ENDET DER NEUE CODEBLOCK ^^^^^
-            
-            
-          # vvvvv HIER DIE NEUEN METHODEN EINFÜGEN vvvvv
+
+    def _check_namensliste_doppel_duplicates(self):
+        """Sucht nach doppelten Namen in der Doppelzimmer-Liste."""
+        if not self.namensliste_doppel_data_cache:
+            messagebox.showinfo("Duplikate prüfen", "Die Doppelzimmer-Liste ist leer.", parent=self.master)
+            return
+
+        def _norm(name):
+            cleaned = re.sub(r'(?i)\b(Ms|Mr|Mrs|Hr|Herr|Frau|Fr|Prof|Dr|Familie)\b\.?\s*', '', name).strip()
+            return ' '.join(cleaned.lower().split())
+
+        seen = {}
+        duplicates = []
+        for entry in self.namensliste_doppel_data_cache:
+            for field in ('p1_name', 'p2_name'):
+                name = entry.get(field, '').strip()
+                if not name:
+                    continue
+                key = _norm(name)
+                if key in seen:
+                    if key not in duplicates:
+                        duplicates.append(key)
+                else:
+                    seen[key] = True
+
+        if not duplicates:
+            messagebox.showinfo(
+                "Duplikate prüfen",
+                "Keine Duplikate gefunden.\n\nAlle Namen in der Liste sind eindeutig.",
+                parent=self.master)
+            return
+
+        dup_display = "\n".join(f"  - {d.title()}" for d in duplicates)
+        messagebox.showwarning(
+            "Duplikate gefunden",
+            f"Es wurden {len(duplicates)} doppelt eingetragene Name(n) gefunden:\n\n"
+            f"{dup_display}\n\n"
+            "Bitte prüfen Sie die Einträge manuell.",
+            parent=self.master)
+
+    def _open_namensliste_doppel_history_dialog(self):
+        """Öffnet den Verlauf-Dialog für die Doppelzimmer-Namensliste."""
+        if not hasattr(self, 'namensliste_doppel_history_file'):
+            self.namensliste_doppel_history_file = os.path.join(
+                self.effective_data_root, 'namensliste_doppel_history.json')
+
+        self._open_generic_list_history_dialog(
+            "Doppelzimmer-Namensliste",
+            self.namensliste_doppel_history_file,
+            self._get_namensliste_doppel_history_summary_line,
+            self._restore_namensliste_doppel_from_history
+        )
+
+    def _get_namensliste_doppel_history_summary_line(self, snapshot):
+        """Zusammenfassungszeile für einen Doppelzimmer-Verlaufseintrag."""
+        data = snapshot.get('data', {})
+        action = snapshot.get('action', 'Unbekannt')
+        entry_count = len(data.get('entries', []))
+        return f"[{action}] ({entry_count} Zimmer)"
+
+    def _restore_namensliste_doppel_from_history(self, history_dialog):
+        """Stellt die Doppelzimmer-Namensliste aus einem Verlaufseintrag wieder her."""
+        try:
+            listbox = history_dialog.listbox_widget
+            all_snapshots = history_dialog.displayed_snapshots
+            selected_indices = listbox.curselection()
+
+            if not selected_indices:
+                messagebox.showwarning("Auswahl", "Bitte einen Eintrag zum Wiederherstellen auswählen.", parent=history_dialog)
+                return
+
+            if len(selected_indices) > 1:
+                messagebox.showwarning("Mehrfachauswahl", "Bitte nur einen Eintrag auf einmal wiederherstellen.", parent=history_dialog)
+                return
+
+            snapshot_data = all_snapshots[selected_indices[0]]
+        except (AttributeError, IndexError) as e:
+            messagebox.showerror("Fehler", f"Die Daten konnten nicht gelesen werden: {e}", parent=history_dialog)
+            return
+
+        data = snapshot_data.get('data', {})
+        if not data or 'entries' not in data:
+            messagebox.showerror("Fehler", "Keine gültigen Daten zum Wiederherstellen.", parent=history_dialog)
+            return
+
+        if messagebox.askyesno("Wiederherstellen",
+                               "Diesen Zustand der Doppelzimmer-Liste wirklich wiederherstellen?\n"
+                               "Alle aktuellen Einträge werden überschrieben.",
+                               parent=history_dialog):
+            entries = data.get('entries', [])
+            self.namensliste_doppel_data_cache = entries
+            self._save_namensliste_doppel_data()
+            self._save_namensliste_doppel_to_history("Wiederhergestellt aus Verlauf")
+            self._load_and_display_namensliste_doppel()
+            history_dialog.destroy()
+            SuccessToast(self.master, title="Wiederhergestellt",
+                         message=f"Doppelzimmer-Liste mit {len(entries)} Einträgen wiederhergestellt.",
+                         toast_type='success',
+                         colors=self.current_settings.get('toast_colors'))
+
+    def _save_namensliste_doppel_to_history(self, action="Gespeichert"):
+        """Speichert den aktuellen Zustand der Doppelzimmer-Liste im Verlauf."""
+        if not hasattr(self, 'namensliste_doppel_history_file'):
+            self.namensliste_doppel_history_file = os.path.join(
+                self.effective_data_root, 'namensliste_doppel_history.json')
+        history_data = []
+        if os.path.exists(self.namensliste_doppel_history_file):
+            try:
+                with open(self.namensliste_doppel_history_file, 'r', encoding='utf-8') as f:
+                    history_data = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                history_data = []
+        snapshot = {
+            "timestamp": datetime.datetime.now().isoformat(),
+            "action": action,
+            "data": {
+                "entries": [dict(e) for e in self.namensliste_doppel_data_cache],
+            }
+        }
+        history_data.append(snapshot)
+        # Maximal 50 Einträge behalten
+        history_data = history_data[-50:]
+        try:
+            with open(self.namensliste_doppel_history_file, 'w', encoding='utf-8') as f:
+                json.dump(history_data, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            print(f"Fehler beim Speichern des Doppelzimmer-Verlaufs: {e}")
+
     def _save_namensliste_to_history(self, action="Gespeichert"):
         """Speichert den aktuellen Zustand der Namensliste im Verlauf."""
         if not hasattr(self, 'namensliste_history_file'):
@@ -36023,7 +36492,7 @@ class KassenprotokollApp:
             "data": {
                 "firmenname": self.namensliste_firmenname_var.get(),
                 "extra_infos": self.namensliste_extra_infos_var.get(),
-                "entries": self.namensliste_data_cache
+                "entries": [dict(e) for e in self.namensliste_data_cache]
             }
         }
         history_data.insert(0, snapshot)

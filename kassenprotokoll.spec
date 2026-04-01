@@ -1,18 +1,22 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 
+import os, glob
+_venv_sp = os.path.join('O:\\\\kassenprotokoll_App', '.venv', 'Lib', 'site-packages')
+_pywin32_dlls = glob.glob(os.path.join(_venv_sp, 'pywin32_system32', '*.dll'))
+
 a = Analysis(
     ['kassenprotokoll.py'],
     pathex=[],
-    binaries=[],
+    binaries=[(dll, '.') for dll in _pywin32_dlls],
     datas=[
         ('fonts', 'fonts'),
         ('icons', 'icons'),
         ('images', 'images'),
         ('sounds', 'sounds'),
     ],
-    hiddenimports=['win32com.client', 'win32timezone', 'asteval'],
-    hookspath=[],
+    hiddenimports=['win32com', 'win32com.client', 'win32timezone', 'pythoncom', 'pywintypes', 'asteval'],
+    hookspath=['hooks'],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
